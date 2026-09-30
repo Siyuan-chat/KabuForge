@@ -1,0 +1,7 @@
+# Install into an isolated environment. Existing production environments are not modified.
+numpy>=1.26
+pandas>=2.2
+pyarrow>=19
+jsonschema==4.26.0
+requests>=2.32.5
+beautifulsoup4>=4.14.3

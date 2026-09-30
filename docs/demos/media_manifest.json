@@ -1,0 +1,55 @@
+{
+  "source": "Existing local trilingual operation recordings, 2026-09-30",
+  "scope": "Historical UI demonstration only; not performance of the public factor distribution.",
+  "media_unchanged": true,
+  "files": {
+    "zh_CN/workflow.gif": {
+      "sha256": "1493c32ef17cd69e02f39abfbb6db722c5d0e6f538a3557163e9bdd44fbae66a",
+      "bytes": 267789
+    },
+    "zh_CN/data.png": {
+      "sha256": "e8d6827f3bb267ce8a881ba70344c97560c0b749e681d47cbba2b42a6f796fe9",
+      "bytes": 89248
+    },
+    "zh_CN/result.png": {
+      "sha256": "3d3f78a4b8be62ccac63a4f8dbcc6311b7e6fb0363bf96ac007377aa95981a95",
+      "bytes": 91504
+    },
+    "zh_CN/history.png": {
+      "sha256": "b3caf0358a7b29e464905ba0df5fd4eb5b1837f3074376e9b45fd0e6240e292c",
+      "bytes": 61507
+    },
+    "ja_JP/workflow.gif": {
+      "sha256": "7893f2409c1dffe904c5f64f6a4e2ed75c3e51803246f74a57e410bcf482284f",
+      "bytes": 189718
+    },
+    "ja_JP/data.png": {
+      "sha256": "c859df827532ce64902c98799f1019fb815ae0efad3acc83a175e3297ae51a75",
+      "bytes": 92921
+    },
+    "ja_JP/result.png": {
+      "sha256": "b6fce25a9ad53e5397c138ff1d646c5a93b032662dd03369a96a2afd9eb2f5a5",
+      "bytes": 96459
+    },
+    "ja_JP/history.png": {
+      "sha256": "11ca1195b600685230ce8d025119e07d92cd663e1b679dd9376d09a484a1dab8",
+      "bytes": 64910
+    },
+    "en_US/workflow.gif": {
+      "sha256": "b7f665c4846dedc7e983fe19096f3994f0c5b28bcbb3326f310103d2d58e684f",
+      "bytes": 235063
+    },
+    "en_US/data.png": {
+      "sha256": "caac451a42dfe97432819ca24f4695d8e3027a3debf6b7a55aa5b9fbaf8e5ee7",
+      "bytes": 75241
+    },
+    "en_US/result.png": {
+      "sha256": "4045b5fd2ffd28996b489078393d678d47dfa21a61ea61d1e920b613062b5334",
+      "bytes": 82379
+    },
+    "en_US/history.png": {
+      "sha256": "5d6e3e07cdf32227db0f9c9ec0e22829b36d285296724ce4d9610e1a70a29063",
+      "bytes": 60154
+    }
+  }
+}

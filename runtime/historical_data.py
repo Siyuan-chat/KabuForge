@@ -7,7 +7,10 @@ from typing import Any, Iterable, Mapping
 import numpy as np
 import pandas as pd
 
-from topix_pool_runtime import HistoricalDataProvider, RunReport, _normalize_code
+try:
+    from .topix_pool_runtime import HistoricalDataProvider, RunReport, _normalize_code
+except ImportError:  # Legacy direct-script entrypoint.
+    from topix_pool_runtime import HistoricalDataProvider, RunReport, _normalize_code
 
 
 SCHEMAS: dict[str, set[str]] = {

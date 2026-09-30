@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Strategy configuration v1",
+  "type": "object",
+  "required": ["schema_version", "id", "version", "kind", "universe", "factors", "scoring", "portfolio", "risk", "rebalance"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "version": {"type": "string", "minLength": 1},
+    "kind": {"const": "strategy"},
+    "universe": {
+      "oneOf": [
+        {"type": "object", "required": ["path"], "properties": {"path": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+        {"type": "object", "required": ["snapshot"], "properties": {"snapshot": {"type": "string", "minLength": 1}}, "additionalProperties": false}
+      ]
+    },
+    "factors": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "scoring": {"type": "object", "required": ["formula"], "properties": {"formula": {"type": "string", "minLength": 1}}, "additionalProperties": false},
+    "portfolio": {
+      "type": "object", "required": ["construction", "parameters"],
+      "properties": {
+        "construction": {"enum": ["equal_weight", "rank"]},
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "top_n": {"type": "integer", "minimum": 1},
+            "count": {"type": "integer", "minimum": 1},
+            "long_count": {"type": "integer", "minimum": 0},
+            "short_count": {"type": "integer", "minimum": 0},
+            "long_gross": {"type": "number", "minimum": 0},
+            "short_gross": {"type": "number", "minimum": 0},
+            "preprocess": {"enum": ["none", "zscore", "rank"]},
+            "missing_policy": {"enum": ["reject", "drop"]}
+          }, "additionalProperties": false
+        }
+      }, "additionalProperties": false
+    },
+    "risk": {
+      "type": "object", "required": ["max_position_weight", "max_gross_exposure"],
+      "properties": {
+        "max_position_weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "max_gross_exposure": {"type": "number", "exclusiveMinimum": 0},
+        "min_net_exposure": {"type": "number", "minimum": -1, "maximum": 1},
+        "max_net_exposure": {"type": "number", "minimum": -1, "maximum": 1},
+        "turnover_budget": {"type": "number", "minimum": 0},
+        "allow_short": {"type": "boolean"}
+      }, "additionalProperties": false
+    },
+    "rebalance": {"type": "object", "required": ["frequency"], "properties": {"frequency": {"enum": ["daily", "weekly", "monthly"]}, "weekday": {"type": "integer", "minimum": 0, "maximum": 4}, "day_of_month": {"type": "integer", "minimum": 1, "maximum": 31}}, "additionalProperties": false},
+    "metadata": {"type": "object"}
+  }, "additionalProperties": false
+}

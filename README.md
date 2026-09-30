@@ -1,679 +1,89 @@
-# JP Equity Backtest Console
+# KabuForge · JP Equity Backtest Console
 
-JP Equity Backtest Console is a local-first Japanese equity factor research and historical backtesting toolkit for users who want to study reproducible equity-selection workflows on their own machine. It supports both a desktop GUI and a CLI, uses user-built J-Quants-backed local caches, and lets users define multi-factor ranking formulas with editable weights and diagnostics-oriented outputs.
+![KabuForge](brand/kabuforge/v1/logo-horizontal-light.png)
 
-This repository is intended for historical research and simulation only. It is not investment advice, not a stock recommendation engine, and not a live trading system. Users must provide their own J-Quants API access, and no JPX or J-Quants source market data is bundled with this repository or should be redistributed from it.
+**A local desktop workbench for Japanese equity research, reproducible simulation, and inspectable execution records.**
 
-See also:
+KabuForge 是本仓库的新一代研究工作台：中文／日本語／English 三语界面、引导式策略表单、离线手册、公开因子、严格数据身份检查，以及分离信号与成交的模拟引擎。仓库名称与地址保持不变。旧版 GUI / CLI 仍保留，见 [旧版说明](docs/LEGACY_README.md)。
 
-- [DISCLAIMER.md](./DISCLAIMER.md)
-- [LICENSE](./LICENSE)
-
-## What this tool helps you do
-
-- Build and refresh local J-Quants-backed caches for historical research.
-- Screen Japanese equities with configurable universe filters.
-- Combine quality, value, momentum, trend, reversal, attention, and behaviour factors.
-- Edit formulas and factor weights from the GUI or through config-driven CLI runs.
-- Run historical rebalance simulations for long-only and optional long/short research workflows.
-- Inspect holdings, trades, factor diagnostics, regime and allocation diagnostics, and performance summaries.
-- Extend the framework with new factor runtimes and loader-backed research modules.
-
-## What this is not
-
-This repository is not:
-
-- investment advice,
-- a stock recommendation engine,
-- a live trading or order-routing system,
-- a JPX or J-Quants data redistribution channel,
-- a guarantee of future or historical performance,
-- a substitute for user review of data quality, modeling assumptions, and licensing obligations.
-
-## Screenshots
-
-### Main GUI
-
-![Main GUI](docs/images/gui_main.png)
-
-### Factor configuration
-
-![Factor configuration](docs/images/factor_config.png)
-
-### Backtest output
-
-![Backtest output](docs/images/backtest_output.png)
-
-Screenshots may use sample or mock data. No JPX or J-Quants market data is bundled with this repository.
-
-## Highlights
-
-- Desktop GUI and CLI entrypoints.
-- Local-cache-based historical backtests.
-- Formula-driven composite scoring with editable factor weights.
-- Standardized `12-1 momentum`.
-- Long-only and optional long/short research workflows.
-- Extensible factor runtime interface.
-
-## Project motivation
-
-This project was built as a personal research and engineering project for testing Japanese equity factor ideas in a reproducible local environment. The goal is to support data-driven hypothesis testing, local-first financial tooling, configurable historical simulation, and product-minded research workflows while staying aware of data licensing boundaries and the distinction between research software and investment advice.
+本发布仅使用本仓库 `factors/` 内已有的**公开因子**。标准 12-1 动量使用 `public.momentum_12_1` 身份；不包含、导入或代替作者的私有残差动量及其他私有因子。没有市场数据、账户记录或凭据随代码发布。
 
 ## Quick start
 
-### Easiest Windows entrypoint
-
-Double-click:
-
-```text
-start_here.bat
-```
-
-This will:
-
-- create and populate `.venv` if needed,
-- install the pinned dependency set when `requirements-lock.txt` is present,
-- launch the GUI.
-
-This is the main Windows entrypoint documented for first use.
-
-### Install dependencies
-
-For Windows users, the easiest way is:
-
-```text
-Install_GUI_Dependencies.bat
-```
-
-This script:
-
-- creates `.venv`,
-- upgrades `pip`,
-- installs from `requirements-lock.txt` when available,
-- otherwise installs from `requirements.txt`,
-- prefers a local `.python\python.exe` or Python 3.10 to reduce wheel and build issues on Windows,
-- falls back to `virtualenv` automatically when the selected interpreter does not provide the built-in `venv` module.
-
-Manual install is also possible:
+Windows：Python 3.12、PowerShell 7。在仓库根目录运行：
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+py -3.12 -m venv .venv-gui
+.\.venv-gui\Scripts\python.exe -m pip install -r framework_v2/requirements-gui.txt
+.\Launch_KabuForge.bat
 ```
 
-### GUI
+安装后，双击 `Launch_KabuForge.bat` 即可启动。进入首页后选择离线演示，再创建策略、运行模拟、查看结果。启动器本身不会安装依赖。旧入口 `start_here.bat` 继续启动旧版 GUI。
+
+也可直接运行：
 
 ```powershell
-python .\runtime\run_gui.py
+.\.venv-gui\Scripts\python.exe -B -m framework_v2.workbench_qt --workspace output/my_workspace
 ```
 
-Then:
+## Preview
 
-1. Enter your J-Quants API key.
-2. Choose the backtest date range.
-3. Adjust enabled factors, formula, and weights.
-4. Start the run.
+沿用本地已有的中文、日文、英文操作演示，GIF 与截图保持原样。它们展示历史研究流程，曲线不代表本次公开因子的结果；演示不附原始行情、策略配置或账本。
 
-### Dependency files
+| 中文 | 日本語 | English |
+| --- | --- | --- |
+| [操作演示](docs/demos/zh_CN/index.html) | [操作デモ](docs/demos/ja_JP/index.html) | [Workflow demo](docs/demos/en_US/index.html) |
 
-- `requirements.txt`
-  - flexible version ranges for normal maintenance
-- `requirements-lock.txt`
-  - pinned versions for more reproducible setup and fewer install surprises
+![中文操作演示](docs/demos/zh_CN/workflow.gif)
 
-## Runtime requirements
+[三语演示总览](docs/demos/index.html) · [日本語 GIF](docs/demos/ja_JP/workflow.gif) · [English GIF](docs/demos/en_US/workflow.gif)
 
-- Python 3.10 or newer
-- Windows for the bundled `.bat` setup flow
-- Access to a user-provided J-Quants API key
+## Documentation
 
-Main Python packages are listed in `requirements.txt`:
+| 内容 | 入口 |
+| --- | --- |
+| 安装、启动与操作 | [操作指南](docs/OPERATIONS.md) |
+| 一步步离线演示 | [演示教程](docs/DEMO.md) |
+| 模块、数据流与执行边界 | [详细架构](docs/ARCHITECTURE.md) |
+| 引擎接口与限制 | [引擎文档](framework_v2/README.md) |
+| 离线完整手册 | [中文](framework_v2/docs/manual_zh_CN.html) · [日本語](framework_v2/docs/manual_ja_JP.html) · [English](framework_v2/docs/manual_en_US.html) |
+| 本次发布的验证 | [验证记录](docs/RELEASE_VALIDATION.md) |
+| 旧版配置与操作 | [旧版 README](docs/LEGACY_README.md) |
 
-- `numpy`
-- `pandas`
-- `pyarrow`
-- `PySide6`
-- `yfinance`
-- `PyYAML`
+HTML 手册请下载仓库后用浏览器打开，或在工作台按 F1；GitHub 文件页显示源代码。
 
-`yfinance` is used only for optional external benchmark or fallback paths. The
-core Japanese equity research flow still depends on user-prepared local
-J-Quants and JPX-style cache tables, and this repository does not bundle or
-redistribute any licensed market data.
+## Offline CLI demonstration
 
-## Example research question
-
-Example question:
-
-Does a simple value-quality-momentum composite behave differently across Japanese equity market regimes?
-
-```text
-Score = 0.3 * Q + 0.3 * V + 0.3 * M + 0.1 * REV
-```
-
-In this repository, a user can configure the formula, choose a monthly rebalance schedule, run a historical simulation, and then inspect resulting weights, holdings, trades, factor diagnostics, regime and allocation diagnostics, and summary outputs.
-
-## CLI
+以下命令在仓库根目录运行；每次使用全新输出目录。
 
 ```powershell
-python .\runtime\run_backtest.py --start 2019-04-01 --end 2023-03-31 --api-file .\api.txt --config .\local_backtest_config.example.json --frequency monthly
+.\.venv-gui\Scripts\python.exe -B -m framework_v2.cli demo --out output/demo
+.\.venv-gui\Scripts\python.exe -B -m framework_v2.cli validate output/demo/backtest.json
+.\.venv-gui\Scripts\python.exe -B -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history
 ```
 
-Supported `api.txt` format:
+`demo` 检查 backtest、paper、fake 三种模式的订单意图一致性，不发送订单。`history` 生成本地模拟的净值、订单、成交及日志。演示使用合成输入，没有真实收益证明。
 
-```text
-api_key=xxxx
+## Engine highlights
+
+- 配置图、数据快照和因子实现均绑定身份及内容哈希。
+- 因子仅读取决策时刻 `available_at` 已知的数据；当前 API 下载结果不会自动取得历史 PIT 证明。
+- 信号、风险约束、数量规划与模拟成交分层；事后执行价格不用于重选历史目标。
+- SQLite 事务记录订单、事件、成交、账户版本与决策证据；未知订单状态阻止盲目重发。
+- 三语界面、离线全文搜索手册、可重开策略草稿、运行记录和只读账本。
+- J-Quants v2 数据下载支持分页、取消、续传及本地完整性检查；用户自行提供访问资格。
+
+## Scope and limitations
+
+软件用于研究和模拟，不是投资建议或实盘交易系统。真实券商连接、Excel 本机集成、历史任务自动恢复及策略有效性认证尚未交付。协议适配代码和 mock 测试不代表可用的真实券商连接。
+
+下载日线后的简化价格研究与严格 PIT 引擎有不同的数据契约。前者使用连续份额，不包含完整整手、滑点、股息或容量审计。完整旧组合/regime 算法不宣称等价迁移。详见 [DISCLAIMER](DISCLAIMER.md) 和 [LICENSE](LICENSE)。
+
+## Development checks
+
+```powershell
+.\.venv-gui\Scripts\python.exe -B -m unittest discover -s framework_v2/tests -q
+.\.venv-gui\Scripts\python.exe -B -m framework_v2.capture_acceptance --output output/gui_acceptance
 ```
 
-## Inputs and outputs
-
-### Inputs
-
-Main inputs are:
-
-- user-built J-Quants-backed local cache tables,
-- a runtime config file,
-- a GUI-entered API key or CLI `--api-file`,
-- start and end dates,
-- rebalance frequency,
-- factor enablement and composite formula settings.
-
-### Output directory
-
-Each run writes a timestamped folder under the configured `runs_dir`.
-
-Typical outputs include:
-
-- `summary.json`
-- `config_used.json`
-- `run_status.json`
-- weights, holdings, and trades tables
-- factor diagnostics
-- regime and allocation diagnostics
-- performance summaries and time series
-
-## Config examples
-
-- Start with `configs/minimal_long_only.example.json` if you want a smaller,
-  easier-to-read long-only example.
-- Move to `local_backtest_config.example.json` when you want the fuller set of
-  research controls, including optional short-leg and richer regime settings.
-
-## Repository layout
-
-### Entry points
-
-- `start_here.bat`
-  - main Windows entrypoint for first-time setup and GUI launch
-- `OPEN_BACKTEST_GUI.bat`
-  - alternate Windows launcher that opens the GUI directly and triggers setup when required
-- `runtime/run_gui.py`
-  - starts the PySide6 desktop application
-- `runtime/run_backtest.py`
-  - thin CLI entrypoint that delegates to `runtime/local_backtest_runner.py`
-
-### Config and examples
-
-- `configs/minimal_long_only.example.json`
-  - minimal long-only configuration example for first-time readers
-- `local_backtest_config.example.json`
-  - fuller research configuration with additional options
-- `examples/README.md`
-  - synthetic schema demo guide with fictitious local cache samples
-- `examples/synthetic_data/`
-  - tiny fictional CSV files showing the expected local cache shapes
-
-### Orchestration and engine
-
-- `runtime/local_backtest_runner.py`
-  - CLI argument parsing
-  - config loading
-  - credential loading for scripted runs
-  - cache preparation and validation
-  - backtest execution
-  - output persistence
-- `runtime/historical_backtest_engine.py`
-  - rebalance loop
-  - factor execution
-  - factor merge and composite scoring
-  - allocation gate and regime logic
-  - long-book construction
-  - optional short hedge construction
-  - execution-price lookup and portfolio updates
-  - result table assembly
-
-### Data access
-
-- `runtime/historical_data.py`
-  - central local data provider
-  - loads prices, fundamentals, market cap, margin, and index data from local cache tables
-  - exposes loader methods used by factor runtimes
-- `runtime/jquants_cache_builder.py`
-  - incremental cache build and refresh utilities for J-Quants-sourced data
-- `runtime/factor_cache.py`
-  - factor-level caching
-- `runtime/snapshot_cache.py`
-  - rebalance snapshot caching
-
-### Factor and composite scripts
-
-- `factors/factor_composite.py`
-  - normalizes factor frames into a common schema
-  - merges factor outputs by code
-  - checks staleness and missingness
-  - computes the formula-driven composite score
-
-### Factors
-
-- `factors/fundamental_factor_runtime.py`
-  - quality and value factors
-- `factors/residual_momentum_factor_runtime.py`
-  - compatibility-named module now implementing standard `12-1 momentum`
-- `factors/dual_ma_factor_runtime.py`
-  - trend gate and dual moving-average module
-- `factors/reversal_factor_runtime.py`
-  - short-horizon reversal
-- `factors/attention_factor_runtime.py`
-  - attention or crowding proxy
-- `factors/behaviour_factor_runtime.py`
-  - behaviour or margin-related signal proxy
-
-### Risk and allocation
-
-- `runtime/market_risk_gating_runtime.py`
-  - market-level stress and trend risk logic
-- `runtime/nikkei_risk_gating_runtime.py`
-  - legacy compatibility wrapper
-- `runtime/regime_indicator.py`
-  - market regime detection
-- `runtime/regime_weights.py`
-  - weight normalization and resolution helpers
-- `runtime/allocation_gate.py`
-  - allocation override logic that combines regime and market risk state
-
-### GUI
-
-- `gui_app/main.py`
-  - Qt application bootstrap
-- `gui_app/ui/main_window.py`
-  - main GUI window and form wiring
-- `gui_app/adapters/backtest_adapter.py`
-  - converts GUI parameters into runtime config and CLI launch arguments
-- `gui_app/validators.py`
-  - local validation of formula and launch inputs
-- `gui_app/config/defaults.py`
-  - repository defaults
-- `gui_app/config/texts.py`
-  - UI copy
-
-## Core workflow
-
-At a high level, a run works like this:
-
-1. A user starts a run from the GUI or CLI.
-2. The runner loads config and credentials.
-3. The cache layer ensures the required local tables exist.
-4. The engine derives rebalance dates.
-5. On each rebalance date:
-   - the universe is screened,
-   - enabled factors are computed,
-   - factor outputs are standardized,
-   - the composite formula is evaluated,
-   - regime and allocation logic are applied,
-   - target weights are built,
-   - execution assumptions are applied,
-   - holdings and performance tables are updated.
-6. Outputs are written to a timestamped run directory.
-
-## Public-release changes
-
-The public release intentionally removes or disables private research assets and opinionated internal defaults:
-
-- the precomputed private strategy path was removed,
-- private best or latest strategy packaging was removed,
-- GUI authentication was simplified to direct API-key entry,
-- private dynamic weight-file workflows were removed from the GUI,
-- momentum was standardized to classic `12-1 momentum`,
-- research caches, saved runs, optimized presets, and local artifacts were excluded.
-
-## Public GUI behavior
-
-The public GUI supports:
-
-- entering a J-Quants API key directly,
-- choosing enabled factors,
-- editing the composite formula,
-- editing factor weights,
-- setting universe filters,
-- configuring long-book and optional short-hedge settings,
-- configuring risk-gate and allocation settings,
-- saving and loading non-secret GUI presets.
-
-The public GUI does not expose:
-
-- private optimized strategy bundles,
-- private weight-file-driven factor blending.
-
-## Composite model
-
-The composite score is formula-driven rather than model-file-driven.
-
-Default structure:
-
-```text
-Score = w_q * Q + w_v * V + w_m * M + w_ts * TS + w_b * B + w_t * T + w_r * REV
-```
-
-Meaning:
-
-- `Q`: quality
-- `V`: value
-- `M`: `12-1 momentum`
-- `TS`: dual-MA trend strength
-- `B`: behaviour signal
-- `T`: attention signal
-- `REV`: reversal
-
-The default model is intentionally simple: each factor contributes directly to the final score through a linear weight, and users can edit both the weights and the formula in the GUI.
-
-## Data interface for factors
-
-Every factor runtime should return a dictionary with the following shape:
-
-```python
-{
-    "minimal": pd.DataFrame(...),
-    "detail": pd.DataFrame(...),
-    "summary": dict(...),
-}
-```
-
-### `minimal` frame
-
-`minimal` is the required interface consumed by the engine and composite layer.
-
-At minimum, the frame should contain:
-
-- `code`
-- `factor_name`
-- `factor_value`
-- `signal_date`
-- `data_end_date`
-- `rebalance_date`
-
-Recommended additional fields:
-
-- `freshness_date`
-- a factor-specific raw or scored column
-- any metadata the composite layer may reuse, such as `industry` or `log_mcap`
-
-### Optional recognized factor-specific columns
-
-The composite layer can infer factor data from either `factor_value` or recognized factor-specific columns.
-
-Examples:
-
-- quality: `QualityScore`, `quality_score`, `Q`
-- value: `ValueScore`, `value_score`, `V`
-- momentum: `momentum_score`, `momentum_12_1_score`, or the compatibility alias columns currently emitted by the momentum runtime
-- dual MA: `dual_ma_gate`, `TS`
-- reversal: `reversal_factor_zscore`, `REV`
-- behaviour: `behaviour_score`, `B`
-- attention: `attention_score`, `T`
-
-If you emit `factor_value`, the standardizer can still work, but factor-specific columns make debugging easier.
-
-## Loader interfaces
-
-The engine injects loader callables into factor configs through `runtime/historical_data.py` via `JpxHistoricalProvider`.
-
-### Price-history loader
-
-Used by trend-style or panel price factors.
-
-Signature:
-
-```python
-loader(
-    universe_codes: pd.DataFrame,
-    start_date: pd.Timestamp,
-    end_date: pd.Timestamp,
-    jquants_api_key: str | None = None,
-    config: dict[str, Any] | None = None,
-) -> pd.DataFrame
-```
-
-Current provider method:
-
-- `JpxHistoricalProvider.load_price_history(...)`
-
-### Attention-input loader
-
-Used when a factor needs prices plus capitalization-related fields.
-
-Current provider method:
-
-- `JpxHistoricalProvider.load_attention_inputs(...)`
-
-### Behaviour-input loader
-
-Used when a factor needs margin data, market cap, and trading-value context.
-
-Current provider method:
-
-- `JpxHistoricalProvider.load_behaviour_inputs(...)`
-
-### Fundamental loader
-
-Used by point-in-time statement factors.
-
-Signature:
-
-```python
-loader(universe: pd.DataFrame, config: dict[str, Any]) -> pd.DataFrame
-```
-
-Current provider method:
-
-- `JpxHistoricalProvider.load_fundamental_panel(...)`
-
-Expected output is a point-in-time panel keyed by `code`, typically including fields such as:
-
-- `StatementDate`
-- `MarketCap`
-- `TotalRevenue`
-- `GrossProfit`
-- `OperatingIncome`
-- `EBIT`
-- `EBITDA`
-- `NetIncome`
-- `TotalAssets`
-- `StockholdersEquity`
-- `TotalDebt`
-- `CashAndCashEquivalents`
-- `OperatingCashFlow`
-- `FreeCashFlow`
-
-### Wide close-price loader
-
-Used by the public momentum module.
-
-Signature:
-
-```python
-loader(
-    tickers: Iterable[str],
-    start_date: pd.Timestamp,
-    end_date: pd.Timestamp,
-    config: dict[str, Any],
-) -> pd.DataFrame
-```
-
-Current provider method:
-
-- `JpxHistoricalProvider.load_close_prices(...)`
-
-Expected output is a wide date-indexed table of close prices.
-
-## How to add a new factor
-
-To add a new factor cleanly, follow this sequence.
-
-### 1. Create a runtime module
-
-Add a file following the same pattern as the existing factor runtimes.
-
-The runtime should expose a function like:
-
-```python
-def run_my_factor(
-    universe: pd.DataFrame | str | Path,
-    rebalance_date: str | pd.Timestamp,
-    jquants_api_key: str | None = None,
-    config: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    ...
-```
-
-Return a `{"minimal", "detail", "summary"}` payload.
-
-### 2. Decide what loader the factor needs
-
-Use one of the existing loader patterns when possible:
-
-- `fundamental_loader`
-- `price_loader`
-- `panel_price_loader`
-- `attention_loader`
-- `behaviour_loader`
-- `close_loader`
-
-If none fits, add a new provider method in `runtime/historical_data.py` and inject it from `_factor_config(...)` in `runtime/historical_backtest_engine.py`.
-
-### 3. Register the factor in the engine
-
-Update:
-
-- `runtime/historical_backtest_engine.py`
-  - import the runtime
-  - add it to the `runners` map
-  - inject any required loader in `_factor_config(...)`
-
-### 4. Register the factor in the composite layer
-
-Update `factors/factor_composite.py`:
-
-- add an alias in `normalize_factor_name_for_composite(...)`,
-- add or extend `FACTOR_SPECS`,
-- make sure column inference can find your raw or scored column.
-
-### 5. Register the factor in the GUI
-
-If the factor should be user-visible, update:
-
-- `gui_app/config/defaults.py`
-  - add a `FactorDefinition`
-  - optionally expose weight semantics
-- `gui_app/validators.py`
-  - extend formula validation mapping if new variables are introduced
-
-### 6. Keep the interface stable
-
-For compatibility with the existing composite layer, try to keep:
-
-- `code` normalized to 4-digit JP equity codes where applicable,
-- dates parseable by pandas,
-- `factor_value` numeric,
-- one row per `code` for the rebalance snapshot.
-
-### 7. Make missing data graceful
-
-Non-critical factors should fail softly:
-
-- return a `minimal` frame with `NaN` values,
-- keep `summary["error"]`,
-- avoid crashing the entire run unless the factor is explicitly required.
-
-## Factor design guidance
-
-When implementing new factors in this repository, it is best to follow these conventions:
-
-- Use point-in-time data only.
-- Emit one rebalance snapshot per code.
-- Record freshness explicitly.
-- Keep `detail` rich for debugging, but keep `minimal` compact and stable.
-- Prefer provider-injected local loaders over direct network access.
-- Treat the runtime as deterministic and side-effect-light.
-
-## Authentication model
-
-### GUI
-
-The GUI accepts:
-
-- `API key`
-
-The GUI writes the key only to a temporary runtime file before launch and uses the built-in default `data_cache` and `backtest_runs` directories.
-
-### CLI
-
-The CLI accepts:
-
-```bash
---api-file api.txt
-```
-
-Supported file format:
-
-```text
-api_key=xxxx
-```
-
-## Compliance and usage boundaries
-
-This repository is a research tool built around user-managed local data caches and historical simulation workflows.
-
-- No JPX or J-Quants source market data is bundled with this repository.
-- Users must bring their own J-Quants API access and remain responsible for the way they obtain, store, use, and retain data.
-- Users must comply with applicable JPX and J-Quants terms, contracts, and data-usage restrictions.
-- Outputs from this repository are research artifacts, not investment advice, not stock recommendations, and not trading instructions.
-- Historical backtest results, factor diagnostics, and summaries are not guarantees of future or historical performance quality.
-- Publishing derived outputs, redistributing data-bearing artifacts, or building external services on top of this workflow may require separate permission, licensing review, or legal review.
-
-Before publishing outputs or derived services, read:
-
-- [DISCLAIMER.md](./DISCLAIMER.md)
-
-## Portfolio / Recruiter Notes
-
-This project is also intended to be a portfolio-quality example of:
-
-- Python data engineering for local financial research pipelines
-- factor research workflow design
-- point-in-time data handling and cache validation
-- GUI and CLI productization for reproducible analysis
-- financial data compliance awareness and boundary-setting
-
-It remains a research and learning project. It is not investment advice, does
-not include a real execution stack, and does not bundle commercial market data.
-
-## Synthetic demo
-
-If you do not have J-Quants access yet, see [examples/README.md](./examples/README.md).
-The synthetic example is a schema and workflow demo built from fictional data.
-It is meant to help readers understand file layout and expected inputs, not to
-represent real market behavior or validated strategy results.
-
-## Security and secrets
-
-- Do not commit API keys, cache files, saved runs, or private presets.
-- Prefer local config files, local environment variables, or other non-public local mechanisms for secrets.
-- Review `.gitignore` before publishing the repository or sharing archives.
-- Treat cached market data and run outputs as potentially sensitive from a licensing and confidentiality perspective even when they are not direct source dumps.
-
-## License
-
-This repository is released under the MIT License.
-
-- [LICENSE](./LICENSE)
+验收脚本使用 Qt 离屏控件和合成/mock 输入，不是原生鼠标自动化、真实 API 权限测试或实盘认证。

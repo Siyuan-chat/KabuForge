@@ -24,3 +24,15 @@ gui_api_credentials.txt
 runs/
 *.parquet
 private_presets/
+
+# KabuForge local state and credentials
+output/
+.venv-gui/
+*.sqlite
+*.sqlite-*
+*.db
+.env.*
+secrets/
+paper_trading_state*/
+paper_trading_runs*/
+KabuForge.lnk

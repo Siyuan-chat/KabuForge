@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run configuration v1",
+  "type": "object",
+  "required": ["schema_version", "id", "version", "kind", "strategy", "data_snapshot", "clock", "mode", "fees", "account_ref", "output_dir"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "version": {"type": "string", "minLength": 1},
+    "kind": {"const": "run"},
+    "strategy": {"type": "string", "minLength": 1},
+    "data_snapshot": {"type": "string", "minLength": 1},
+    "clock": {"type": "object", "required": ["start", "end", "timezone"], "properties": {"start": {"type": "string", "format": "date"}, "end": {"type": "string", "format": "date"}, "timezone": {"const": "Asia/Tokyo"}}, "additionalProperties": false},
+    "mode": {"enum": ["backtest", "paper", "fake", "broker"]},
+    "fees": {"type": "object", "required": ["commission_rate", "minimum_fee"], "properties": {"commission_rate": {"type": "number", "minimum": 0}, "minimum_fee": {"type": "number", "minimum": 0}}, "additionalProperties": false},
+    "account_ref": {"type": "string", "minLength": 1},
+    "output_dir": {"type": "string", "minLength": 1},
+    "metadata": {"type": "object"}
+  }, "additionalProperties": false
+}

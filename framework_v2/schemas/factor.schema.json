@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Factor configuration v1",
+  "type": "object",
+  "required": ["schema_version", "id", "version", "kind", "implementation", "data_requirements", "lookback", "output"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"},
+    "version": {"type": "string", "minLength": 1},
+    "kind": {"const": "factor"},
+    "implementation": {
+      "type": "object", "required": ["id", "version", "parameters"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_.-]*$"},
+        "version": {"type": "string", "minLength": 1},
+        "parameters": {"type": "object"}
+      }, "additionalProperties": false
+    },
+    "data_requirements": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["dataset", "fields"],
+        "properties": {
+          "dataset": {"type": "string", "minLength": 1},
+          "fields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        }, "additionalProperties": false
+      }
+    },
+    "lookback": {"type": "integer", "minimum": 0},
+    "output": {
+      "type": "object", "required": ["name", "description"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "unit": {"type": "string"}
+      }, "additionalProperties": false
+    },
+    "metadata": {"type": "object"}
+  }, "additionalProperties": false
+}

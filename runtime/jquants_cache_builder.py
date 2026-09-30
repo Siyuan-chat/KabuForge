@@ -17,7 +17,10 @@ import numpy as np
 import pandas as pd
 import requests
 
-from historical_data import JpxHistoricalProvider, LocalDataPaths, normalize_code
+try:
+    from .historical_data import JpxHistoricalProvider, LocalDataPaths, normalize_code
+except ImportError:  # Legacy direct-script entrypoint.
+    from historical_data import JpxHistoricalProvider, LocalDataPaths, normalize_code
 
 
 JQUANTS_CACHE_BUILDER_VERSION = "2026-04-18-full-month-cache"

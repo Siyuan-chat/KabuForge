@@ -1,0 +1,22 @@
+name: KabuForge public distribution
+on:
+  push:
+  pull_request:
+jobs:
+  public-workbench:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install workbench dependencies
+        run: python -m pip install -r framework_v2/requirements-gui.txt
+      - name: Test public engine and Qt workflows
+        run: python -B -m unittest discover -s framework_v2/tests -q
+      - name: Run offline demo
+        run: python -B -m framework_v2.cli demo --out output/demo
+      - name: Validate demo configuration
+        run: python -B -m framework_v2.cli validate output/demo/backtest.json
+      - name: Replay synthetic history
+        run: python -B -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history
