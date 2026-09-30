@@ -1,14 +1,16 @@
 # KabuForge · JP Equity Backtest Console
 
+[简体中文](README.md) · [日本語](README.ja.md) · [English](README.en.md)
+
 ![KabuForge](brand/kabuforge/v1/logo-horizontal-light.png)
 
-**A local desktop workbench for Japanese equity research, reproducible simulation, and inspectable execution records.**
+**用于日股研究、可复现模拟与执行记录核查的本地桌面工作台。**
 
 KabuForge 是本仓库的新一代研究工作台：中文／日本語／English 三语界面、引导式策略表单、离线手册、公开因子、严格数据身份检查，以及分离信号与成交的模拟引擎。仓库原名 `JP-Equity-Backtest-Console`，现名 `KabuForge`，旧链接由 GitHub 自动跳转。旧版 GUI / CLI 仍保留，见 [旧版说明](docs/LEGACY_README.md)。
 
 本发布仅使用本仓库 `factors/` 内已有的**公开因子**。标准 12-1 动量使用 `public.momentum_12_1` 身份；不包含、导入或代替作者的私有残差动量及其他私有因子。没有市场数据、账户记录或凭据随代码发布。
 
-## Quick start
+## 快速开始
 
 Windows：Python 3.12、PowerShell 7。在仓库根目录运行：
 
@@ -26,7 +28,7 @@ py -3.12 -m venv .venv-gui
 .\.venv-gui\Scripts\python.exe -B -m framework_v2.workbench_qt --workspace output/my_workspace
 ```
 
-## Preview
+## 操作演示
 
 沿用本地已有的中文、日文、英文操作演示，GIF 与截图保持原样。它们展示历史研究流程，曲线不代表本次公开因子的结果；演示不附原始行情、策略配置或账本。
 
@@ -38,7 +40,7 @@ py -3.12 -m venv .venv-gui
 
 [三语演示总览](docs/demos/index.html) · [日本語 GIF](docs/demos/ja_JP/workflow.gif) · [English GIF](docs/demos/en_US/workflow.gif)
 
-## Documentation
+## 文档
 
 | 内容 | 入口 |
 | --- | --- |
@@ -52,7 +54,7 @@ py -3.12 -m venv .venv-gui
 
 HTML 手册请下载仓库后用浏览器打开，或在工作台按 F1；GitHub 文件页显示源代码。
 
-## Offline CLI demonstration
+## 离线命令行演示
 
 以下命令在仓库根目录运行；每次使用全新输出目录。
 
@@ -64,7 +66,7 @@ HTML 手册请下载仓库后用浏览器打开，或在工作台按 F1；GitHub
 
 `demo` 检查 backtest、paper、fake 三种模式的订单意图一致性，不发送订单。`history` 生成本地模拟的净值、订单、成交及日志。演示使用合成输入，没有真实收益证明。
 
-## Engine highlights
+## 引擎特性
 
 - 配置图、数据快照和因子实现均绑定身份及内容哈希。
 - 因子仅读取决策时刻 `available_at` 已知的数据；当前 API 下载结果不会自动取得历史 PIT 证明。
@@ -73,13 +75,13 @@ HTML 手册请下载仓库后用浏览器打开，或在工作台按 F1；GitHub
 - 三语界面、离线全文搜索手册、可重开策略草稿、运行记录和只读账本。
 - J-Quants v2 数据下载支持分页、取消、续传及本地完整性检查；用户自行提供访问资格。
 
-## Scope and limitations
+## 范围与限制
 
 软件用于研究和模拟，不是投资建议或实盘交易系统。真实券商连接、Excel 本机集成、历史任务自动恢复及策略有效性认证尚未交付。协议适配代码和 mock 测试不代表可用的真实券商连接。
 
 下载日线后的简化价格研究与严格 PIT 引擎有不同的数据契约。前者使用连续份额，不包含完整整手、滑点、股息或容量审计。完整旧组合/regime 算法不宣称等价迁移。详见 [DISCLAIMER](DISCLAIMER.md) 和 [LICENSE](LICENSE)。
 
-## Development checks
+## 开发验证
 
 ```powershell
 .\.venv-gui\Scripts\python.exe -B -m unittest discover -s framework_v2/tests -q
