@@ -30,15 +30,11 @@ py -3.12 -m venv .venv-gui
 
 ## 操作演示
 
-沿用本地已有的中文、日文、英文操作演示，GIF 与截图保持原样。它们展示历史研究流程，曲线不代表本次公开因子的结果；演示不附原始行情、策略配置或账本。
-
-| 中文 | 日本語 | English |
-| --- | --- | --- |
-| [操作演示](docs/demos/zh_CN/index.html) | [操作デモ](docs/demos/ja_JP/index.html) | [Workflow demo](docs/demos/en_US/index.html) |
+沿用本地已有的中文操作演示，GIF 与截图保持原样。它展示历史研究流程，曲线不代表本次公开因子的结果；演示不附原始行情、策略配置或账本。
 
 ![中文操作演示](docs/demos/zh_CN/workflow.gif)
 
-[三语演示总览](docs/demos/index.html) · [日本語 GIF](docs/demos/ja_JP/workflow.gif) · [English GIF](docs/demos/en_US/workflow.gif)
+[中文操作截图集](docs/demos/zh_CN/index.html)
 
 ## 文档
 
@@ -48,7 +44,7 @@ py -3.12 -m venv .venv-gui
 | 一步步离线演示 | [演示教程](docs/DEMO.md) |
 | 模块、数据流与执行边界 | [详细架构](docs/ARCHITECTURE.md) |
 | 引擎接口与限制 | [引擎文档](framework_v2/README.md) |
-| 离线完整手册 | [中文](framework_v2/docs/manual_zh_CN.html) · [日本語](framework_v2/docs/manual_ja_JP.html) · [English](framework_v2/docs/manual_en_US.html) |
+| 离线完整手册 | [中文](framework_v2/docs/manual_zh_CN.html) |
 | 本次发布的验证 | [验证记录](docs/RELEASE_VALIDATION.md) |
 | 旧版配置与操作 | [旧版 README](docs/LEGACY_README.md) |
 

@@ -30,15 +30,11 @@ You can also launch the workbench directly:
 
 ## Workflow demonstrations
 
-The existing local Chinese, Japanese, and English recordings are reused without changing their GIFs or screenshots. They show a historical research workflow; their curves are not results of this public factor distribution. The demonstrations do not include the underlying market data, strategy configurations, or ledgers.
-
-| 中文 | 日本語 | English |
-| --- | --- | --- |
-| [操作演示](docs/demos/zh_CN/index.html) | [操作デモ](docs/demos/ja_JP/index.html) | [Workflow demo](docs/demos/en_US/index.html) |
+The existing local English recording is reused without changing its GIF or screenshots. It shows a historical research workflow; its curves are not results of this public factor distribution. The demonstration does not include the underlying market data, strategy configurations, or ledger.
 
 ![English workflow demonstration](docs/demos/en_US/workflow.gif)
 
-[Trilingual demonstration index](docs/demos/index.html) · [中文 GIF](docs/demos/zh_CN/workflow.gif) · [日本語 GIF](docs/demos/ja_JP/workflow.gif)
+[English workflow screenshots](docs/demos/en_US/index.html)
 
 ## Documentation
 
@@ -48,7 +44,7 @@ The existing local Chinese, Japanese, and English recordings are reused without 
 | Step-by-step offline demonstration | [Demo guide — Chinese](docs/DEMO.md) |
 | Modules, data flow, and execution boundaries | [Architecture — Chinese](docs/ARCHITECTURE.md) |
 | Engine interfaces and limitations | [Engine documentation — Chinese](framework_v2/README.md) |
-| Complete offline manuals | [English](framework_v2/docs/manual_en_US.html) · [中文](framework_v2/docs/manual_zh_CN.html) · [日本語](framework_v2/docs/manual_ja_JP.html) |
+| Complete offline manual | [English](framework_v2/docs/manual_en_US.html) |
 | Validation of this release | [Validation record — English](docs/RELEASE_VALIDATION.md) |
 | Legacy configuration and operation | [Legacy README — English](docs/LEGACY_README.md) |
 
