@@ -4,7 +4,7 @@
 
 **A local desktop workbench for Japanese equity research, reproducible simulation, and inspectable execution records.**
 
-KabuForge 是本仓库的新一代研究工作台：中文／日本語／English 三语界面、引导式策略表单、离线手册、公开因子、严格数据身份检查，以及分离信号与成交的模拟引擎。仓库名称与地址保持不变。旧版 GUI / CLI 仍保留，见 [旧版说明](docs/LEGACY_README.md)。
+KabuForge 是本仓库的新一代研究工作台：中文／日本語／English 三语界面、引导式策略表单、离线手册、公开因子、严格数据身份检查，以及分离信号与成交的模拟引擎。仓库原名 `JP-Equity-Backtest-Console`，现名 `KabuForge`，旧链接由 GitHub 自动跳转。旧版 GUI / CLI 仍保留，见 [旧版说明](docs/LEGACY_README.md)。
 
 本发布仅使用本仓库 `factors/` 内已有的**公开因子**。标准 12-1 动量使用 `public.momentum_12_1` 身份；不包含、导入或代替作者的私有残差动量及其他私有因子。没有市场数据、账户记录或凭据随代码发布。
 
