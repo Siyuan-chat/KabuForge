@@ -13,6 +13,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: python -m pip install -e '.[gui]' build
       - run: python -m unittest discover -s framework_v2/tests -p 'test_*.py' -q
       - run: python tools/check_docs.py
@@ -37,6 +39,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: python -m pip install build
       - run: python -m build
       - run: python -m venv /tmp/kabuforge-clean
