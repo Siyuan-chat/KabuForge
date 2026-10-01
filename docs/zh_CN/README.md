@@ -4,22 +4,47 @@ version: 1
 locale: zh_CN
 ---
 
-# KabuForge 本地版 v0.1.0-rc.1
+# KabuForge documentation
 
 <!-- section:contract -->
-## 合约
+## Contract
 
-KabuForge 是本地日股研究与模拟软件包：校验声明式运行文件、构建因子和策略决策、生成券商中立订单意图，并运行本地回测、纸面或假券商模拟；绝不提交真实订单。安装本地检出并使用 CLI：
+按下列入口阅读。包版本仍为 0.1.0rc1，已发布 v0.1.0 Release 保留 RC 附件。不提供真实交易或完整历史 PIT 认证。
 
-```shell
-pip install -e .
-kabuforge demo --out output/new_demo
-kabuforge mcp --workspace output/agent_workspace
-```
+### 开始使用
 
-公开 RC 保留既有已公开因子实现；私有工作区实现、账户状态、缓存和凭证不进入此发行物。旧 GUI 的说明继续由既有手册维护。
+- [快速开始 / CLI](DEVELOPMENT.md)
+- [Development](DEVELOPMENT.md)
+
+### 概念
+
+- [Architecture](ARCHITECTURE.md)
+- [Research correctness and data limits](RESEARCH_METHODOLOGY.md)
+
+### API
+
+- [Factors: registry and validators](FACTOR_API.md)
+- [Strategies: decisions and targets](STRATEGY_API.md)
+- [MCP: access and receipts](AGENT_API.md)
+- [Execution: simulation and UNKNOWN](EXECUTION.md)
+- [Broker mappings and mocks](BROKER_API.md)
+
+### 验证
+
+- [Validation and retained release limitations](RELEASE_PROCESS.md)
+- [Python 3.12 release foundation CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
+- [Release process](RELEASE_PROCESS.md)
+
+### 参与开发
+
+- [Contribution and license](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
 
 <!-- section:evidence -->
-## 证据
+## Evidence
 
-`kabuforge` 提供 `doctor`、`factors`、`strategies`、`demo`、`backtest`、`paper` 与 `mcp`。运行模式必须匹配 `backtest` 或 `paper`；`demo` 只产生本地合成输出。当前版本为 `0.1.0rc1`，正式 v0.1.0 尚需独立公共实现与发行审计。
+`kabuforge doctor`, `kabuforge factors`, `kabuforge strategies`, `kabuforge demo` / Python 3.12+.
+
+[English](../en_US/README.md) · [简体中文](../zh_CN/README.md) · [日本語](../ja_JP/README.md)

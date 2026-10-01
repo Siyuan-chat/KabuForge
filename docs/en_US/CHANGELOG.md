@@ -6,6 +6,20 @@ locale: en_US
 
 # Changelog
 
+## Unreleased: current-source license and GitHub navigation
+
+Project-owned material adopts AGPL-3.0-only at commit `3bdbb7e1b68de53fcb243abb92cd851801dcb7be`.
+The original MIT notice and external contribution provenance are retained in
+NOTICE / LICENSE_SCOPE.md. Existing v0.1.0-rc.1 and v0.1.0 releases, tags,
+wheel/sdist attachments and checksums remain MIT and unchanged. Package version
+is still 0.1.0rc1; local builds are validation-only, and a future AGPL release
+requires a new version. Runtime dependencies and APIs are unchanged.
+
+The current-source update adds three-language capability evidence, research
+boundaries, citation, navigation, community forms and stricter document checks.
+Brand wordmarks are being replaced with pinned OFL Noto Sans outlines while
+preserving the anvil. Font software retains OFL and is not bundled.
+
 <!-- section:contract -->
 ## Contract
 

@@ -4,22 +4,47 @@ version: 1
 locale: ja_JP
 ---
 
-# KabuForge ローカル版 v0.1.0-rc.1
+# KabuForge documentation
 
 <!-- section:contract -->
-## 契約
+## Contract
 
-KabuForge は日本株のローカル研究・シミュレーション用パッケージです。宣言的な run ファイルを検証し、因子・戦略判断とブローカー非依存の注文意図を作成し、ローカルのバックテスト、ペーパー、FakeBroker シミュレーションを実行します。実注文は送信しません。ローカル checkout を導入して CLI を使います。
+以下の入口を選んでください。パッケージ版は 0.1.0rc1、公開済み v0.1.0 Release は RC 添付物を保持します。実取引や完全な過去 PIT 認証は提供しません。
 
-```shell
-pip install -e .
-kabuforge demo --out output/new_demo
-kabuforge mcp --workspace output/agent_workspace
-```
+### 始め方
 
-公開 RC は既存の公開ファクター実装を維持します。非公開ワークスペースの実装、口座状態、キャッシュ、認証情報を配布物に含めません。従来 GUI の説明は既存マニュアルで維持します。
+- [クイックスタート / CLI](DEVELOPMENT.md)
+- [Development](DEVELOPMENT.md)
+
+### 概念
+
+- [Architecture](ARCHITECTURE.md)
+- [Research correctness and data limits](RESEARCH_METHODOLOGY.md)
+
+### API
+
+- [Factors: registry and validators](FACTOR_API.md)
+- [Strategies: decisions and targets](STRATEGY_API.md)
+- [MCP: access and receipts](AGENT_API.md)
+- [Execution: simulation and UNKNOWN](EXECUTION.md)
+- [Broker mappings and mocks](BROKER_API.md)
+
+### 検証
+
+- [Validation and retained release limitations](RELEASE_PROCESS.md)
+- [Python 3.12 release foundation CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
+- [Release process](RELEASE_PROCESS.md)
+
+### 貢献
+
+- [Contribution and license](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
 
 <!-- section:evidence -->
-## 根拠
+## Evidence
 
-`kabuforge` は `doctor`、`factors`、`strategies`、`demo`、`backtest`、`paper`、`mcp` を提供します。run mode は `backtest` 又は `paper` と一致しなければなりません。現在は `0.1.0rc1` で、正式 v0.1.0 には独立した公開実装とリリース監査が必要です。
+`kabuforge doctor`, `kabuforge factors`, `kabuforge strategies`, `kabuforge demo` / Python 3.12+.
+
+[English](../en_US/README.md) · [简体中文](../zh_CN/README.md) · [日本語](../ja_JP/README.md)
