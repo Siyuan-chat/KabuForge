@@ -2,7 +2,11 @@
 
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
-![KabuForge](framework_v2/assets/brand/logo-horizontal-dark.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v1/logo-horizontal-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="brand/kabuforge/v1/logo-horizontal-light.svg">
+  <img alt="KabuForge" src="brand/kabuforge/v1/logo-horizontal-light.svg">
+</picture>
 
 KabuForge is a public release candidate for local Japanese-equity research and simulation. It validates declarative inputs, computes registered public factors, builds strategy decisions, plans broker-neutral order intents, and runs local backtest or paper simulations.
 
