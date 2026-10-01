@@ -2,7 +2,11 @@
 
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
-![KabuForge](framework_v2/assets/brand/logo-horizontal-dark.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v1/logo-horizontal-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="brand/kabuforge/v1/logo-horizontal-light.svg">
+  <img alt="KabuForge" src="brand/kabuforge/v1/logo-horizontal-light.svg">
+</picture>
 
 KabuForge 是面向本地日股研究与模拟的公共候选发行版。它校验声明式输入，计算已登记的公开因子，生成策略决策与券商中立的订单意图，并执行本地回测或纸面模拟。
 
