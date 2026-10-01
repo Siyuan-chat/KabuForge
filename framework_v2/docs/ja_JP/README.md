@@ -4,22 +4,65 @@ version: 1
 locale: ja_JP
 ---
 
-# KabuForge ローカル版 v0.1.0-rc.1
+# KabuForge ドキュメント
 
 <!-- section:contract -->
 ## 契約
 
-KabuForge は日本株のローカル研究・シミュレーション用パッケージです。宣言的な run ファイルを検証し、因子・戦略判断とブローカー非依存の注文意図を作成し、ローカルのバックテスト、ペーパー、FakeBroker シミュレーションを実行します。実注文は送信しません。ローカル checkout を導入して CLI を使います。
+以下の入口を選んでください。パッケージ版は 0.1.0rc1、公開済み v0.1.0 Release は RC 添付物を保持します。実取引や完全な過去 PIT 認証は提供しません。
+
+
+<a id="quick-start"></a>
+### クイックスタート / CLI
+
+Python 3.12+
+
+ソースのチェックアウト内で実行します：
 
 ```shell
-pip install -e .
-kabuforge demo --out output/new_demo
-kabuforge mcp --workspace output/agent_workspace
+git clone https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
+python -m pip install .
+kabuforge doctor
+kabuforge demo --out output/demo
+kabuforge factors
+kabuforge strategies
 ```
 
-公開 RC は既存の公開ファクター実装を維持します。非公開ワークスペースの実装、口座状態、キャッシュ、認証情報を配布物に含めません。従来 GUI の説明は既存マニュアルで維持します。
+### 始め方
+
+- [クイックスタート / CLI](#quick-start)
+- [開発の契約](DEVELOPMENT.md)
+
+### 概念
+
+- [アーキテクチャ](ARCHITECTURE.md)
+- [研究の正確性とデータ制約](RESEARCH_METHODOLOGY.md)
+
+### API
+
+- [ファクター：登録と検証器](FACTOR_API.md)
+- [戦略：意思決定と目標](STRATEGY_API.md)
+- [MCP：アクセスと呼び出し証拠](AGENT_API.md)
+- [執行：シミュレーションと UNKNOWN](EXECUTION.md)
+- [ブローカー mappings と mock](BROKER_API.md)
+
+### 検証
+
+- [検証と従来のリリース制約](RELEASE_PROCESS.md)
+- [Python 3.12 リリース基盤 CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
+- [リリース手順](RELEASE_PROCESS.md)
+
+### 貢献
+
+- [貢献とライセンス](CONTRIBUTING.md)
+- [セキュリティ](SECURITY.md)
+- [変更履歴](CHANGELOG.md)
+- [ロードマップ](ROADMAP.md)
 
 <!-- section:evidence -->
-## 根拠
+## 証拠
 
-`kabuforge` は `doctor`、`factors`、`strategies`、`demo`、`backtest`、`paper`、`mcp` を提供します。run mode は `backtest` 又は `paper` と一致しなければなりません。現在は `0.1.0rc1` で、正式 v0.1.0 には独立した公開実装とリリース監査が必要です。
+`kabuforge doctor`, `kabuforge factors`, `kabuforge strategies`, `kabuforge demo` / Python 3.12+.
+
+[English](../en_US/README.md) · [简体中文](../zh_CN/README.md) · [日本語](../ja_JP/README.md)

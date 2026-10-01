@@ -16,4 +16,4 @@ Use deterministic local fixtures. Keep research data, credentials, broker transp
 <!-- section:evidence -->
 ## Evidence
 
-The public package is `kabuforge`, requires Python 3.12+, and retains the repository MIT license. Its command entry point is `kabuforge = kabuforge.cli:main`. Public source provenance is pinned by `public_source_manifest.json` and checked for source, wheel and sdist.
+The public package is `kabuforge`, requires Python 3.12+, and uses AGPL-3.0-only for project-owned material; retained third-party notices remain applicable. Its command entry point is `kabuforge = kabuforge.cli:main`. Public source provenance is pinned by `public_source_manifest.json` and checked for source, wheel and sdist.

@@ -1,5 +1,5 @@
-name: Bug report
-description: Report a reproducible software defect
+name: Documentation
+description: Report missing, incorrect or unclear documentation
 body:
   - type: markdown
     attributes:
@@ -20,16 +20,23 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduce
+    id: location
     attributes:
-      label: Minimal reproduction / 最小复现 / 最小再現
-      description: Commands and synthetic inputs.
+      label: Page and locale / 页面与语言 / ページと言語
+      description: Link the page and section.
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Expected and actual behavior / 预期与实际 / 期待と実際
-      description: Include the full relevant error without secrets.
+      label: Expected and actual guidance / 预期与实际说明 / 期待と実際の説明
+      description: Propose precise wording where possible.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproduction or reading path / 最小复现或阅读路径 / 再現または読書経路
+      description: Commands for broken examples or links for confusing navigation.
     validations:
       required: true

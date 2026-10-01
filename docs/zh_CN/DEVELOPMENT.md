@@ -16,4 +16,4 @@ locale: zh_CN
 <!-- section:evidence -->
 ## 证据
 
-公开包名为 `kabuforge`，要求 Python 3.12+，沿用仓库 MIT 许可证，入口为 `kabuforge = kabuforge.cli:main`。`public_source_manifest.json` 固定公开源码身份，并检查源码、wheel 和 sdist。
+公开包名为 `kabuforge`，要求 Python 3.12+，项目自有材料采用 AGPL-3.0-only，并保留第三方许可通知，入口为 `kabuforge = kabuforge.cli:main`。`public_source_manifest.json` 固定公开源码身份，并检查源码、wheel 和 sdist。

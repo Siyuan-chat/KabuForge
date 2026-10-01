@@ -16,4 +16,4 @@ GUI 内部や設定駆動 import ではなく package boundary に対して開�
 <!-- section:evidence -->
 ## 根拠
 
-公開 package は `kabuforge`、Python 3.12+ と既存 MIT license を使用します。entry point は `kabuforge = kabuforge.cli:main` です。`public_source_manifest.json` で公開ソースを固定し、source/wheel/sdist を検査します。
+公開 package は `kabuforge`、Python 3.12+ とプロジェクト所有の資料には AGPL-3.0-only を適用し、第三者の通知を保持します。entry point は `kabuforge = kabuforge.cli:main` です。`public_source_manifest.json` で公開ソースを固定し、source/wheel/sdist を検査します。

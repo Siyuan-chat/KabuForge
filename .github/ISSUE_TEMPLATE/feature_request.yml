@@ -1,5 +1,5 @@
-name: Bug report
-description: Report a reproducible software defect
+name: Feature request
+description: Propose a research workflow or interface improvement
 body:
   - type: markdown
     attributes:
@@ -20,16 +20,23 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduce
+    id: use_case
     attributes:
-      label: Minimal reproduction / 最小复现 / 最小再現
-      description: Commands and synthetic inputs.
+      label: Use case / 使用场景 / ユースケース
+      description: Who needs this and what decision does it support?
     validations:
       required: true
   - type: textarea
     id: expected
     attributes:
-      label: Expected and actual behavior / 预期与实际 / 期待と実際
-      description: Include the full relevant error without secrets.
+      label: Expected and current behavior / 预期与现状 / 期待と現状
+      description: State the desired outcome and current limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal example / 最小示例 / 最小例
+      description: Public or synthetic example of the workflow.
     validations:
       required: true

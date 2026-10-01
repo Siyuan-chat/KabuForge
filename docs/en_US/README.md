@@ -4,22 +4,65 @@ version: 1
 locale: en_US
 ---
 
-# KabuForge v0.1.0-rc.1
+# KabuForge documentation
 
 <!-- section:contract -->
 ## Contract
 
-KabuForge is a local Japanese-equity research and simulation package. It validates declarative run files, builds factor and strategy decisions, plans broker-neutral intents, and runs local backtest, paper, or fake-broker simulations. It does not submit a real order. Install the local checkout and use the public CLI:
+Choose a route below. Package version is 0.1.0rc1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
+
+
+<a id="quick-start"></a>
+### Quick start / CLI
+
+Python 3.12+
+
+From a source checkout, run:
 
 ```shell
-pip install -e .
-kabuforge demo --out output/new_demo
-kabuforge mcp --workspace output/agent_workspace
+git clone https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
+python -m pip install .
+kabuforge doctor
+kabuforge demo --out output/demo
+kabuforge factors
+kabuforge strategies
 ```
 
-The public RC retains the already-published public factor implementations. Private workspace implementations, account state, caches and credentials are excluded from this distribution. Legacy GUI instructions remain available in the existing manuals.
+### Getting started
+
+- [Quick start / CLI](#quick-start)
+- [Development](DEVELOPMENT.md)
+
+### Concepts
+
+- [Architecture](ARCHITECTURE.md)
+- [Research correctness and data limits](RESEARCH_METHODOLOGY.md)
+
+### APIs
+
+- [Factors: registry and validators](FACTOR_API.md)
+- [Strategies: decisions and targets](STRATEGY_API.md)
+- [MCP: access and receipts](AGENT_API.md)
+- [Execution: simulation and UNKNOWN](EXECUTION.md)
+- [Broker mappings and mocks](BROKER_API.md)
+
+### Validation
+
+- [Validation and retained release limitations](RELEASE_PROCESS.md)
+- [Python 3.12 release foundation CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
+- [Release process](RELEASE_PROCESS.md)
+
+### Contribution
+
+- [Contribution and license](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+- [Roadmap](ROADMAP.md)
 
 <!-- section:evidence -->
 ## Evidence
 
-`kabuforge` dispatches `doctor`, `factors`, `strategies`, `demo`, `backtest`, `paper`, and `mcp`. A run mode must match `backtest` or `paper`; `demo` produces local synthetic output. Current release metadata is `0.1.0rc1`; a formal v0.1.0 follows RC feedback and release validation.
+`kabuforge doctor`, `kabuforge factors`, `kabuforge strategies`, `kabuforge demo` / Python 3.12+.
+
+[English](../en_US/README.md) · [简体中文](../zh_CN/README.md) · [日本語](../ja_JP/README.md)

@@ -1,0 +1,56 @@
+name: Data source
+description: Report data source integration or time semantics concerns
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic or license-permitted minimal examples. Do not include credentials, account records, or private data.
+        For security vulnerabilities follow [SECURITY.md](https://github.com/Siyuan-chat/KabuForge/blob/main/SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: Package version or commit / 版本或提交 / バージョンまたはコミット
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment / 环境 / 環境
+      description: OS, Python version, interface (Python / CLI / GUI / MCP).
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source and version / 来源与版本 / ソースと版
+      description: Official documentation link and dataset revision.
+    validations:
+      required: true
+  - type: textarea
+    id: time
+    attributes:
+      label: Timestamp semantics / 时间语义 / 時刻の意味
+      description: Event time, publication time, available_at, timezone and decision time.
+    validations:
+      required: true
+  - type: textarea
+    id: revisions
+    attributes:
+      label: Missingness and revisions / 缺失与修订 / 欠損と修訂
+      description: Known missing fields, historical changes and affected rows.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior / 预期与实际 / 期待と実際
+      description: Describe the integration behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: License-permitted minimal sample / 许可允许的最小样本 / 許諾された最小サンプル
+      description: Prefer synthetic data; link source access and redistribution terms.
+    validations:
+      required: true

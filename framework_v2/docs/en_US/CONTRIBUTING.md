@@ -17,3 +17,5 @@ New public factor or strategy work requires an independently implementable versi
 ## Evidence
 
 Before review, exercise affected CLI commands, run relevant tests and verify the public distribution boundary. New implementations require review; do not weaken the provenance, credential or private-code gates.
+
+New contributions to project-owned code, documentation and assets are submitted under AGPL-3.0-only. Preserve third-party notices and contribute only material you have the right to license. No additional CLA is introduced.

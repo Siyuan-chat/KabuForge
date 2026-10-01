@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: >-
+  If you use KabuForge in research or technical writing,
+  please cite this repository.
+title: KabuForge
+type: software
+authors:
+  - name: Siyuan-chat
+    website: https://github.com/Siyuan-chat
+repository-code: https://github.com/Siyuan-chat/KabuForge
+url: https://github.com/Siyuan-chat/KabuForge
+license: AGPL-3.0-only

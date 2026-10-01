@@ -6,6 +6,16 @@ locale: zh_CN
 
 # 变更日志
 
+## 未发行：当前源码许可与 GitHub 导航
+
+项目自有材料从提交 `3bdbb7e1b68de53fcb243abb92cd851801dcb7be` 起采用 AGPL-3.0-only。
+NOTICE / PROJECT_LICENSING.md 保留原 MIT 通知和外部贡献来源。
+既有 v0.1.0-rc.1、v0.1.0 Release、tag、wheel/sdist 附件及校验和保持 MIT 且不变。
+包版本仍为 0.1.0rc1；本地构建仅用于验证，未来 AGPL 发行必须使用新版本。
+运行时依赖与 API 不变。更新包括三语能力证据、研究边界、引用、导航、社区表单
+和文档检查。字标已改用固定来源的 OFL Noto Sans 转曲，铁砧保持原样；字体软件
+仍按 OFL 授权且不打包。
+
 <!-- section:contract -->
 ## 合约
 
