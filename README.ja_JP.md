@@ -2,7 +2,11 @@
 
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
-![KabuForge](framework_v2/assets/brand/logo-horizontal-dark.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v1/logo-horizontal-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="brand/kabuforge/v1/logo-horizontal-light.svg">
+  <img alt="KabuForge" src="brand/kabuforge/v1/logo-horizontal-light.svg">
+</picture>
 
 KabuForge は、日本株のローカル研究とシミュレーションのための public release candidate です。宣言的 input を検証し、登録済み公開因子を計算して戦略判断と broker-neutral な注文意図を作り、ローカル backtest 又は paper simulation を実行します。
 
