@@ -12,9 +12,16 @@ locale: en_US
 Choose a route below. Package version is 0.1.0rc1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
 
 
+<a id="quick-start"></a>
+### Quick start / CLI
+
+Python 3.12+
+
 From a source checkout, run:
 
 ```shell
+git clone https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
 python -m pip install .
 kabuforge doctor
 kabuforge demo --out output/demo
@@ -24,7 +31,7 @@ kabuforge strategies
 
 ### Getting started
 
-- [Quick start / CLI](DEVELOPMENT.md)
+- [Quick start / CLI](#quick-start)
 - [Development](DEVELOPMENT.md)
 
 ### Concepts

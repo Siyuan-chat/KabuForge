@@ -2,4 +2,4 @@
 
 正式な日本語ホームは [README.ja_JP.md](README.ja_JP.md) です。
 
-[文書](docs/ja_JP/README.md) · [ライセンス](LICENSE_SCOPE.md)
+[文書](docs/ja_JP/README.md) · [ライセンス](PROJECT_LICENSING.md)

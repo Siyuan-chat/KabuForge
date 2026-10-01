@@ -12,9 +12,16 @@ locale: zh_CN
 按下列入口阅读。包版本仍为 0.1.0rc1，已发布 v0.1.0 Release 保留 RC 附件。不提供真实交易或完整历史 PIT 认证。
 
 
+<a id="quick-start"></a>
+### 快速开始 / CLI
+
+Python 3.12+
+
 在源码检出目录执行：
 
 ```shell
+git clone https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
 python -m pip install .
 kabuforge doctor
 kabuforge demo --out output/demo
@@ -24,7 +31,7 @@ kabuforge strategies
 
 ### 开始使用
 
-- [快速开始 / CLI](DEVELOPMENT.md)
+- [快速开始 / CLI](#quick-start)
 - [开发约定](DEVELOPMENT.md)
 
 ### 概念

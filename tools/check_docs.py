@@ -51,7 +51,7 @@ def check_homepages(root):
         for language_path in HOMEPAGES:
             if f']({language_path})' not in text:
                 errors.append('language entry mismatch: '+path+' '+language_path)
-        for token in ('AGPL-3.0-only','CITATION.cff','LICENSE_SCOPE.md','available_at','UNKNOWN','0.1.0rc1'):
+        for token in ('AGPL-3.0-only','CITATION.cff','PROJECT_LICENSING.md','available_at','UNKNOWN','0.1.0rc1'):
             if token not in text: errors.append('homepage identity mismatch: '+path+' '+token)
         if 'license-MIT-' in text: errors.append('current license badge mismatch: '+path)
     return errors
@@ -104,7 +104,7 @@ def check(root):
             mirror = root/'framework_v2/docs'/locale/source.relative_to(root/'docs'/locale)
             if not mirror.exists() or source.read_bytes()!=mirror.read_bytes():
                 errors.append('package mirror drift: '+source.relative_to(root).as_posix())
-    for path in (*HOMEPAGES,'README.en.md','README.ja.md','LICENSE_SCOPE.md'):
+    for path in (*HOMEPAGES,'README.en.md','README.ja.md','PROJECT_LICENSING.md'):
         if (root/path).exists(): files.add(root/path)
     for file in sorted(files): errors.extend(local_links(root,file))
     errors.extend(check_homepages(root))

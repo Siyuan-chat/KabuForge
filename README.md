@@ -66,6 +66,60 @@ kabuforge mcp --workspace output/agent_workspace
 kabuforge mcp --workspace output/agent_workspace --enable-paper
 ```
 
+## Why KabuForge?
+
+KabuForge keeps research ideas in explicit Factor and Strategy contracts, then connects them to portfolio, risk and broker-neutral planning through shared application services.
+
+| Design | What it enables |
+| --- | --- |
+| Extensible research | Registered, versioned factors and strategies without rewriting the execution engine |
+| One decision pipeline | Research decisions remain separate from execution constraints and order construction |
+| Shared interfaces | Python, GUI, CLI and MCP use the same application contracts; agent access adds workspace and receipt boundaries |
+| Inspectable decisions | Declared visibility times, content identities and durable receipts support review, with external-data limits kept explicit |
+
+## Bring your own Factor and Strategy
+
+```text
+FactorSpec + FactorContext → FactorResult
+FactorResult(s) → StrategyDecision → TargetPortfolio
+```
+
+Trusted application code registers factor implementations with spec validators, and strategy factories by implementation ID and version. Unknown or duplicate identities fail; configuration cannot request arbitrary Python imports or evaluation. Strategies receive registered factor results, PIT context, state and decision identity, then return a target or no-rebalance decision. Risk policy and the planner apply execution constraints afterwards.
+
+[Factor contracts](docs/en_US/FACTOR_API.md) · [Strategy contracts](docs/en_US/STRATEGY_API.md)
+
+## Architecture and interfaces
+
+```mermaid
+flowchart TD
+  Python[Python] --> App[Application Services]
+  GUI[GUI] --> App
+  CLI[CLI] --> App
+  MCP[MCP Agent] --> App
+  Data[PIT Data Snapshot] --> Factor[Factor Registry]
+  App --> Factor
+  Factor --> Strategy[Strategy Registry]
+  Strategy --> Target[TargetPortfolio]
+  Target --> Risk[Risk Policy]
+  Risk --> Planner[Order Planner]
+  Planner --> Intent[OrderIntent]
+  Intent --> Backtest[Historical Backtest]
+  Intent --> Paper[Local Paper Simulation]
+  Intent -. reserved / disabled .-> Broker[Broker Adapter]
+```
+
+```text
+Python / GUI / CLI / MCP
+           ↓
+   Application Services
+           ↓
+Research / Risk / Planning
+```
+
+Shared application services validate, decide and plan; this boundary does not submit broker orders or write an execution ledger. Historical and local paper workflows share research and decision semantics while their execution prices and simulated fills remain explicit. R0/R1 MCP tools are enabled by default, R2 paper writes require opt-in, and R3 external actions remain disabled in this RC.
+
+[Architecture](docs/en_US/ARCHITECTURE.md) · [Agent boundaries](docs/en_US/AGENT_API.md)
+
 ## Research correctness
 
 - Timezone-aware `available_at` declares when an input became visible; future rows require a decision-time gate.
@@ -83,6 +137,8 @@ kabuforge mcp --workspace output/agent_workspace --enable-paper
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>
 
+This is a historical interface/workflow recording. Its historical NAV does not represent current public factors, the new synthetic CLI demo, or investment performance. [Demo context](docs/demos/en_US/index.html).
+
 ![KabuForge workflow](docs/demos/en_US/workflow.gif)
 
 </details>
@@ -93,6 +149,6 @@ For research or technical writing, cite this repository using [CITATION.cff](CIT
 
 ## License
 
-Current project-owned code, documentation and assets are licensed under **AGPL-3.0-only**. See [LICENSE](LICENSE) and [licensing scope and retained notices](LICENSE_SCOPE.md). Historical tags, wheels, source archives and checksums retain their original licenses; the existing `v0.1.0-rc.1` and `v0.1.0` Releases remain MIT. New AGPL distributions require a future version.
+Current project-owned code, documentation and assets are licensed under **AGPL-3.0-only**. See [LICENSE](LICENSE) and [licensing scope and retained notices](PROJECT_LICENSING.md). Historical tags, wheels, source archives and checksums retain their original licenses; the existing `v0.1.0-rc.1` and `v0.1.0` Releases remain MIT. New AGPL distributions require a future version.
 
 Research and simulation software; not investment advice. See [DISCLAIMER.md](DISCLAIMER.md) and [SECURITY.md](SECURITY.md).

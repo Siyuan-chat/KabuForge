@@ -674,6 +674,6 @@ represent real market behavior or validated strategy results.
 
 ## License
 
-This is a historical manual. Current project-owned material uses AGPL-3.0-only; see [licensing scope](../LICENSE_SCOPE.md). Historical MIT releases retain their original license.
+This is a historical manual. Current project-owned material uses AGPL-3.0-only; see [licensing scope](../PROJECT_LICENSING.md). Historical MIT releases retain their original license.
 
 - [LICENSE](../LICENSE)

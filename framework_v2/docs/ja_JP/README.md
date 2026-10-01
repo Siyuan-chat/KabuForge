@@ -12,9 +12,16 @@ locale: ja_JP
 以下の入口を選んでください。パッケージ版は 0.1.0rc1、公開済み v0.1.0 Release は RC 添付物を保持します。実取引や完全な過去 PIT 認証は提供しません。
 
 
+<a id="quick-start"></a>
+### クイックスタート / CLI
+
+Python 3.12+
+
 ソースのチェックアウト内で実行します：
 
 ```shell
+git clone https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
 python -m pip install .
 kabuforge doctor
 kabuforge demo --out output/demo
@@ -24,7 +31,7 @@ kabuforge strategies
 
 ### 始め方
 
-- [クイックスタート / CLI](DEVELOPMENT.md)
+- [クイックスタート / CLI](#quick-start)
 - [開発の契約](DEVELOPMENT.md)
 
 ### 概念

@@ -66,6 +66,60 @@ kabuforge mcp --workspace output/agent_workspace
 kabuforge mcp --workspace output/agent_workspace --enable-paper
 ```
 
+## 为什么选择 KabuForge？
+
+KabuForge 用明确的 Factor 和 Strategy 契约承载研究想法，再通过共享应用服务连接组合、风险与券商中立规划。
+
+| 设计 | 带来的能力 |
+| --- | --- |
+| 可扩展研究 | 注册、版本化的因子与策略，无需重写执行引擎 |
+| 统一决策流程 | 研究决策与执行约束、订单构建保持分离 |
+| 共享接口 | Python、GUI、CLI、MCP 使用同一应用契约；agent 另受工作区与回执边界约束 |
+| 可检查决策 | 声明的可见时间、内容身份与持久回执支持审查，同时明确外部数据限制 |
+
+## 接入自己的 Factor 与 Strategy
+
+```text
+FactorSpec + FactorContext → FactorResult
+FactorResult(s) → StrategyDecision → TargetPortfolio
+```
+
+可信应用代码注册因子实现及 spec validator，并按实现 ID 和版本注册策略 factory。未知或重复身份会失败；配置不能请求任意 Python import 或 eval。策略接收已注册因子结果、PIT 上下文、状态与决策身份，返回目标组合或不再平衡决策；随后由风险策略与 planner 应用执行约束。
+
+[Factor 契约](docs/zh_CN/FACTOR_API.md) · [Strategy 契约](docs/zh_CN/STRATEGY_API.md)
+
+## 架构与接口
+
+```mermaid
+flowchart TD
+  Python[Python] --> App[Application Services]
+  GUI[GUI] --> App
+  CLI[CLI] --> App
+  MCP[MCP Agent] --> App
+  Data[PIT Data Snapshot] --> Factor[Factor Registry]
+  App --> Factor
+  Factor --> Strategy[Strategy Registry]
+  Strategy --> Target[TargetPortfolio]
+  Target --> Risk[Risk Policy]
+  Risk --> Planner[Order Planner]
+  Planner --> Intent[OrderIntent]
+  Intent --> Backtest[Historical Backtest]
+  Intent --> Paper[Local Paper Simulation]
+  Intent -. reserved / disabled .-> Broker[Broker Adapter]
+```
+
+```text
+Python / GUI / CLI / MCP
+           ↓
+   Application Services
+           ↓
+Research / Risk / Planning
+```
+
+共享应用服务负责验证、决策与规划；这一边界不向券商下单，也不写执行账本。历史回测与本地纸上流程共享研究及决策语义，同时明确执行价格与模拟成交的差异。MCP 默认启用 R0/R1，R2 paper 写入须显式启用，当前 RC 的 R3 外部动作保持禁用。
+
+[架构](docs/zh_CN/ARCHITECTURE.md) · [Agent 边界](docs/zh_CN/AGENT_API.md)
+
 ## 研究正确性
 
 - 带时区的 `available_at` 声明输入何时可见；未来记录须通过决策时间门控。
@@ -83,6 +137,8 @@ kabuforge mcp --workspace output/agent_workspace --enable-paper
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>
 
+这是历史界面与工作流录制；其中的历史 NAV 不代表当前公开因子、新的合成 CLI demo 结果或投资表现。 [Demo context](docs/demos/zh_CN/index.html).
+
 ![KabuForge workflow](docs/demos/zh_CN/workflow.gif)
 
 </details>
@@ -93,6 +149,6 @@ kabuforge mcp --workspace output/agent_workspace --enable-paper
 
 ## 许可证
 
-当前项目自有代码、文档与资产采用 **AGPL-3.0-only**。见 [LICENSE](LICENSE) 及[许可范围与保留通知](LICENSE_SCOPE.md)。历史 tag、wheel、源码包和校验和保持原许可；既有 `v0.1.0-rc.1` 与 `v0.1.0` Release 仍为 MIT。未来 AGPL 发行物须使用新版本。
+当前项目自有代码、文档与资产采用 **AGPL-3.0-only**。见 [LICENSE](LICENSE) 及[许可范围与保留通知](PROJECT_LICENSING.md)。历史 tag、wheel、源码包和校验和保持原许可；既有 `v0.1.0-rc.1` 与 `v0.1.0` Release 仍为 MIT。未来 AGPL 发行物须使用新版本。
 
 本软件用于研究与模拟，不构成投资建议。见 [DISCLAIMER.md](DISCLAIMER.md) 与 [SECURITY.md](SECURITY.md)。

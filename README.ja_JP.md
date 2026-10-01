@@ -66,6 +66,60 @@ kabuforge mcp --workspace output/agent_workspace
 kabuforge mcp --workspace output/agent_workspace --enable-paper
 ```
 
+## KabuForge を選ぶ理由
+
+KabuForge は明示的な Factor・Strategy 契約で研究アイデアを表し、共通のアプリケーションサービスを通じてポートフォリオ、リスク、ブローカー中立の計画へつなぎます。
+
+| 設計 | 提供する能力 |
+| --- | --- |
+| 拡張可能な研究 | 登録・版管理されたファクターと戦略。執行エンジンを書き換える必要はありません |
+| 共通の意思決定フロー | 研究判断を執行制約と注文構築から分離 |
+| 共通インターフェース | Python、GUI、CLI、MCP が同じアプリケーション契約を使用。agent にはワークスペースと実行記録の境界も適用 |
+| 検査可能な判断 | 宣言された可視時刻、内容の識別情報、永続的な実行記録で検査を支援し、外部データの制限も明示 |
+
+## 独自の Factor と Strategy を接続
+
+```text
+FactorSpec + FactorContext → FactorResult
+FactorResult(s) → StrategyDecision → TargetPortfolio
+```
+
+信頼されたアプリケーションコードがファクター実装と spec validator を登録し、戦略 factory を実装 ID と版で登録します。未知・重複の識別情報は失敗し、設定から任意の Python import や eval は要求できません。戦略は登録済みファクター結果、PIT コンテキスト、状態、判断の識別情報を受け取り、目標ポートフォリオまたは再配分なしの判断を返します。その後、リスクポリシーと planner が執行制約を適用します。
+
+[Factor 契約](docs/ja_JP/FACTOR_API.md) · [Strategy 契約](docs/ja_JP/STRATEGY_API.md)
+
+## アーキテクチャとインターフェース
+
+```mermaid
+flowchart TD
+  Python[Python] --> App[Application Services]
+  GUI[GUI] --> App
+  CLI[CLI] --> App
+  MCP[MCP Agent] --> App
+  Data[PIT Data Snapshot] --> Factor[Factor Registry]
+  App --> Factor
+  Factor --> Strategy[Strategy Registry]
+  Strategy --> Target[TargetPortfolio]
+  Target --> Risk[Risk Policy]
+  Risk --> Planner[Order Planner]
+  Planner --> Intent[OrderIntent]
+  Intent --> Backtest[Historical Backtest]
+  Intent --> Paper[Local Paper Simulation]
+  Intent -. reserved / disabled .-> Broker[Broker Adapter]
+```
+
+```text
+Python / GUI / CLI / MCP
+           ↓
+   Application Services
+           ↓
+Research / Risk / Planning
+```
+
+共通アプリケーションサービスは検証、意思決定、計画を担当し、この境界からブローカー発注や執行台帳への書き込みは行いません。過去バックテストとローカル paper は研究・判断の意味を共有し、執行価格と模擬約定の差は明示します。MCP は R0/R1 が既定で、R2 paper 書き込みには明示的 opt-in が必要です。この RC の R3 外部アクションは無効です。
+
+[アーキテクチャ](docs/ja_JP/ARCHITECTURE.md) · [Agent の境界](docs/ja_JP/AGENT_API.md)
+
 ## 研究の正確性
 
 - タイムゾーン付き `available_at` で入力の可視時刻を宣言し、未来の行には意思決定時刻のゲートを適用します。
@@ -83,6 +137,8 @@ kabuforge mcp --workspace output/agent_workspace --enable-paper
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>
 
+これは過去の画面・ワークフローの録画です。表示された過去 NAV は、現在の公開ファクター、新しい合成 CLI demo の結果、投資実績を示しません。 [Demo context](docs/demos/ja_JP/index.html).
+
 ![KabuForge workflow](docs/demos/ja_JP/workflow.gif)
 
 </details>
@@ -93,6 +149,6 @@ kabuforge mcp --workspace output/agent_workspace --enable-paper
 
 ## ライセンス
 
-現在のプロジェクト所有のコード、文書、資産は **AGPL-3.0-only** です。[LICENSE](LICENSE) と[適用範囲・保持通知](LICENSE_SCOPE.md)を参照してください。過去の tag、wheel、ソースアーカイブ、チェックサムは元のライセンスを維持し、既存の `v0.1.0-rc.1` と `v0.1.0` Release は MIT のままです。今後の AGPL 配布には新しい版が必要です。
+現在のプロジェクト所有のコード、文書、資産は **AGPL-3.0-only** です。[LICENSE](LICENSE) と[適用範囲・保持通知](PROJECT_LICENSING.md)を参照してください。過去の tag、wheel、ソースアーカイブ、チェックサムは元のライセンスを維持し、既存の `v0.1.0-rc.1` と `v0.1.0` Release は MIT のままです。今後の AGPL 配布には新しい版が必要です。
 
 研究・シミュレーション用ソフトウェアで、投資助言ではありません。[DISCLAIMER.md](DISCLAIMER.md) と [SECURITY.md](SECURITY.md) を参照してください。
