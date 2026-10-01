@@ -29,7 +29,7 @@ access and redistribution rights are not granted by KabuForge.
 ## Assets
 
 Project-owned graphics use AGPL-3.0-only. Font software remains separately
-licensed; see the brand asset provenance record for sources and output rules.
+licensed; see the [brand asset provenance](brand/kabuforge/v2/README.md) for sources and output rules.
 No font software is bundled in the distribution. Historical logo files remain
 available in Git history and are not retroactively relicensed by this change.
 

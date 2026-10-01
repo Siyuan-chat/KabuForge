@@ -1,0 +1,83 @@
+{
+  "schema": "kabuforge-font-provenance/v1",
+  "purpose": "Outline-only Noto Sans Bold wordmarks for KabuForge v2 candidate assets; font binaries are evidence/build inputs and are never copied into the source repository or SVG output.",
+  "font": {
+    "family": "Noto Sans",
+    "style": "Bold",
+    "weight": 700,
+    "format": "TrueType variable font; wdth=100, wght=700 instance",
+    "upstream_repository": "https://github.com/google/fonts",
+    "pinned_commit": "48133440178622e215912d34d386c5ee1682c677",
+    "version": "2.015",
+    "font_url": "https://raw.githubusercontent.com/google/fonts/48133440178622e215912d34d386c5ee1682c677/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
+    "font_sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+    "ofl_url": "https://raw.githubusercontent.com/google/fonts/48133440178622e215912d34d386c5ee1682c677/ofl/notosans/OFL.txt",
+    "ofl_sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+    "upstream_source_commit": "c4a321e123e4d4ff315f57f4e0adf294fe3a95be",
+    "upstream_release": "https://github.com/notofonts/latin-greek-cyrillic/releases/tag/NotoSans-v2.015"
+  },
+  "license": {
+    "name": "SIL Open Font License 1.1",
+    "license_text_local": "OFL.txt",
+    "official_license": "https://openfontlicense.org/open-font-license-official-text/",
+    "faq": "https://openfontlicense.org/ofl-faq/",
+    "output_rule": "OFL FAQ \u00a71.1 states that graphics made using OFL fonts, including bitmap images and vector graphics, are not Font Software. The generated SVG contains only outlined glyph paths and no embedded font program; the PNG is a raster image. Keep OFL.txt only with any distributed font binary, not as an assertion that the outlines themselves are Font Software."
+  },
+  "verification": {
+    "required_local_files": [
+      "NotoSans-wdth-wght.ttf",
+      "OFL.txt"
+    ],
+    "hash_command": "Get-FileHash -LiteralPath NotoSans-wdth-wght.ttf,OFL.txt -Algorithm SHA256",
+    "script_checks_hashes_before_generating": true
+  },
+  "outputs": [
+    {
+      "name": "logo-horizontal-light.svg",
+      "sha256": "e16fa281956169c60f77c8665555d3a4c017935f53d76eb5aa73e25a780bc454",
+      "png_dimensions": null,
+      "anvil_unchanged": true
+    },
+    {
+      "name": "logo-horizontal-light.png",
+      "sha256": "b22d50044dfad6b1bac3b0b9f3db5ef1bdf037e5989f8c2180630377de9c01e1",
+      "png_dimensions": [
+        2784,
+        592
+      ],
+      "anvil_unchanged": true
+    },
+    {
+      "name": "logo-horizontal-dark.svg",
+      "sha256": "dfd5875fe75dfdaedb31ccddcb24e50d0127ba108002809645505f54b3ec7ddc",
+      "png_dimensions": null,
+      "anvil_unchanged": true
+    },
+    {
+      "name": "logo-horizontal-dark.png",
+      "sha256": "ad3402484e8a1e0a23f424815fc05945c2439786a7a06d4bf5f2806d143dc212",
+      "png_dimensions": [
+        2784,
+        592
+      ],
+      "anvil_unchanged": true
+    },
+    {
+      "name": "logo-stacked-light.svg",
+      "sha256": "1da5d5b419aea54455aae9d08892b6a1c6b19964c1818e5941dbad46974e8aab",
+      "png_dimensions": null,
+      "anvil_unchanged": true
+    },
+    {
+      "name": "logo-stacked-light.png",
+      "sha256": "dab9b6d84740e7f0d7d953e6b77016dd96fc04b196774f4d372c70c71b6f7c52",
+      "png_dimensions": [
+        2240,
+        1664
+      ],
+      "anvil_unchanged": true
+    }
+  ],
+  "generator": "generate_brand.py; fontTools instance wght=700 wdth=100; SVGPathPen outlines; CairoSVG PNG rasterization",
+  "project_graphics_license": "AGPL-3.0-only; font software remains OFL-1.1 and is not bundled"
+}

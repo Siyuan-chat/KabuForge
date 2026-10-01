@@ -3,8 +3,8 @@
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v1/logo-horizontal-dark.svg">
-  <img width="420" alt="KabuForge" src="brand/kabuforge/v1/logo-horizontal-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v2/logo-horizontal-dark.svg">
+  <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
 </picture>
 
 **Reproducible quantitative research for Japanese equities.**

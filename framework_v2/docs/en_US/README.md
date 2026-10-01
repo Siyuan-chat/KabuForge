@@ -11,6 +11,17 @@ locale: en_US
 
 Choose a route below. Package version is 0.1.0rc1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
 
+
+From a source checkout, run:
+
+```shell
+python -m pip install .
+kabuforge doctor
+kabuforge demo --out output/demo
+kabuforge factors
+kabuforge strategies
+```
+
 ### Getting started
 
 - [Quick start / CLI](DEVELOPMENT.md)
