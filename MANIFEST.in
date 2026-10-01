@@ -21,3 +21,5 @@ include public_source_manifest.json
 include framework_v2/public_source_manifest.json
 recursive-include factors *.py
 recursive-include runtime *.py
+
+include NOTICE LICENSE_SCOPE.md CITATION.cff

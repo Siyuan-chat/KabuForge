@@ -5,16 +5,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kabuforge"
 version = "0.1.0rc1"
-description = "Local-first systematic research and execution framework for Japanese equities."
+description = "Open-source, local-first quantitative research framework for Japanese equities."
 requires-python = ">=3.12"
-license = "MIT"
-license-files = ["LICENSE"]
+license = "AGPL-3.0-only"
+license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
 dependencies = ["pandas>=2.2", "jsonschema>=4.0", "pyarrow>=19", "requests>=2.32.5", "beautifulsoup4>=4.14.3", "tzdata"]
 classifiers = ["Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Operating System :: OS Independent"]
 
 [project.urls]
 Homepage = "https://github.com/Siyuan-chat/KabuForge"
+Documentation = "https://github.com/Siyuan-chat/KabuForge/blob/main/docs/en_US/README.md"
+Repository = "https://github.com/Siyuan-chat/KabuForge"
+Changelog = "https://github.com/Siyuan-chat/KabuForge/blob/main/docs/en_US/CHANGELOG.md"
+Releases = "https://github.com/Siyuan-chat/KabuForge/releases"
 Issues = "https://github.com/Siyuan-chat/KabuForge/issues"
 
 [project.optional-dependencies]
