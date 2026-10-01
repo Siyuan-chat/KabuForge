@@ -36,3 +36,8 @@ secrets/
 paper_trading_state*/
 paper_trading_runs*/
 KabuForge.lnk
+
+# Public SDK build outputs
+build/
+dist/
+*.egg-info/

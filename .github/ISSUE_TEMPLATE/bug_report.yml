@@ -1,0 +1,16 @@
+name: Bug report
+description: Report a reproducible software defect without secrets or account details
+body:
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction / 再現手順 / 复现步骤
+      description: Use synthetic inputs; omit credentials and private trading records.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior / 期待と実際 / 预期与实际
+    validations:
+      required: true

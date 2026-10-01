@@ -22,14 +22,25 @@ def main():
     def record(action,**details):
         operations.append({"at":datetime.now(timezone.utc).isoformat(),"action":action,**details})
         (root/"operations.json").write_text(json.dumps(operations,ensure_ascii=False,indent=2),encoding="utf-8")
+    def drain_owned_job():
+        if not window.jobs.busy: return
+        window.jobs.cancel()
+        deadline=time.monotonic()+5
+        while window.jobs.busy and time.monotonic()<deadline:
+            app.processEvents(); time.sleep(.01)
+        if window.jobs.busy:
+            raise RuntimeError("owned worker did not stop within cancellation deadline")
     def wait():
-        deadline=time.monotonic()+120
+        deadline=time.monotonic()+300
         while time.monotonic()<deadline:
             app.processEvents(); time.sleep(.01)
             if not window.jobs.busy:
                 app.processEvents()
                 if not window.jobs.busy: break
-        if window.jobs.busy: window.jobs.cancel(); raise RuntimeError("timeout")
+        if window.jobs.busy:
+            drain_owned_job()
+            record("job_timeout",job_id=window.jobs.jobs[-1]["job_id"],status=window.jobs.jobs[-1]["status"])
+            raise RuntimeError("job timeout after 300 seconds")
         job=window.jobs.jobs[-1]
         record("job_finished",job_id=job["job_id"],status=job["status"],manifest=job["manifest"])
         if job["status"]!="COMPLETED": raise RuntimeError(str(job))
@@ -88,6 +99,9 @@ def main():
         (root/"source_hashes.json").write_text(json.dumps(hashes,indent=2),encoding="utf-8")
         record("acceptance_complete",result="PASS",limitations=["No real J-Quants entitlement/network verification", "Qt widget captures, not native mouse automation", "No strategy readiness certification"])
     finally:
+        # Closing a live job opens a modal confirmation. Drain its owned QProcess
+        # first so offscreen failures retain evidence and exit without a dialog.
+        drain_owned_job()
         window.document._dirty=False; window.close(); app.processEvents()
     print(json.dumps({"output":str(root),"operations":len(operations),"screenshots":len(list(root.glob('*.png')))},ensure_ascii=False))
 

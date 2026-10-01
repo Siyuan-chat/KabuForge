@@ -1,22 +1,68 @@
-name: KabuForge public distribution
-on:
-  push:
-  pull_request:
+name: KabuForge Release Foundation
+on: [push, pull_request, workflow_dispatch]
 jobs:
-  public-workbench:
-    runs-on: windows-latest
+  core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install workbench dependencies
-        run: python -m pip install -r framework_v2/requirements-gui.txt
-      - name: Test public engine and Qt workflows
-        run: python -B -m unittest discover -s framework_v2/tests -q
-      - name: Run offline demo
-        run: python -B -m framework_v2.cli demo --out output/demo
-      - name: Validate demo configuration
-        run: python -B -m framework_v2.cli validate output/demo/backtest.json
-      - name: Replay synthetic history
-        run: python -B -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history
+      - run: python -m pip install -e '.[gui]' build
+      - run: python -m unittest discover -s framework_v2/tests -p 'test_*.py' -q
+      - run: python tools/check_docs.py
+      - run: python -m build
+      - run: kabuforge demo --out output/ci_demo
+      - run: kabuforge strategies
+  gui:
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[gui]'
+      - run: python -m unittest framework_v2.tests.test_workbench_qt framework_v2.tests.test_product_ui -q
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install build
+      - run: python -m build
+      - run: python -m venv /tmp/kabuforge-clean
+      - run: /tmp/kabuforge-clean/bin/python -c "import glob,subprocess,sys; subprocess.run([sys.executable,'-m','pip','install',glob.glob('dist/*.whl')[0]+'[gui]'],check=True)"
+      - run: cd /tmp && /tmp/kabuforge-clean/bin/kabuforge demo --out /tmp/kabuforge-demo
+      - run: cd /tmp && /tmp/kabuforge-clean/bin/python "$GITHUB_WORKSPACE/tools/check_installed_package.py"
+  agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e .
+      - run: python -m unittest framework_v2.tests.test_agent framework_v2.tests.test_research_diagnostics -q
+      - run: python tools/check_agent_catalog.py
+  # Public artifacts are audited on every PR and push, before a release tag.
+  public-distribution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install build
+      - run: python -m build
+      - run: python tools/check_public_distribution.py .
+      - run: python tools/check_public_distribution.py dist/*.whl
+      - run: python tools/check_public_distribution.py dist/*.tar.gz

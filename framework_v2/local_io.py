@@ -71,6 +71,7 @@ def research_marks(context):
 def result_document(result):
     from .diagnostics import decision_diagnostics
     return {"strategy_hash":result.strategy_hash,"decision_identity":result.decision_identity,
+        "strategy_implementation":{"id":result.strategy_implementation_id,"version":result.strategy_implementation_version},
         "factors":{k:{"minimal":plain(v.minimal),"detail":plain(v.detail),"summary":plain(v.summary)} for k,v in result.factors.items()},
         "decision":plain(result.decision),"risk":plain(result.risk),"plan":plain(result.plan),
         "diagnostics":plain(decision_diagnostics(result))}

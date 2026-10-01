@@ -1,4 +1,4 @@
-"""Private unified PySide6 workbench. Legacy entry points remain untouched."""
+"""Unified PySide6 workbench. Legacy entry points remain untouched."""
 from __future__ import annotations
 import argparse,json,hashlib,os
 from decimal import Decimal
@@ -9,7 +9,7 @@ from PySide6.QtGui import QKeySequence,QShortcut,QFontDatabase,QFont
 from PySide6.QtWidgets import (QApplication,QMainWindow,QWidget,QVBoxLayout,QHBoxLayout,
     QGridLayout,QFormLayout,QSplitter,QListWidget,QListWidgetItem,QStackedWidget,QScrollArea,
     QLabel,QPushButton,QLineEdit,QComboBox,QPlainTextEdit,QTabWidget,QGroupBox,QFileDialog,QMessageBox)
-from gui_app.config.theme import APP_STYLESHEET
+from .workbench_theme import APP_STYLESHEET
 from .workbench_widgets import DataTable,SeriesChart,label
 from .workbench_jobs import JobController
 from .workbench_model import ConfigDocument

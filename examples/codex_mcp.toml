@@ -1,0 +1,6 @@
+# Merge this section into your Codex configuration manually.
+# Replace both paths with absolute paths for your local installation.
+[mcp_servers.kabuforge]
+# On Windows use C:/path/to/venv/Scripts/kabuforge.exe instead.
+command = "/absolute/path/to/venv/bin/kabuforge"
+args = ["--locale", "en_US", "mcp", "--workspace", "/absolute/path/to/agent_workspace"]

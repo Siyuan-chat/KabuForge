@@ -71,7 +71,7 @@ class JobController(QObject):
                 try: result=json.loads(line.split("=",1)[1])
                 except ValueError: pass
         valid=result is not None and result.get("job_id")==self.current["job_id"]
-        success=code==0 and valid and result.get("ok") is True
+        success=code==0 and valid and result.get("ok") is True and not self.cancel_requested
         state="COMPLETED" if success else ("CANCELED" if self.cancel_requested else "FAILED")
         self.current.update(status=state,exit_code=int(code),finished_at=datetime.now(timezone.utc).isoformat(),
             result=result if valid else None,error=None if success else ((result or {}).get("errors") or "任务中止或未返回有效结果；见完整日志"))

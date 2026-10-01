@@ -196,6 +196,9 @@ class ImplementationRegistry:
         except KeyError as exc:
             raise ConfigError(f"unknown implementation: {key}") from exc
 
+    def catalog(self):
+        return tuple({"implementation_id":item[0],"implementation_version":item[1]} for item in sorted(self._items))
+
 
 @dataclass(frozen=True)
 class ResolvedRun:

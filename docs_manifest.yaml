@@ -1,0 +1,199 @@
+{
+  "documents": [
+    {
+      "id": "readme",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/README.md",
+        "zh_CN": "docs/zh_CN/README.md",
+        "ja_JP": "docs/ja_JP/README.md"
+      }
+    },
+    {
+      "id": "architecture",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/ARCHITECTURE.md",
+        "zh_CN": "docs/zh_CN/ARCHITECTURE.md",
+        "ja_JP": "docs/ja_JP/ARCHITECTURE.md"
+      }
+    },
+    {
+      "id": "development",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/DEVELOPMENT.md",
+        "zh_CN": "docs/zh_CN/DEVELOPMENT.md",
+        "ja_JP": "docs/ja_JP/DEVELOPMENT.md"
+      }
+    },
+    {
+      "id": "agent_api",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/AGENT_API.md",
+        "zh_CN": "docs/zh_CN/AGENT_API.md",
+        "ja_JP": "docs/ja_JP/AGENT_API.md"
+      }
+    },
+    {
+      "id": "factor_api",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/FACTOR_API.md",
+        "zh_CN": "docs/zh_CN/FACTOR_API.md",
+        "ja_JP": "docs/ja_JP/FACTOR_API.md"
+      }
+    },
+    {
+      "id": "strategy_api",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/STRATEGY_API.md",
+        "zh_CN": "docs/zh_CN/STRATEGY_API.md",
+        "ja_JP": "docs/ja_JP/STRATEGY_API.md"
+      }
+    },
+    {
+      "id": "execution",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/EXECUTION.md",
+        "zh_CN": "docs/zh_CN/EXECUTION.md",
+        "ja_JP": "docs/ja_JP/EXECUTION.md"
+      }
+    },
+    {
+      "id": "broker_api",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/BROKER_API.md",
+        "zh_CN": "docs/zh_CN/BROKER_API.md",
+        "ja_JP": "docs/ja_JP/BROKER_API.md"
+      }
+    },
+    {
+      "id": "research_methodology",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/RESEARCH_METHODOLOGY.md",
+        "zh_CN": "docs/zh_CN/RESEARCH_METHODOLOGY.md",
+        "ja_JP": "docs/ja_JP/RESEARCH_METHODOLOGY.md"
+      }
+    },
+    {
+      "id": "security",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/SECURITY.md",
+        "zh_CN": "docs/zh_CN/SECURITY.md",
+        "ja_JP": "docs/ja_JP/SECURITY.md"
+      }
+    },
+    {
+      "id": "contributing",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/CONTRIBUTING.md",
+        "zh_CN": "docs/zh_CN/CONTRIBUTING.md",
+        "ja_JP": "docs/ja_JP/CONTRIBUTING.md"
+      }
+    },
+    {
+      "id": "release_process",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/RELEASE_PROCESS.md",
+        "zh_CN": "docs/zh_CN/RELEASE_PROCESS.md",
+        "ja_JP": "docs/ja_JP/RELEASE_PROCESS.md"
+      }
+    },
+    {
+      "id": "roadmap",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/ROADMAP.md",
+        "zh_CN": "docs/zh_CN/ROADMAP.md",
+        "ja_JP": "docs/ja_JP/ROADMAP.md"
+      }
+    },
+    {
+      "id": "changelog",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/CHANGELOG.md",
+        "zh_CN": "docs/zh_CN/CHANGELOG.md",
+        "ja_JP": "docs/ja_JP/CHANGELOG.md"
+      }
+    },
+    {
+      "id": "adr_agent_boundary",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/adr/0001-agent-boundary.md",
+        "zh_CN": "docs/zh_CN/adr/0001-agent-boundary.md",
+        "ja_JP": "docs/ja_JP/adr/0001-agent-boundary.md"
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kabuforge"
+version = "0.1.0rc1"
+description = "Local-first systematic research and execution framework for Japanese equities."
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+dependencies = ["pandas>=2.2", "jsonschema>=4.0", "pyarrow>=19", "requests>=2.32.5", "beautifulsoup4>=4.14.3", "tzdata"]
+classifiers = ["Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+
+[project.urls]
+Homepage = "https://github.com/Siyuan-chat/KabuForge"
+Issues = "https://github.com/Siyuan-chat/KabuForge/issues"
+
+[project.optional-dependencies]
+gui = ["PySide6>=6.8"]
+
+[project.scripts]
+kabuforge = "kabuforge.cli:main"
+
+[tool.setuptools]
+packages = ["kabuforge", "kabuforge.agent", "framework_v2", "framework_v2.agent", "factors", "runtime"]
+package-dir = {"" = ".", "kabuforge" = "src/kabuforge", "kabuforge.agent" = "src/kabuforge/agent", "framework_v2" = "framework_v2", "framework_v2.agent" = "framework_v2/agent", "factors" = "factors", "runtime" = "runtime"}
+include-package-data = false
+
+[tool.setuptools.package-data]
+framework_v2 = ["public_source_manifest.json", "assets/*", "assets/brand/*", "bridge/*", "docs/*", "docs/*/*.md", "docs/*/adr/*.md", "schemas/*.json"]

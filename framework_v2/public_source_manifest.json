@@ -1,0 +1,39 @@
+{
+  "baseline_commit": "a329d3632b83c6e4f2d0145d572013f3537e6515",
+  "source_hashes": {
+    "factors/attention_factor_runtime.py": "a00784e5b669ff9bba5a4465c07b21203c54066de68cc71b5652561ba679c196",
+    "factors/behaviour_factor_runtime.py": "0cb6e54b44a1419c967c0b9f175bf641f933dd3dc877179c72bc5727f6433d6c",
+    "factors/dual_ma_factor_runtime.py": "a40393660a3198b829c86b3d57240f051fd9b8bc9eeb4c8667a2bd40e5f0c15b",
+    "factors/factor_composite.py": "c11d8cd114311db46b69e7942d20924ff1070d3bf7f94a782748fbe440934039",
+    "factors/fundamental_factor_runtime.py": "506c30f99b72cd0eda3a3e1a0d6438e198f60d92d9be2f06a8d9399e6a028b60",
+    "factors/residual_momentum_factor_runtime.py": "9c56c36e93f73ff2681b274c4f1595cd2318d46c601cccebf7095c091470dfa3",
+    "factors/reversal_factor_runtime.py": "b63a29ca47c74c6867f5e43b7bd96d57a4978e0c6d5810d8b440caca8c9057c1",
+    "factors/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtime/allocation_gate.py": "1c8dbf9d67e723bf71f718865eef783ee0388ea0f31414f530a213388dee9cd0",
+    "runtime/factor_cache.py": "e77dfd00b36484279cac7eb3fa0bed53453ba76ebe3a2a6afe9a3f2e56763fcd",
+    "runtime/historical_backtest_engine.py": "19f6c0bbbd3fa08308b3d5b728c1d5ef5974500e9aa574df9c5fee5f7169bcc9",
+    "runtime/historical_data.py": "ea97f4977369c72c70d886bd1c23a2e7f80cf9dbe45a8ae199c15dbf3d4b030d",
+    "runtime/jquants_cache_builder.py": "b890ee837a8ae3a5424bb62b5628b6024592b7e4b2dda3b7cfde5aa4a8e1be83",
+    "runtime/local_backtest_runner.py": "91d46da5c3680aa8a03d1c9cab535333b512aa18ff5be110c3db3b77bbadc710",
+    "runtime/market_risk_gating_runtime.py": "1a0f49385d0060edb19ba7b3e62a44b656ef13f94e2f7f2fb52a94a08b3bcd77",
+    "runtime/nikkei_risk_gating_runtime.py": "85baac5830f34a9ae2767b50b3daabd8de08d737b279f8d37a864164bb3ba67a",
+    "runtime/regime_indicator.py": "dc1a28ae9d22c3d1806ba5443bf61fdf9c5b87a0af89339e85ad5c32df67854c",
+    "runtime/regime_weights.py": "9d914131d80960fc3de2826ccd0f12a7b27e9820bf7b2143b427483a9700b449",
+    "runtime/run_backtest.py": "cd1a9243e3ea0d79337f3ffd0d5adff4903411b92af2c9365e9e4d56c6a00a33",
+    "runtime/run_gui.py": "9600e59d4e2aa99c42817404bd670ec89661728425bc6743e5b607012fe27539",
+    "runtime/snapshot_cache.py": "859ced269339747a6a077810785164b20cd290ac4e683d517200f8e5cc6486a6",
+    "runtime/topix_pool_runtime.py": "ad80b92fde64129a47258c84a33ac62957b47bb3f403d97cb5e0c8e23454c4f0",
+    "runtime/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "framework_v2/cli.py": "816debd02fd6e36166e72387dfc036d46685d0b5a3148b11fb8dd02b2603912f",
+    "framework_v2/legacy_provider.py": "5f958cedbff7d042c2a86c40568806deb77826b15500c3b698063ba081d0c446",
+    "framework_v2/demo.py": "652cdfe3361c99eac836763cb92b86a7c88e80834f02bffd8ab062039dbdee23",
+    "framework_v2/conversion.py": "f5bfc3968739b082b9464b60b2eefacb603a501678e1a27e9dd54c0613ec0880",
+    "framework_v2/prepare_legacy_research.py": "db3b111c9fd98ab8afb9105fdfdbe830b19a504bbcd7eb7af90e01d6dfecf02e",
+    "framework_v2/legacy_factors.py": "4b7dd1e521f0dd0426461f088e0cf5b731a4600c5babd47f673afa71bac0328b",
+    "framework_v2/workbench_theme.py": "245ef0c59d532691eac716366d6779a87c8cbf4bc14115041c37fb772537cff3"
+  },
+  "hash_normalization": "LF",
+  "source_aliases": {
+    "framework_v2/workbench_theme.py": "gui_app/config/theme.py"
+  }
+}

@@ -1,0 +1,23 @@
+include pyproject.toml README.md README.zh_CN.md README.ja_JP.md LICENSE
+include docs_manifest.yaml
+recursive-include docs/en_US *.md
+recursive-include docs/zh_CN *.md
+recursive-include docs/ja_JP *.md
+recursive-include framework_v2/schemas *.json
+recursive-include framework_v2/assets *
+recursive-include framework_v2/docs *
+recursive-include framework_v2/bridge *
+recursive-include framework_v2/tests test_*.py
+recursive-include tools *.py
+recursive-include examples codex_mcp.toml
+prune output
+prune data_cache
+prune paper_trading_runs
+prune paper_trading_state
+prune public-development
+global-exclude __pycache__ *.pyc *.sqlite *.parquet
+
+include public_source_manifest.json
+include framework_v2/public_source_manifest.json
+recursive-include factors *.py
+recursive-include runtime *.py

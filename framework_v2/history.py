@@ -32,7 +32,7 @@ def schedule(sessions,rebalance):
         chosen[key]=session
     return list(chosen.values())
 
-def run_history(run_path,timeline_path,*,output_dir):
+def run_history(run_path,timeline_path,*,output_dir,cancel_check=None):
     path=Path(run_path).resolve(); service=ApplicationService(); resolved=service.validate(path)
     if resolved.run["mode"] not in {"backtest","paper","fake"}:
         raise ExecutionError("historical simulation cannot run broker mode")
@@ -44,6 +44,7 @@ def run_history(run_path,timeline_path,*,output_dir):
     if not isinstance(sessions,list) or not sessions: raise ConfigError("timeline must contain sessions")
     previous=None; days=set()
     for session in sessions:
+        if cancel_check is not None and cancel_check(): raise InterruptedError("local job canceled")
         required = {"decision_at","now","quotes","instruments"}
         if daily_bars: required.add("execution_quotes")
         if set(session)!=required: raise ConfigError("invalid session fields")
@@ -65,6 +66,7 @@ def run_history(run_path,timeline_path,*,output_dir):
     state=StrategyState(); decisions=[]; nav=[]
     initial_equity=account.equity; peak=initial_equity
     for i,session in enumerate(sessions):
+        if cancel_check is not None and cancel_check(): raise InterruptedError("local job canceled")
         now=datetime.fromisoformat(session["now"])
         context=context_from_file(path.parent/resolved.run["data_snapshot"],expected_hash=resolved.data_snapshot_hash,decision_at=session["decision_at"])
         marks=research_marks(context)

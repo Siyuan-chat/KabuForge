@@ -12,7 +12,9 @@ from .factors import FactorContext, FactorSpec, FactorResult
 from .legacy_provider import BuiltinFactors
 from .models import StrategyState, StrategyDecision, RiskDecision, TargetPortfolio
 from .planner import Planner, FeeModel
-from .strategy import CompositeFactorStrategy, RiskPolicy
+from .strategy import RiskPolicy
+from .strategy_registry import (CompositeFactorStrategyAdapter, StrategyRegistry,
+                                StrategySpec, spec_from_config)
 
 @dataclass(frozen=True)
 class RunResult:
@@ -22,11 +24,21 @@ class RunResult:
     decision: StrategyDecision
     risk: RiskDecision
     plan: OrderPlan
+    strategy_implementation_id: str = "composite_factor"
+    strategy_implementation_version: str = "1"
 
 class ApplicationService:
-    def __init__(self, builtins: BuiltinFactors | None = None, *, factor_cache=None):
+    def __init__(self, builtins: BuiltinFactors | None = None, *, factor_cache=None,
+                 strategy_registry: StrategyRegistry | None = None):
         self.builtins=builtins or BuiltinFactors()
         self.factor_cache=factor_cache
+        self.strategy_registry=strategy_registry or StrategyRegistry()
+        composite_spec=StrategySpec("composite_factor", "1")
+        if not self.strategy_registry.contains(composite_spec):
+            self.strategy_registry.register(
+                composite_spec,
+                lambda config, factor_ids: CompositeFactorStrategyAdapter(config, factor_ids),
+            )
         self.registry=ImplementationRegistry()
         self.validators={}
         for implementation,version in self.builtins.versions.items():
@@ -44,7 +56,12 @@ class ApplicationService:
         for factor in result.factors:
             spec=FactorSpec.from_config(factor)
             self.validators[(spec.implementation_id,spec.implementation_version)](spec)
+        self.build_strategy(result.strategy, tuple(factor["id"] for factor in result.factors))
         return result
+
+    def build_strategy(self, config: Mapping, factor_ids: tuple[str, ...]):
+        """Resolve an approved strategy implementation without dynamic imports."""
+        return self.strategy_registry.create(spec_from_config(config), config, factor_ids)
 
     def plan(self, resolved: ResolvedRun, *, context: FactorContext,
              account: AccountState, research_marks: Mapping[str, Decimal],
@@ -78,8 +95,8 @@ class ApplicationService:
                 if not isinstance(result,FactorResult): raise ExecutionError("factor implementation returned an invalid contract")
                 if self.factor_cache is not None: self.factor_cache.put(key,result)
             results[factor["id"]]=result
-        strategy=CompositeFactorStrategy(resolved.strategy,factor_ids=tuple(results))
-        decision=strategy.decide_with_audit(results=results,context=context,
+        strategy=self.build_strategy(resolved.strategy,tuple(results))
+        decision=strategy.decide(results=results,context=context,
             state=state or StrategyState(),decision_identity=identity)
         weights={}
         for position in account.positions:
@@ -94,4 +111,6 @@ class ApplicationService:
             now=now,decision_identity=identity,strategy_hash=resolved.strategy_hash,
             turnover_budget=risk.turnover_budget,
             fee_model=FeeModel(**dict(resolved.run["fees"])))
-        return RunResult(resolved.strategy_hash,identity,results,decision,risk,plan)
+        spec=spec_from_config(resolved.strategy)
+        return RunResult(resolved.strategy_hash,identity,results,decision,risk,plan,
+                         spec.implementation_id,spec.implementation_version)

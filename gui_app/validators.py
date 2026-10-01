@@ -39,7 +39,6 @@ class FormulaValidator(ast.NodeVisitor):
         ast.Load,
         ast.Name,
         ast.Constant,
-        ast.Num,
     )
 
     def __init__(self) -> None:

@@ -1,0 +1,682 @@
+{
+  "tools": {
+    "analyze_factor": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "factor_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "quantiles": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "run_id",
+          "factor_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cancel_job": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "check_lookahead": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "decision_at": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "path",
+          "decision_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "check_point_in_time": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "decision_at": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "path",
+          "decision_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "compare_runs": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "right": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "left",
+          "right"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "create_workspace": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "describe_factor": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "implementation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "implementation_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "implementation_id",
+          "implementation_version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "describe_strategy": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "implementation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "implementation_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "implementation_id",
+          "implementation_version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "get_account_snapshot": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "get_capabilities": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "get_job_result": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "get_job_status": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "get_run_report": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "get_run_status": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "inspect_broker_capabilities": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "inspect_run": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "inspect_snapshot": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "list_factors": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "list_fills": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "list_orders": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "list_strategies": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "plan_strategy": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "execution": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "decision_at": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "now": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "path",
+          "execution",
+          "decision_at",
+          "now"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "reconcile_local_state": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "run_backtest": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "timeline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path",
+          "timeline"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "run_demo": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "save_strategy_draft": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "config": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "config"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "start_backtest": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "timeline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path",
+          "timeline"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "start_paper_simulation": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "timeline": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path",
+          "timeline"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "stop_paper_simulation": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "validate_config": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "validate_factor": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "reserved_external_tools": {
+    "request_order_approval": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "plan_hash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "account_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "run_id",
+        "plan_hash",
+        "account_id"
+      ],
+      "additionalProperties": false
+    },
+    "submit_order": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "intent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "plan_hash": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "account_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "approval_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "run_id",
+        "intent_id",
+        "plan_hash",
+        "account_id",
+        "approval_ref",
+        "idempotency_key"
+      ],
+      "additionalProperties": false
+    },
+    "cancel_order": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "broker_order_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "account_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "approval_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "run_id",
+        "broker_order_id",
+        "account_id",
+        "approval_ref",
+        "idempotency_key"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

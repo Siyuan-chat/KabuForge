@@ -2,7 +2,7 @@
 from pathlib import Path
 import re
 
-BRAND_DIR=Path(__file__).resolve().parents[1]/"brand"/"kabuforge"/"v1"
+BRAND_DIR=Path(__file__).resolve().parent/"assets"/"brand"
 
 def palette(mode="dark"):
     source=(BRAND_DIR/"tokens.css").read_text(encoding="utf-8")
