@@ -1,0 +1,56 @@
+name: Research correctness
+description: Report timing, bias or reproducibility concerns
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use synthetic or license-permitted minimal examples. Do not include credentials, account records, or private data.
+        For security vulnerabilities follow [SECURITY.md](https://github.com/Siyuan-chat/KabuForge/blob/main/SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: Package version or commit / 版本或提交 / バージョンまたはコミット
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment / 环境 / 環境
+      description: OS, Python version, interface (Python / CLI / GUI / MCP).
+    validations:
+      required: true
+  - type: textarea
+    id: decision_time
+    attributes:
+      label: Decision timestamp and timezone / 决策时间与时区 / 意思決定時刻とタイムゾーン
+      description: Include the exact decision_at.
+    validations:
+      required: true
+  - type: textarea
+    id: availability
+    attributes:
+      label: Data availability time / 数据可用时间 / データ可用時刻
+      description: Include declared available_at and its provenance.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Affected results and suspected bias / 受影响结果与疑似偏差 / 影響と疑われるバイアス
+      description: Timing, revisions, survivorship, universe, corporate actions, price semantics or identity.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result / 预期与实际结果 / 期待と実際の結果
+      description: Do not infer complete PIT certification from a visibility check.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproducible evidence / 可复现证据 / 再現可能な証拠
+      description: Supply a synthetic minimal case, configuration identity and receipt.
+    validations:
+      required: true
