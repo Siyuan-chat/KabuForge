@@ -60,6 +60,10 @@ class MCPAdapter:
 
 
 def main(argv=None):
+    # MCP stdio uses UTF-8 regardless of the host console or locale.
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description='KabuForge local MCP stdio server')
     parser.add_argument('--workspace',required=True)
     parser.add_argument('--enable-paper',action='store_true')
