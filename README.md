@@ -6,7 +6,7 @@
 
 KabuForge is a public release candidate for local Japanese-equity research and simulation. It validates declarative inputs, computes registered public factors, builds strategy decisions, plans broker-neutral order intents, and runs local backtest or paper simulations.
 
-> **Public RC — v0.1.0-rc.1.** This repository is the public distribution, not the private local source package. It remains a release candidate: remote CI evidence is pending and no live-broker, strategy-performance, or complete point-in-time certification is claimed.
+> **Public RC — v0.1.0-rc.1.** This repository is the public distribution, not the private local source package. It remains a release candidate: remote CI evidence and checksums are available in the [GitHub release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0-rc.1) and no live-broker, strategy-performance, or complete point-in-time certification is claimed.
 
 ```mermaid
 flowchart LR

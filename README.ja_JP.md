@@ -6,7 +6,7 @@
 
 KabuForge は、日本株のローカル研究とシミュレーションのための public release candidate です。宣言的 input を検証し、登録済み公開因子を計算して戦略判断と broker-neutral な注文意図を作り、ローカル backtest 又は paper simulation を実行します。
 
-> **Public RC — v0.1.0-rc.1。** この repository は public distribution であり private local source package ではありません。まだ candidate であり、remote CI の証拠は未実施です。live broker、strategy performance、完全な point-in-time 認証は主張しません。
+> **Public RC — v0.1.0-rc.1。** この repository は public distribution であり private local source package ではありません。まだ candidate であり、remote CI の証拠と checksum は [GitHub release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0-rc.1) に掲載されています。live broker、strategy performance、完全な point-in-time 認証は主張しません。
 
 ```mermaid
 flowchart LR
