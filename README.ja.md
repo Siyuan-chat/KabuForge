@@ -2,7 +2,11 @@
 
 [简体中文](README.md) · [日本語](README.ja.md) · [English](README.en.md)
 
-![KabuForge](brand/kabuforge/v1/logo-horizontal-light.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v1/logo-horizontal-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="brand/kabuforge/v1/logo-horizontal-light.svg">
+  <img alt="KabuForge" src="brand/kabuforge/v1/logo-horizontal-light.svg">
+</picture>
 
 **日本株の投資戦略を手元の PC で検証するためのデスクトップアプリです。**
 
