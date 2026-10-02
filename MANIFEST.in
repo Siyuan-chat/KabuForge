@@ -10,6 +10,8 @@ recursive-include framework_v2/bridge *
 recursive-include framework_v2/tests test_*.py
 recursive-include tools *.py
 recursive-include examples codex_mcp.toml
+include examples/extension_demo.py
+include examples/README.md
 prune output
 prune data_cache
 prune paper_trading_runs
