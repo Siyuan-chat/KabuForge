@@ -46,6 +46,8 @@ jobs:
       - run: /tmp/kabuforge-clean/bin/python -c "import glob,subprocess,sys; subprocess.run([sys.executable,'-m','pip','install',glob.glob('dist/*.whl')[0]+'[gui]'],check=True)"
       - run: cd /tmp && /tmp/kabuforge-clean/bin/kabuforge demo --out /tmp/kabuforge-demo
       - run: cd /tmp && /tmp/kabuforge-clean/bin/python "$GITHUB_WORKSPACE/tools/check_installed_package.py"
+      - name: Verify tutorial from extracted sdist
+        run: /tmp/kabuforge-clean/bin/python -I tools/check_sdist_tutorial.py dist/*.tar.gz
   agent:
     runs-on: ubuntu-latest
     steps:
