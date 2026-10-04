@@ -1,0 +1,1 @@
+export function GET(){return new Response('User-agent: *\nAllow: /\n\nSitemap: https://kabuforge.com/sitemap.xml\n',{headers:{'Content-Type':'text/plain'}});}
