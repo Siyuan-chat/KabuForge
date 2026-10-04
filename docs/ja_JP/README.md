@@ -9,7 +9,11 @@ locale: ja_JP
 <!-- section:contract -->
 ## 契約
 
-以下の入口を選んでください。パッケージ版は 0.1.1、公開済み v0.1.0 Release は RC 添付物を保持します。実取引や完全な過去 PIT 認証は提供しません。
+KabuForge は、日本株のファクター、戦略、再現可能なバックテストに取り組む研究者・開発者向けのオープンソース・ローカル研究フレームワークです。
+
+package `v0.1.1` が現在の安定版です（[GitHub Release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)）。`main` は開発ブランチで、未リリースの変更を含む場合があります。Python、CLI、デスクトップ GUI、MCP は共通アプリケーションサービスを利用します。
+
+オフラインの合成デモにデータキーは不要です。実市場データの利用条件や認証情報は選択する provider によって異なります。paper とバックテストの約定はシミュレーションであり、ブローカー約定ではありません。完全な過去 PIT 認証も提供しません。
 
 
 <a id="quick-start"></a>
@@ -20,7 +24,7 @@ Python 3.12+
 ソースのチェックアウト内で実行します：
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor

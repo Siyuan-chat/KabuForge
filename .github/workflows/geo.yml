@@ -1,0 +1,14 @@
+name: GEO facts consistency
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  geo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/check_geo.py
+      - run: python -m unittest discover -s tools -p 'test_check_geo.py' -q

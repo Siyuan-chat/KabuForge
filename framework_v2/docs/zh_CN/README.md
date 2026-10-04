@@ -9,7 +9,11 @@ locale: zh_CN
 <!-- section:contract -->
 ## 契约
 
-按下列入口阅读。包版本为 0.1.1，已发布 v0.1.0 Release 保留 RC 附件。不提供真实交易或完整历史 PIT 认证。
+KabuForge 是面向日本股票因子、策略与可复现回测研究者和开发者的开源本地研究框架。
+
+`v0.1.1` 是当前稳定发行版（[GitHub Release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)）；`main` 是开发分支，可能包含尚未发行的改动。Python、CLI、桌面 GUI 与 MCP 共用应用服务。
+
+离线合成 demo 无需数据密钥；真实市场数据的使用条件及凭证要求取决于所选数据提供方。paper 与回测成交均为模拟，不是券商成交；项目不提供完整历史 PIT 认证。
 
 
 <a id="quick-start"></a>
@@ -20,7 +24,7 @@ Python 3.12+
 在源码检出目录执行：
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
