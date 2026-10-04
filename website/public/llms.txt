@@ -1,0 +1,31 @@
+# KabuForge
+
+> KabuForge is an open-source, local-first research framework for Japanese equities.
+
+## Current release
+
+- Latest stable release: [v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1), package version 0.1.1; Python 3.12+.
+- Official website: <https://kabuforge.com/>.
+- Source repository: <https://github.com/Siyuan-chat/KabuForge>.
+- Current project-owned source, documentation, and original assets use AGPL-3.0-only. Retained notices and third-party terms remain applicable. The historical v0.1.0 release retains its original RC artifacts and MIT terms.
+
+## Product and documentation
+
+- [Documentation overview](https://kabuforge.com/docs/) describes the framework, audience, interfaces, pipeline, and limits.
+- [Architecture](https://kabuforge.com/docs/architecture/) documents Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent.
+- [Quickstart](https://kabuforge.com/docs/quickstart/) installs the stable release and runs the offline demo.
+- [Research methodology](https://kabuforge.com/docs/methodology/) explains availability-time checks and their limits.
+- [MCP guide](https://kabuforge.com/docs/mcp/) describes workspace-bounded access tiers and local paper opt-in.
+- [Offline demo](https://kabuforge.com/examples/offline-demo/) explains the synthetic, reproducible software simulation.
+- [Release history](https://kabuforge.com/releases/) distinguishes the current stable release from retained historical artifacts.
+
+## Operating boundaries
+
+- Historical backtesting and paper workflows run as local simulations. Simulated fills are not broker fills; real broker order submission is disabled in v0.1.1.
+- The synthetic offline demo uses fictional inputs and needs no market-data API key or broker account. External data providers may have separate credential and licensing requirements.
+- Point-in-time checks compare declared `available_at` values with an explicit decision time. They do not certify complete historical PIT coverage, vendor timing, revisions, survivorship treatment, or investment performance.
+- Factor diagnostics and synthetic examples do not establish out-of-sample performance, investability, or future returns.
+
+## Research context
+
+- Research notes and project context: [ArcaViso](https://arcaviso.com/).

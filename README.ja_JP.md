@@ -15,7 +15,7 @@
 
 [Quick Start](#quick-start) · [Documentation](docs/ja_JP/README.md) · [Architecture](docs/ja_JP/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-現在のパッケージ版は **0.1.1** です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。公開済み GitHub `v0.1.0` Release は RC パッケージと従来の MIT ライセンスを維持しています。
+最新安定版は **v0.1.1**（パッケージ版 **0.1.1**、公開日 2026-10-04）です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。公開済み GitHub `v0.1.0` Release は RC パッケージと従来の MIT ライセンスを維持しています。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -29,6 +29,8 @@
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 ```
 
+研究ノートとプロジェクトの背景：[ArcaViso](https://arcaviso.com/)。
+
 ## 現在の機能
 
 | 機能 | 状態と境界 | 証拠 |
@@ -40,7 +42,7 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 | ローカル paper | ローカル口座・ジャーナルのシミュレーション。模擬約定は実約定ではありません | [Docs](docs/ja_JP/EXECUTION.md) |
 | MCP agents | R0/R1 の検査・ローカル研究が既定。R2 paper 書き込みは明示的 opt-in | [Docs](docs/ja_JP/AGENT_API.md) |
 | ブローカー mappings / mocks | 契約と mock の検証層。実 transport は未検証 | [Docs](docs/ja_JP/BROKER_API.md) |
-| 実ブローカー発注 | この RC では無効。予約済み R3 インターフェースも無効 | [Docs](docs/ja_JP/AGENT_API.md) |
+| 実ブローカー発注 | v0.1.1 では無効。予約済み R3 インターフェースも無効 | [Docs](docs/ja_JP/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## クイックスタート
@@ -118,7 +120,7 @@ Python / GUI / CLI / MCP
 Research / Risk / Planning
 ```
 
-共通アプリケーションサービスは検証、意思決定、計画を担当し、この境界からブローカー発注や執行台帳への書き込みは行いません。過去バックテストとローカル paper は研究・判断の意味を共有し、執行価格と模擬約定の差は明示します。MCP は R0/R1 が既定で、R2 paper 書き込みには明示的 opt-in が必要です。この RC の R3 外部アクションは無効です。
+共通アプリケーションサービスは検証、意思決定、計画を担当し、この境界からブローカー発注や執行台帳への書き込みは行いません。過去バックテストとローカル paper は研究・判断の意味を共有し、執行価格と模擬約定の差は明示します。MCP は R0/R1 が既定で、R2 paper 書き込みには明示的 opt-in が必要です。v0.1.1 の R3 外部アクションは無効です。
 
 [アーキテクチャ](docs/ja_JP/ARCHITECTURE.md) · [Agent の境界](docs/ja_JP/AGENT_API.md)
 

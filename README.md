@@ -15,7 +15,7 @@ An open-source, local-first research framework for Japanese equities, with facto
 
 [Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-Current package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
+Latest stable release: **v0.1.1** (package version **0.1.1**, published 2026-10-04). Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -24,6 +24,8 @@ Current package version: **0.1.1**. Research and local simulation only; real bro
 ## What is KabuForge?
 
 KabuForge connects factor and strategy research with portfolio construction, risk controls, broker-neutral order planning, historical backtesting, and local paper simulation. Shared application services are accessible through Python, CLI, desktop GUI, and MCP-compatible agents.
+
+Research notes and project context: [ArcaViso](https://arcaviso.com/).
 
 ```text
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
@@ -40,7 +42,7 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 | Local paper | Local account/journal simulation; simulated fills are not broker fills | [Docs](docs/en_US/EXECUTION.md) |
 | MCP agents | R0/R1 inspection and local research by default; R2 paper writes require explicit opt-in | [Docs](docs/en_US/AGENT_API.md) |
 | Broker mappings / mocks | Contract and mock validation layer; real transport remains unverified | [Docs](docs/en_US/BROKER_API.md) |
-| Real broker orders | Not enabled in this RC; reserved R3 interfaces are disabled | [Docs](docs/en_US/AGENT_API.md) |
+| Real broker orders | Disabled in v0.1.1; reserved R3 interfaces are disabled | [Docs](docs/en_US/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## Quick start
@@ -118,7 +120,7 @@ Python / GUI / CLI / MCP
 Research / Risk / Planning
 ```
 
-Shared application services validate, decide and plan; this boundary does not submit broker orders or write an execution ledger. Historical and local paper workflows share research and decision semantics while their execution prices and simulated fills remain explicit. R0/R1 MCP tools are enabled by default, R2 paper writes require opt-in, and R3 external actions remain disabled in this RC.
+Shared application services validate, decide and plan; this boundary does not submit broker orders or write an execution ledger. Historical and local paper workflows share research and decision semantics while their execution prices and simulated fills remain explicit. R0/R1 MCP tools are enabled by default, R2 paper writes require opt-in, and R3 external actions remain disabled in v0.1.1.
 
 [Architecture](docs/en_US/ARCHITECTURE.md) · [Agent boundaries](docs/en_US/AGENT_API.md)
 

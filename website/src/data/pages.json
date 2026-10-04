@@ -2,15 +2,15 @@
   {
     "slug": "docs",
     "title": "Documentation",
-    "description": "Choose a practical route through KabuForge installation, desktop research, architecture and agent integration.",
+    "description": "KabuForge is an open-source, local-first research framework for Japanese equities. Learn its audience, pipeline, interfaces, and operating limits.",
     "sections": [
       {
-        "title": "Start with an offline workflow",
-        "body": "<p>Install the public source, inspect your environment, and run a fictional demo before bringing your own licensed market data.</p><div class=\"cards\"><a href=\"/docs/quickstart/\">Quickstart</a><a href=\"/docs/desktop/\">Desktop workbench</a><a href=\"/examples/offline-demo/\">Offline demo</a></div>"
+        "title": "What KabuForge is and who it serves",
+        "body": "<p>KabuForge is an open-source, local-first framework for people building and evaluating Japanese-equity research workflows. The current stable release is <a href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1\">v0.1.1</a> (package version 0.1.1, Python 3.12+). It supports factor and strategy research, risk-aware portfolio planning, historical backtesting, and local paper simulation through Python, CLI, desktop GUI, and MCP.</p><div class=\"cards\"><a href=\"/docs/quickstart/\">Quickstart</a><a href=\"/docs/desktop/\">Desktop workbench</a><a href=\"/examples/offline-demo/\">Offline demo</a><a href=\"/releases/\">Release history</a></div>"
       },
       {
-        "title": "Understand the contracts",
-        "body": "<p>Follow factors and strategies into portfolio targets, risk controls and broker-neutral order planning.</p><div class=\"cards\"><a href=\"/docs/architecture/\">Architecture</a><a href=\"/docs/methodology/\">Methodology and limitations</a><a href=\"/docs/mcp/\">MCP integration</a></div>"
+        "title": "Research pipeline and operating boundaries",
+        "body": "<p>The documented flow is Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent. The planner produces broker-neutral intents; it does not submit real orders. Local paper fills are simulations, and availability-time checks do not certify complete historical PIT coverage.</p><div class=\"cards\"><a href=\"/docs/architecture/\">Architecture</a><a href=\"/docs/methodology/\">Methodology and limitations</a><a href=\"/docs/mcp/\">MCP integration</a></div>"
       }
     ],
     "sourcePath": "docs/en_US/README.md"
@@ -22,11 +22,11 @@
     "sections": [
       {
         "title": "Prepare your environment",
-        "body": "<p>Use Python 3.12 or newer, Git and a new working directory. The commands below run from the cloned KabuForge root. Create a virtual environment to keep this installation separate.</p>"
+        "body": "<p>Use Python 3.12 or newer, Git and a new working directory. The commands below install the official stable v0.1.1 source tag. Create a virtual environment to keep this installation separate.</p>"
       },
       {
         "title": "Install and inspect",
-        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>This guide pins the reviewed public source commit. <code>doctor</code> reports version 0.1.0rc1, local capabilities, paper opt-in and disabled external actions. The demo needs no market-data key or broker account.</p>"
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout v0.1.1\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>This guide pins the stable <code>v0.1.1</code> tag (package version <code>0.1.1</code>). <code>doctor</code> reports the installed version, local capabilities, paper opt-in and disabled external actions. The synthetic offline demo needs no market-data key or broker account.</p>"
       },
       {
         "title": "Read the outputs",
@@ -54,7 +54,7 @@
       },
       {
         "title": "Media and data boundaries",
-        "body": "<p>The public repository’s September 30 recordings show historical research, paths and curves. They are not a reproducible performance demonstration of the current public factors. This website uses the decision architecture instead of presenting those curves as current results.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/docs/DEMO.md\">Read the public media provenance and demonstration limits</a>.</p>"
+        "body": "<p>The public repository’s September 30 recordings show historical research, paths and curves. They are not a reproducible performance demonstration of the current public factors. This website uses the decision architecture instead of presenting those curves as current results.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/docs/DEMO.md\">Read the public media provenance and demonstration limits</a>.</p>"
       },
       {
         "title": "Troubleshooting",
@@ -94,7 +94,7 @@
     "sections": [
       {
         "title": "Availability at decision time",
-        "body": "<p>Inputs declare a decision timestamp and snapshot identity. <code>check_point_in_time</code> and <code>check_lookahead</code> inspect <code>available_at</code>, count future-visible rows and require a visibility gate. Missing availability timestamps invalidate this check.</p>"
+        "body": "<p>In v0.1.1, inputs declare a timezone-aware decision timestamp and snapshot identity. <code>check_point_in_time</code> and <code>check_lookahead</code> inspect <code>available_at</code>, count future-visible rows and require a visibility gate. Missing availability timestamps invalidate this check; declared timestamps do not prove genuine historical availability.</p>"
       },
       {
         "title": "A visibility gate has limits",
@@ -150,7 +150,7 @@
       },
       {
         "title": "Factor and strategy extension",
-        "body": "<p>The public extension tutorial registers trusted factor and strategy code, validates a configuration graph and runs risk and planning with fictional data. It does not submit orders or simulate fills.</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python examples/extension_demo.py --out output/extension_demo</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/examples/extension_demo.py\">Read the complete public example</a>. Use a new output directory; omit <code>--out</code> for a temporary one.</p>"
+        "body": "<p>The public extension tutorial registers trusted factor and strategy code, validates a configuration graph and runs risk and planning with fictional data. It does not submit orders or simulate fills.</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python examples/extension_demo.py --out output/extension_demo</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/examples/extension_demo.py\">Read the complete public example</a>. Use a new output directory; omit <code>--out</code> for a temporary one.</p>"
       },
       {
         "title": "Cache schema fixtures",
@@ -169,7 +169,7 @@
         "body": "<p>First complete the <a href=\"/docs/quickstart/\">quickstart</a>. Run from the source root with the same active environment and a new output directory.</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge demo --out output/demo\npython -m framework_v2.cli validate output/demo/paper.json\npython -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
       },
       {
-        "title": "Inspect evidence",
+        "title": "Inspect and reproduce the local run",
         "body": "<p>The demo writes configurations and synthetic snapshots. Validation checks their schema and fields. History consumes an explicit timeline and produces reports and a local SQLite ledger under <code>output/history</code>. Review targets, risk results, order intents and simulated events together.</p>"
       },
       {
@@ -178,7 +178,7 @@
       },
       {
         "title": "Keep runs separate",
-        "body": "<p>Do not use an existing real research directory as <code>--out</code>. Preserve generated inputs with their results. Compare only runs with matching source identity, inputs and environment.</p>"
+        "body": "<p>Preserve the generated inputs, configuration, timeline, source tag and environment with each result. Compare runs only when source identity, inputs and environment match. This supports reproduction of the software simulation, not a claim of reproducible real-market performance.</p>"
       }
     ],
     "sourcePath": "docs/DEMO.md"
@@ -194,11 +194,11 @@
       },
       {
         "title": "Contribute through the public project",
-        "body": "<p><a href=\"https://github.com/Siyuan-chat/KabuForge/issues\">Report issues</a> with the public version, environment and reproducible inputs. Read the <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/CONTRIBUTING.md\">contribution guide</a> and <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/SECURITY.md\">security policy</a>.</p>"
+        "body": "<p><a href=\"https://github.com/Siyuan-chat/KabuForge/issues\">Report issues</a> with the public version, environment and reproducible inputs. Read the <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/CONTRIBUTING.md\">contribution guide</a> and <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/SECURITY.md\">security policy</a>.</p>"
       },
       {
         "title": "License and attribution",
-        "body": "<p>Current project-owned source, documentation and original assets use AGPL-3.0-only. Upstream MIT notices and third-party terms remain applicable. Historical releases retain their original MIT terms. Fonts and market data have separate terms.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/PROJECT_LICENSING.md\">Licensing scope</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/NOTICE\">Retained notices</a></p>"
+        "body": "<p>Current project-owned source, documentation and original assets use AGPL-3.0-only. Upstream MIT notices and third-party terms remain applicable. Historical releases retain their original MIT terms. Fonts and market data have separate terms.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/PROJECT_LICENSING.md\">Licensing scope</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/NOTICE\">Retained notices</a></p>"
       }
     ],
     "sourcePath": "PROJECT_LICENSING.md"
@@ -206,11 +206,11 @@
   {
     "slug": "releases",
     "title": "Versions and Releases",
-    "description": "Distinguish current KabuForge source from retained 0.1.0rc1 release artifacts and their licenses.",
+    "description": "Current stable v0.1.1 and the retained historical v0.1.0 RC artifacts and license terms.",
     "sections": [
       {
-        "title": "Current reviewed source",
-        "body": "<p>Package version: <strong>0.1.0rc1</strong>. Python 3.12+. Current project-owned material: AGPL-3.0-only.</p><p>Reviewed commit: <code>c922d5439f6f018c140de14b6056f82b901dc434</code>. The quickstart pins this source identity.</p>"
+        "title": "Current stable release",
+        "body": "<p>Latest stable tag: <strong>v0.1.1</strong> (package version <strong>0.1.1</strong>), published 2026-10-04. Python 3.12+. Current project-owned source, documentation and original assets use AGPL-3.0-only.</p><p>Release source commit: <code>7a38b1cbce2d755b3d1575e91889465598152143</code>. <a href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1\">View v0.1.1 release and validation artifacts</a>.</p>"
       },
       {
         "title": "Retained GitHub releases",
@@ -218,7 +218,7 @@
       },
       {
         "title": "Before upgrading",
-        "body": "<p>Read the source changelog and release notes together. A future AGPL distribution requires a new version and release validation; this website does not rename existing artifacts or claim a stable 1.0 release.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/releases\">All releases</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/docs/en_US/CHANGELOG.md\">Source changelog</a></p>"
+        "body": "<p>For current stable features, review the v0.1.1 source changelog and release notes. The historical v0.1.0 tag retains its original RC artifacts and MIT terms.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/releases\">All releases</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/framework_v2/docs/en_US/CHANGELOG.md\">v0.1.1 source changelog</a></p>"
       }
     ],
     "sourcePath": "pyproject.toml"
@@ -226,15 +226,15 @@
   {
     "slug": "ja/docs",
     "title": "ドキュメント",
-    "description": "KabuForge の導入、デスクトップ、設計、MCP の公開ガイド。",
+    "description": "日本株リサーチ基盤 KabuForge の対象ユーザー、処理の流れ、各インターフェースと運用上の制約を説明します。",
     "sections": [
       {
-        "title": "まずは合成データで試す",
-        "body": "<p>Python 3.12 以降で導入し、外部データに接続する前にローカル機能を確認します。</p><div class=\"cards\"><a href=\"/ja/docs/quickstart/\">クイックスタート</a><a href=\"/ja/docs/desktop/\">デスクトップ</a><a href=\"/ja/examples/offline-demo/\">オフラインデモ</a></div>"
+        "title": "KabuForge の概要と対象",
+        "body": "<p>KabuForge は、日本株の研究ワークフローを構築・評価する人向けのオープンソース・ローカル実行型フレームワークです。最新安定版は <a href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1\">v0.1.1</a>（パッケージ版 0.1.1、Python 3.12 以降）です。ファクター・戦略研究、リスクを考慮したポートフォリオ計画、履歴バックテスト、ローカルペーパーシミュレーションを、Python、CLI、デスクトップ GUI、MCP から利用できます。</p><div class=\"cards\"><a href=\"/ja/docs/quickstart/\">クイックスタート</a><a href=\"/ja/docs/desktop/\">デスクトップ</a><a href=\"/ja/examples/offline-demo/\">オフラインデモ</a><a href=\"/ja/releases/\">リリース履歴</a></div>"
       },
       {
-        "title": "設計と境界",
-        "body": "<p><a href=\"/ja/docs/architecture/\">アーキテクチャ</a>、<a href=\"/ja/docs/methodology/\">研究方法と制約</a>、<a href=\"/ja/docs/mcp/\">MCP 接続</a>を確認してください。注文計画やシミュレーションは実取引の証拠ではありません。</p>"
+        "title": "研究パイプラインと運用上の境界",
+        "body": "<p>公開されている流れは Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent です。Planner は証券会社に依存しない注文意図を作りますが、実注文を送信しません。ペーパー約定はローカルシミュレーションであり、可用時刻の検査も過去データの完全な PIT 認証ではありません。</p><div class=\"cards\"><a href=\"/ja/docs/architecture/\">アーキテクチャ</a><a href=\"/ja/docs/methodology/\">研究方法と制約</a><a href=\"/ja/docs/mcp/\">MCP 接続</a></div>"
       }
     ],
     "sourcePath": "docs/ja_JP/README.md"
@@ -246,11 +246,11 @@
     "sections": [
       {
         "title": "環境を準備する",
-        "body": "<p>Python 3.12 以降と Git を用意し、新しい作業ディレクトリから開始します。以下は KabuForge のルートで実行します。仮想環境に導入し、レビュー対象の公開コミットを固定します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
+        "body": "<p>Python 3.12 以降と Git を用意し、新しい作業ディレクトリから開始します。以下は公式安定版 v0.1.1 の導入手順です。仮想環境に導入してください。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout v0.1.1\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
       },
       {
         "title": "結果を確認する",
-        "body": "<p><code>doctor</code> は 0.1.0rc1、ローカル機能、ペーパー操作の明示的な許可、外部注文の無効状態を表示します。デモは架空データを使い、API キーや証券口座は不要です。</p><p><code>output/demo</code> の <code>paper.json</code>、<code>backtest.json</code>、<code>timeline.json</code> を確認します。</p>"
+        "body": "<p><code>doctor</code> は導入済みの 0.1.1、ローカル機能、ペーパー操作の明示的な許可、外部注文の無効状態を表示します。合成データのオフラインデモは市場データ API キーや証券口座を必要としません。</p><p><code>output/demo</code> の <code>paper.json</code>、<code>backtest.json</code>、<code>timeline.json</code> を確認します。</p>"
       },
       {
         "title": "失敗した場合",
@@ -306,7 +306,7 @@
     "sections": [
       {
         "title": "意思決定時点の可用性",
-        "body": "<p>入力は意思決定時刻とスナップショット ID を宣言します。<code>available_at</code> を検査し、未来の行を数えて可視性ゲートを要求します。時刻の欠落はこの検査で無効です。</p>"
+        "body": "<p>v0.1.1 では、入力にタイムゾーン付き意思決定時刻とスナップショット ID を宣言します。<code>check_point_in_time</code> と <code>check_lookahead</code> は <code>available_at</code> を検査し、将来行を数えて可視性ゲートを要求します。可用時刻の欠落はこの検査で無効です。宣言時刻だけでは、過去に本当に利用可能だったことを証明しません。</p>"
       },
       {
         "title": "完全な PIT 認証ではない",
@@ -373,12 +373,12 @@
         "body": "<p><a href=\"/ja/docs/quickstart/\">導入ガイド</a>を完了し、同じ仮想環境とソースのルートで実行します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge demo --out output/demo\npython -m framework_v2.cli validate output/demo/paper.json\npython -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
       },
       {
-        "title": "生成物を確認",
+        "title": "ローカル実行を確認・再現する",
         "body": "<p>設定と合成スナップショットが生成されます。validate はスキーマと項目を確認し、history は明示した時系列からレポートと SQLite 帳簿を作ります。目標、リスク、注文意図、模擬イベントを一緒に確認します。</p>"
       },
       {
         "title": "検証の範囲",
-        "body": "<p>公開ファクターの接続、設定、PIT 項目、注文計画と決定的なローカル処理の例です。実データ、証券会社、収益評価は含みません。既存の研究ディレクトリを出力先にせず、入力と結果を保存してください。</p>"
+        "body": "<p>生成した入力、設定、時系列、ソースタグ、実行環境を結果と一緒に保存します。ソース、入力、環境が一致する場合に実行を比較してください。これはソフトウェアシミュレーションの再現性を支えるもので、実市場の成績を再現する主張ではありません。</p>"
       }
     ],
     "sourcePath": "docs/DEMO.md"
@@ -406,11 +406,11 @@
   {
     "slug": "ja/releases",
     "title": "バージョンとリリース",
-    "description": "現在のソースと旧 RC 配布物、各ライセンスを確認します。",
+    "description": "最新安定版 v0.1.1 と、過去の v0.1.0 RC 配布物およびライセンスを説明します。",
     "sections": [
       {
-        "title": "レビュー対象のソース",
-        "body": "<p>パッケージ版は <strong>0.1.0rc1</strong>、Python 3.12 以降。現在のプロジェクト所有物は AGPL-3.0-only です。</p><p>対象コミット：<code>c922d5439f6f018c140de14b6056f82b901dc434</code></p>"
+        "title": "現在の安定版",
+        "body": "<p>最新安定タグは <strong>v0.1.1</strong>（パッケージ版 <strong>0.1.1</strong>）、公開日は 2026-10-04 です。Python 3.12 以降。現在のプロジェクト所有コード・文書・独自素材は AGPL-3.0-only です。</p><p>Release ソースコミット：<code>7a38b1cbce2d755b3d1575e91889465598152143</code>。<a href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1\">v0.1.1 Release と検証資料</a></p>"
       },
       {
         "title": "過去の配布物",
@@ -418,7 +418,7 @@
       },
       {
         "title": "更新の前に",
-        "body": "<p>変更履歴と Release ノートを確認します。今後の AGPL 配布には新しい版と検証が必要です。旧ファイルを安定版 1.0 と呼び替えません。</p>"
+        "body": "<p>現在の安定版の機能は v0.1.1 の変更履歴と Release ノートを確認してください。過去の v0.1.0 tag は当時の RC 配布物と MIT 条件を保持します。</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/releases\">すべてのリリース</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/v0.1.1/framework_v2/docs/ja_JP/CHANGELOG.md\">v0.1.1 の変更履歴</a></p>"
       }
     ],
     "sourcePath": "pyproject.toml"

@@ -1,9 +1,9 @@
 name: Website validation
 on:
   push:
-    paths: ['website/**', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'README*.md', 'CITATION.cff', 'docs/en_US/CHANGELOG.md', 'docs/ja_JP/CHANGELOG.md', 'docs/zh_CN/CHANGELOG.md', 'tools/check_geo_consistency.py', '.github/workflows/website.yml']
   pull_request:
-    paths: ['website/**', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'README*.md', 'CITATION.cff', 'docs/en_US/CHANGELOG.md', 'docs/ja_JP/CHANGELOG.md', 'docs/zh_CN/CHANGELOG.md', 'tools/check_geo_consistency.py', '.github/workflows/website.yml']
 permissions:
   contents: read
 jobs:
@@ -14,6 +14,14 @@ jobs:
         working-directory: website
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check release and website facts
+        working-directory: .
+        run: |
+          curl --fail --silent --show-error --location https://api.github.com/repos/Siyuan-chat/KabuForge/releases/latest --output "$RUNNER_TEMP/kabuforge-latest-release.json"
+          python tools/check_geo_consistency.py --website website --release-json "$RUNNER_TEMP/kabuforge-latest-release.json"
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0

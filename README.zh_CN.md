@@ -15,7 +15,7 @@
 
 [Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-当前包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
+最新稳定版为 **v0.1.1**（包版本 **0.1.1**，发布于 2026-10-04）。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -29,6 +29,8 @@ KabuForge 将因子与策略研究连接到组合构建、风险控制、券商�
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 ```
 
+研究笔记和项目背景：[ArcaViso](https://arcaviso.com/)。
+
 ## 当前能力
 
 | 能力 | 状态与边界 | 证据 |
@@ -40,7 +42,7 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 | 本地纸上模拟 | 本地账户与日志模拟；模拟成交不等于券商成交 | [Docs](docs/zh_CN/EXECUTION.md) |
 | MCP agents | 默认 R0/R1 检查和本地研究；R2 paper 写入必须显式启用 | [Docs](docs/zh_CN/AGENT_API.md) |
 | 券商映射 / mocks | 契约与 mock 验证层；真实 transport 尚未验证 | [Docs](docs/zh_CN/BROKER_API.md) |
-| 真实券商下单 | 当前 RC 未启用；预留 R3 接口处于禁用状态 | [Docs](docs/zh_CN/AGENT_API.md) |
+| 真实券商下单 | v0.1.1 未启用；预留 R3 接口处于禁用状态 | [Docs](docs/zh_CN/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## 快速开始
@@ -118,7 +120,7 @@ Python / GUI / CLI / MCP
 Research / Risk / Planning
 ```
 
-共享应用服务负责验证、决策与规划；这一边界不向券商下单，也不写执行账本。历史回测与本地纸上流程共享研究及决策语义，同时明确执行价格与模拟成交的差异。MCP 默认启用 R0/R1，R2 paper 写入须显式启用，当前 RC 的 R3 外部动作保持禁用。
+共享应用服务负责验证、决策与规划；这一边界不向券商下单，也不写执行账本。历史回测与本地纸上流程共享研究及决策语义，同时明确执行价格与模拟成交的差异。MCP 默认启用 R0/R1，R2 paper 写入须显式启用，v0.1.1 的 R3 外部动作保持禁用。
 
 [架构](docs/zh_CN/ARCHITECTURE.md) · [Agent 边界](docs/zh_CN/AGENT_API.md)
 
