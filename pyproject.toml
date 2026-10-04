@@ -14,8 +14,8 @@ dependencies = ["pandas>=2.2", "jsonschema>=4.0", "pyarrow>=19", "requests>=2.32
 classifiers = ["Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Operating System :: OS Independent"]
 
 [project.urls]
-Homepage = "https://github.com/Siyuan-chat/KabuForge"
-Documentation = "https://github.com/Siyuan-chat/KabuForge/blob/main/docs/en_US/README.md"
+Homepage = "https://kabuforge.com/"
+Documentation = "https://kabuforge.com/docs/"
 Repository = "https://github.com/Siyuan-chat/KabuForge"
 Changelog = "https://github.com/Siyuan-chat/KabuForge/blob/main/docs/en_US/CHANGELOG.md"
 Releases = "https://github.com/Siyuan-chat/KabuForge/releases"

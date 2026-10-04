@@ -1,0 +1,426 @@
+[
+  {
+    "slug": "docs",
+    "title": "Documentation",
+    "description": "Choose a practical route through KabuForge installation, desktop research, architecture and agent integration.",
+    "sections": [
+      {
+        "title": "Start with an offline workflow",
+        "body": "<p>Install the public source, inspect your environment, and run a fictional demo before bringing your own licensed market data.</p><div class=\"cards\"><a href=\"/docs/quickstart/\">Quickstart</a><a href=\"/docs/desktop/\">Desktop workbench</a><a href=\"/examples/offline-demo/\">Offline demo</a></div>"
+      },
+      {
+        "title": "Understand the contracts",
+        "body": "<p>Follow factors and strategies into portfolio targets, risk controls and broker-neutral order planning.</p><div class=\"cards\"><a href=\"/docs/architecture/\">Architecture</a><a href=\"/docs/methodology/\">Methodology and limitations</a><a href=\"/docs/mcp/\">MCP integration</a></div>"
+      }
+    ],
+    "sourcePath": "docs/en_US/README.md"
+  },
+  {
+    "slug": "docs/quickstart",
+    "title": "Quickstart: Run the Offline Demo",
+    "description": "Install KabuForge with Python 3.12+, check the environment and run an offline synthetic example.",
+    "sections": [
+      {
+        "title": "Prepare your environment",
+        "body": "<p>Use Python 3.12 or newer, Git and a new working directory. The commands below run from the cloned KabuForge root. Create a virtual environment to keep this installation separate.</p>"
+      },
+      {
+        "title": "Install and inspect",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>This guide pins the reviewed public source commit. <code>doctor</code> reports version 0.1.0rc1, local capabilities, paper opt-in and disabled external actions. The demo needs no market-data key or broker account.</p>"
+      },
+      {
+        "title": "Read the outputs",
+        "body": "<p>The demo creates fictional inputs and configuration files under <code>output/demo</code>. Inspect <code>paper.json</code>, <code>backtest.json</code> and <code>timeline.json</code>. These files describe a local simulation workflow; planned orders are not broker submissions.</p>"
+      },
+      {
+        "title": "If a command fails",
+        "body": "<p>Check <code>python --version</code> and that your virtual environment is active. If <code>kabuforge</code> is missing, reinstall using that environment’s <code>python -m pip install .</code>. Choose a new demo output directory. Preserve the error and inputs for an issue report.</p><p>Next: <a href=\"/examples/offline-demo/\">validate and simulate the demo</a>, or <a href=\"/docs/desktop/\">install the desktop interface</a>.</p>"
+      }
+    ],
+    "sourcePath": "docs/en_US/README.md"
+  },
+  {
+    "slug": "docs/desktop",
+    "title": "Desktop Workbench Guide",
+    "description": "Install the optional PySide6 desktop interface and start KabuForge on Windows.",
+    "sections": [
+      {
+        "title": "Install the desktop extra",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python -m pip install \".[gui]\"\n# From the KabuForge source root on Windows\n.\\Launch_KabuForge.bat</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>The optional interface requires PySide6 6.8 or newer. The Windows launcher runs the public PowerShell launcher. Start it from the source checkout used for installation.</p>"
+      },
+      {
+        "title": "Explore the workflow",
+        "body": "<p>Use the workbench to configure local data and factor research, inspect preflight results, and run local backtest workflows. Read the output and run history alongside the configuration. A desktop success message is not evidence of broker execution.</p>"
+      },
+      {
+        "title": "Media and data boundaries",
+        "body": "<p>The public repository’s September 30 recordings show historical research, paths and curves. They are not a reproducible performance demonstration of the current public factors. This website uses the decision architecture instead of presenting those curves as current results.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/docs/DEMO.md\">Read the public media provenance and demonstration limits</a>.</p>"
+      },
+      {
+        "title": "Troubleshooting",
+        "body": "<p>If Qt cannot start, confirm the GUI extra was installed in the environment the launcher selects. Native desktop interaction, external APIs and licensed data access require separate validation; an offscreen render does not establish those capabilities.</p>"
+      }
+    ],
+    "sourcePath": "Launch_KabuForge.bat"
+  },
+  {
+    "slug": "docs/architecture",
+    "title": "Architecture and Decision Contracts",
+    "description": "Understand the shared KabuForge services from registered factors to risk-constrained order intents.",
+    "sections": [
+      {
+        "title": "One explicit decision pipeline",
+        "body": "<div class=\"pipeline\"><span>Factor</span><span>Strategy</span><span>TargetPortfolio</span><span>Risk</span><span>Planner</span><span>OrderIntent</span></div><p>Python, CLI, desktop GUI and MCP call shared application contracts. Factor outputs inform strategy decisions; risk controls and execution constraints apply after target construction.</p>"
+      },
+      {
+        "title": "Registered research extensions",
+        "body": "<p>Trusted code registers factors with IDs, versions and mandatory validators. Strategies select registered implementation identities. Unknown or duplicate identities fail; configuration cannot request arbitrary Python imports or evaluation. The default strategy registry includes <code>composite_factor</code> version 1.</p>"
+      },
+      {
+        "title": "Planning is a boundary",
+        "body": "<p><code>ApplicationService</code> validates configuration and returns an immutable plan. It cannot submit an order, write a ledger or contact a broker. Planning records explicit clocks, snapshot hashes, research marks, quotes, instruments and account state.</p>"
+      },
+      {
+        "title": "Local simulation and agent access",
+        "body": "<p>Historical backtests and paper workflows simulate locally. The agent facade adds bounded paths, JSON-schema validation, credential scanning, durable receipts and SQLite audit state. Real broker transport remains unverified and real order submission is disabled.</p>"
+      }
+    ],
+    "sourcePath": "docs/en_US/ARCHITECTURE.md"
+  },
+  {
+    "slug": "docs/methodology",
+    "title": "Research Methodology and Limitations",
+    "description": "What KabuForge visibility checks and local simulations establish, and what they cannot certify.",
+    "sections": [
+      {
+        "title": "Availability at decision time",
+        "body": "<p>Inputs declare a decision timestamp and snapshot identity. <code>check_point_in_time</code> and <code>check_lookahead</code> inspect <code>available_at</code>, count future-visible rows and require a visibility gate. Missing availability timestamps invalidate this check.</p>"
+      },
+      {
+        "title": "A visibility gate has limits",
+        "body": "<p>This does not certify source provenance, vendor timing, historical revisions, survivorship, corporate actions, universe construction or economic validity. Factor diagnostics do not establish out-of-sample performance or investability.</p>"
+      },
+      {
+        "title": "Simulation semantics",
+        "body": "<p>Research marks and execution quotes are separate inputs. Order intents are plans; simulated fills are local records rather than broker fills. Costs, liquidity, capacity, recovery and real broker behavior need independent validation.</p>"
+      },
+      {
+        "title": "Release validation is bounded",
+        "body": "<p>The v0.1.0 notes retain an independent 29/30 P0 acceptance result. The full Ubuntu suite did not complete; a reused synthetic case matched selected outputs. These historical release statements are not current website validation or a claim that the remaining gate passed.</p>"
+      },
+      {
+        "title": "Bring appropriately licensed data",
+        "body": "<p>KabuForge grants no vendor-data access or redistribution rights. Validate external datasets and their history independently before interpreting any research result. The synthetic demo cannot measure investment performance.</p>"
+      }
+    ],
+    "sourcePath": "docs/en_US/RESEARCH_METHODOLOGY.md"
+  },
+  {
+    "slug": "docs/mcp",
+    "title": "MCP Integration Guide",
+    "description": "Start a workspace-bounded stdio KabuForge MCP server and understand default access and local paper opt-in.",
+    "sections": [
+      {
+        "title": "Start with a bounded workspace",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge mcp --workspace output/agent_workspace</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>Configure your MCP client to launch the installed <code>kabuforge</code> command with these arguments. The server implements JSON-RPC 2.0 initialization, ping, tools and resources over stdio.</p>"
+      },
+      {
+        "title": "Inspect before calling",
+        "body": "<p>Use <code>get_capabilities</code>, factor and strategy catalogs, run inspection and <code>kabuforge://</code> resources. Each call validates its exact schema and records a durable receipt. Paths stay inside the workspace; protected directories, secrets and the audit database are excluded.</p>"
+      },
+      {
+        "title": "Access tiers",
+        "body": "<table><thead><tr><th>Tier</th><th>Boundary</th></tr></thead><tbody><tr><td>R0</td><td>Read-only inspection; enabled by default.</td></tr><tr><td>R1</td><td>Local validation, analysis, planning, demo, backtest, comparison and cancellation; default access.</td></tr><tr><td>R2</td><td>Workspace drafts and local paper simulation; explicit opt-in required.</td></tr><tr><td>R3</td><td>Reserved external interfaces; disabled.</td></tr></tbody></table>"
+      },
+      {
+        "title": "Enable local paper only when needed",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge mcp --workspace output/agent_workspace --enable-paper</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>R2 calls require <code>agent_call_id</code> and <code>idempotency_key</code>. Do not retry an uncertain mutation under a new identity. This switch grants local simulation access only.</p>"
+      }
+    ],
+    "sourcePath": "docs/en_US/AGENT_API.md"
+  },
+  {
+    "slug": "examples",
+    "title": "Examples",
+    "description": "Explore fictional offline workflows and public factor and strategy extension examples.",
+    "sections": [
+      {
+        "title": "Offline synthetic demo",
+        "body": "<p>Check installation and local planning, then validate and run an explicit simulation timeline.</p><a class=\"button\" href=\"/examples/offline-demo/\">Run the offline demo</a>"
+      },
+      {
+        "title": "Factor and strategy extension",
+        "body": "<p>The public extension tutorial registers trusted factor and strategy code, validates a configuration graph and runs risk and planning with fictional data. It does not submit orders or simulate fills.</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python examples/extension_demo.py --out output/extension_demo</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/examples/extension_demo.py\">Read the complete public example</a>. Use a new output directory; omit <code>--out</code> for a temporary one.</p>"
+      },
+      {
+        "title": "Cache schema fixtures",
+        "body": "<p><code>examples/synthetic_data</code> contains fictional CSV shapes. These are schema examples, not realistic market samples or a validated strategy demonstration.</p>"
+      }
+    ],
+    "sourcePath": "examples/README.md"
+  },
+  {
+    "slug": "examples/offline-demo",
+    "title": "Offline Demo: From Inputs to Local Simulation",
+    "description": "Generate fictional inputs, validate configuration and inspect a timeline-based local KabuForge simulation.",
+    "sections": [
+      {
+        "title": "Create fresh fictional inputs",
+        "body": "<p>First complete the <a href=\"/docs/quickstart/\">quickstart</a>. Run from the source root with the same active environment and a new output directory.</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge demo --out output/demo\npython -m framework_v2.cli validate output/demo/paper.json\npython -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
+      },
+      {
+        "title": "Inspect evidence",
+        "body": "<p>The demo writes configurations and synthetic snapshots. Validation checks their schema and fields. History consumes an explicit timeline and produces reports and a local SQLite ledger under <code>output/history</code>. Review targets, risk results, order intents and simulated events together.</p>"
+      },
+      {
+        "title": "What this example proves",
+        "body": "<p>It exercises public factor wiring, configuration, declared PIT fields, order planning and deterministic local simulation. No real market data, broker connection or profitability claim is involved.</p>"
+      },
+      {
+        "title": "Keep runs separate",
+        "body": "<p>Do not use an existing real research directory as <code>--out</code>. Preserve generated inputs with their results. Compare only runs with matching source identity, inputs and environment.</p>"
+      }
+    ],
+    "sourcePath": "docs/DEMO.md"
+  },
+  {
+    "slug": "about",
+    "title": "About KabuForge",
+    "description": "An open-source, local-first Japanese equity research framework maintained on GitHub.",
+    "sections": [
+      {
+        "title": "Research you can inspect",
+        "body": "<p>KabuForge connects factor and strategy research to portfolio construction, risk controls, broker-neutral planning, historical backtesting and local paper simulation. The public project is maintained by Siyuan-chat on GitHub.</p>"
+      },
+      {
+        "title": "Contribute through the public project",
+        "body": "<p><a href=\"https://github.com/Siyuan-chat/KabuForge/issues\">Report issues</a> with the public version, environment and reproducible inputs. Read the <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/CONTRIBUTING.md\">contribution guide</a> and <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/SECURITY.md\">security policy</a>.</p>"
+      },
+      {
+        "title": "License and attribution",
+        "body": "<p>Current project-owned source, documentation and original assets use AGPL-3.0-only. Upstream MIT notices and third-party terms remain applicable. Historical releases retain their original MIT terms. Fonts and market data have separate terms.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/PROJECT_LICENSING.md\">Licensing scope</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/NOTICE\">Retained notices</a></p>"
+      }
+    ],
+    "sourcePath": "PROJECT_LICENSING.md"
+  },
+  {
+    "slug": "releases",
+    "title": "Versions and Releases",
+    "description": "Distinguish current KabuForge source from retained 0.1.0rc1 release artifacts and their licenses.",
+    "sections": [
+      {
+        "title": "Current reviewed source",
+        "body": "<p>Package version: <strong>0.1.0rc1</strong>. Python 3.12+. Current project-owned material: AGPL-3.0-only.</p><p>Reviewed commit: <code>c922d5439f6f018c140de14b6056f82b901dc434</code>. The quickstart pins this source identity.</p>"
+      },
+      {
+        "title": "Retained GitHub releases",
+        "body": "<p>The tag <code>v0.1.0</code> retains RC wheel and sdist artifacts, package version <code>0.1.0rc1</code>, and historical MIT terms. It is not a new AGPL package release. Its source commit is <code>e41fd6a672d9be99252604b41d4ca9744360d090</code>.</p><a class=\"button\" href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0\">View retained release and checksums</a>"
+      },
+      {
+        "title": "Before upgrading",
+        "body": "<p>Read the source changelog and release notes together. A future AGPL distribution requires a new version and release validation; this website does not rename existing artifacts or claim a stable 1.0 release.</p><p><a href=\"https://github.com/Siyuan-chat/KabuForge/releases\">All releases</a> · <a href=\"https://github.com/Siyuan-chat/KabuForge/blob/c922d5439f6f018c140de14b6056f82b901dc434/docs/en_US/CHANGELOG.md\">Source changelog</a></p>"
+      }
+    ],
+    "sourcePath": "pyproject.toml"
+  },
+  {
+    "slug": "ja/docs",
+    "title": "ドキュメント",
+    "description": "KabuForge の導入、デスクトップ、設計、MCP の公開ガイド。",
+    "sections": [
+      {
+        "title": "まずは合成データで試す",
+        "body": "<p>Python 3.12 以降で導入し、外部データに接続する前にローカル機能を確認します。</p><div class=\"cards\"><a href=\"/ja/docs/quickstart/\">クイックスタート</a><a href=\"/ja/docs/desktop/\">デスクトップ</a><a href=\"/ja/examples/offline-demo/\">オフラインデモ</a></div>"
+      },
+      {
+        "title": "設計と境界",
+        "body": "<p><a href=\"/ja/docs/architecture/\">アーキテクチャ</a>、<a href=\"/ja/docs/methodology/\">研究方法と制約</a>、<a href=\"/ja/docs/mcp/\">MCP 接続</a>を確認してください。注文計画やシミュレーションは実取引の証拠ではありません。</p>"
+      }
+    ],
+    "sourcePath": "docs/ja_JP/README.md"
+  },
+  {
+    "slug": "ja/docs/quickstart",
+    "title": "クイックスタート：オフラインデモ",
+    "description": "Python 3.12 以降で KabuForge を導入し、合成データのデモを実行します。",
+    "sections": [
+      {
+        "title": "環境を準備する",
+        "body": "<p>Python 3.12 以降と Git を用意し、新しい作業ディレクトリから開始します。以下は KabuForge のルートで実行します。仮想環境に導入し、レビュー対象の公開コミットを固定します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
+      },
+      {
+        "title": "結果を確認する",
+        "body": "<p><code>doctor</code> は 0.1.0rc1、ローカル機能、ペーパー操作の明示的な許可、外部注文の無効状態を表示します。デモは架空データを使い、API キーや証券口座は不要です。</p><p><code>output/demo</code> の <code>paper.json</code>、<code>backtest.json</code>、<code>timeline.json</code> を確認します。</p>"
+      },
+      {
+        "title": "失敗した場合",
+        "body": "<p>Python の版と仮想環境を確認します。コマンドが見つからない場合は、その環境の <code>python -m pip install .</code> を再実行します。新しい出力先を使い、エラーと入力を保存してください。</p><p>次は <a href=\"/ja/examples/offline-demo/\">時系列シミュレーション</a>または<a href=\"/ja/docs/desktop/\">デスクトップ</a>です。</p>"
+      }
+    ],
+    "sourcePath": "docs/ja_JP/README.md"
+  },
+  {
+    "slug": "ja/docs/desktop",
+    "title": "デスクトップガイド",
+    "description": "PySide6 の追加依存を導入し、Windows でワークベンチを起動します。",
+    "sections": [
+      {
+        "title": "追加依存と起動",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python -m pip install \".[gui]\"\n.\\Launch_KabuForge.bat</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>PySide6 6.8 以降が必要です。Windows では公開ソースのルートから起動します。ランチャーは PowerShell の起動スクリプトを呼び出します。</p>"
+      },
+      {
+        "title": "研究の流れ",
+        "body": "<p>ローカルデータとファクターを設定し、事前検査、バックテスト、出力と実行履歴を確認します。画面上の完了表示は証券会社での約定を意味しません。</p>"
+      },
+      {
+        "title": "公開録画の注意",
+        "body": "<p>9月30日の公開録画には過去の研究曲線とローカルパスが含まれます。現在の公開ファクターの運用成績ではないため、本サイトでは成果の証拠として使用しません。ネイティブ操作と外部 API は別途検証が必要です。</p>"
+      }
+    ],
+    "sourcePath": "Launch_KabuForge.bat"
+  },
+  {
+    "slug": "ja/docs/architecture",
+    "title": "アーキテクチャ",
+    "description": "ファクターからリスク制約と注文意図までの共通サービスを理解します。",
+    "sections": [
+      {
+        "title": "共通の意思決定サービス",
+        "body": "<div class=\"pipeline\"><span>Factor</span><span>Strategy</span><span>TargetPortfolio</span><span>Risk</span><span>Planner</span><span>OrderIntent</span></div><p>Python、CLI、GUI、MCP は共通の契約を使用します。ファクター結果から目標を作り、その後にリスクと執行制約を適用します。</p>"
+      },
+      {
+        "title": "登録済み実装を使う",
+        "body": "<p>ID、版、必須の検証関数を付けて信頼できるコードを登録します。未知・重複の ID は拒否され、設定から任意のコードを読み込みません。標準戦略は <code>composite_factor</code> 版 1 です。</p>"
+      },
+      {
+        "title": "計画と執行を分ける",
+        "body": "<p><code>ApplicationService</code> は不変の計画を返し、注文送信、帳簿書込み、証券会社への接続を行いません。時刻、スナップショット、研究価格と執行気配を明示します。実注文は無効です。</p>"
+      }
+    ],
+    "sourcePath": "docs/ja_JP/ARCHITECTURE.md"
+  },
+  {
+    "slug": "ja/docs/methodology",
+    "title": "研究方法と制約",
+    "description": "可用時刻の検査とローカルシミュレーションの検証範囲を説明します。",
+    "sections": [
+      {
+        "title": "意思決定時点の可用性",
+        "body": "<p>入力は意思決定時刻とスナップショット ID を宣言します。<code>available_at</code> を検査し、未来の行を数えて可視性ゲートを要求します。時刻の欠落はこの検査で無効です。</p>"
+      },
+      {
+        "title": "完全な PIT 認証ではない",
+        "body": "<p>出所、ベンダーの提供時刻、過去の改訂、生存者バイアス、企業行動、銘柄集合、経済的妥当性は認証しません。ファクター診断は期間外の成績や投資可能性を証明しません。</p>"
+      },
+      {
+        "title": "シミュレーションの意味",
+        "body": "<p>研究価格と執行気配を分離します。注文意図は計画であり、模擬約定は実際の約定ではありません。費用、流動性、容量、復旧、実証券接続は別の検証が必要です。</p>"
+      },
+      {
+        "title": "検証とデータの制約",
+        "body": "<p>旧 v0.1.0 の独立受入は P0 の29/30項目で、Ubuntu 全 suite は未完了です。合成ケースの一致は残る gate の完了を意味しません。市場データの利用・再配布権は別途必要です。</p>"
+      }
+    ],
+    "sourcePath": "docs/ja_JP/RESEARCH_METHODOLOGY.md"
+  },
+  {
+    "slug": "ja/docs/mcp",
+    "title": "MCP 接続ガイド",
+    "description": "ワークスペースを限定した stdio サーバーとペーパー操作の権限。",
+    "sections": [
+      {
+        "title": "ワークスペースを指定",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge mcp --workspace output/agent_workspace</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>MCP クライアントからこのコマンドを stdio で起動します。JSON-RPC 2.0 の初期化、ping、ツールとリソースに対応します。</p>"
+      },
+      {
+        "title": "権限の段階",
+        "body": "<p>R0 は読取り専用、R1 はローカル検証・分析・計画・デモ・バックテストなどで、既定で利用できます。R2 の下書きとペーパー操作は明示的な許可が必要です。R3 の外部操作は無効です。</p>"
+      },
+      {
+        "title": "ペーパー操作の条件",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge mcp --workspace output/agent_workspace --enable-paper</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>R2 には <code>agent_call_id</code> と <code>idempotency_key</code> が必要です。不確かな操作を新しい ID で再試行しないでください。各呼出しは厳密なスキーマとパスを検証し、永続的な記録を残します。</p>"
+      }
+    ],
+    "sourcePath": "docs/ja_JP/AGENT_API.md"
+  },
+  {
+    "slug": "ja/examples",
+    "title": "実行例",
+    "description": "架空データを用いたローカル研究と拡張の実行例。",
+    "sections": [
+      {
+        "title": "オフラインデモ",
+        "body": "<p>合成入力で導入と設定を確認し、明示的な時系列でローカルシミュレーションを実行します。</p><a class=\"button\" href=\"/ja/examples/offline-demo/\">デモを実行</a>"
+      },
+      {
+        "title": "ファクターと戦略を拡張",
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>python examples/extension_demo.py --out output/extension_demo</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>公開例は架空データを使って登録、設定検証、リスク、注文計画を実行します。約定や注文送信は行いません。新しい出力先を使い、<code>--out</code> を省略すると一時ディレクトリを使います。</p>"
+      },
+      {
+        "title": "CSV の形を理解する",
+        "body": "<p><code>synthetic_data</code> は架空のスキーマ例です。実市場のサンプルや検証済み戦略ではありません。</p>"
+      }
+    ],
+    "sourcePath": "examples/README.md"
+  },
+  {
+    "slug": "ja/examples/offline-demo",
+    "title": "オフラインデモ",
+    "description": "合成入力の作成、設定検証、時系列によるローカルシミュレーション。",
+    "sections": [
+      {
+        "title": "新しい出力先で実行",
+        "body": "<p><a href=\"/ja/docs/quickstart/\">導入ガイド</a>を完了し、同じ仮想環境とソースのルートで実行します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>kabuforge demo --out output/demo\npython -m framework_v2.cli validate output/demo/paper.json\npython -m framework_v2.cli history output/demo/backtest.json --timeline output/demo/timeline.json --out output/history</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
+      },
+      {
+        "title": "生成物を確認",
+        "body": "<p>設定と合成スナップショットが生成されます。validate はスキーマと項目を確認し、history は明示した時系列からレポートと SQLite 帳簿を作ります。目標、リスク、注文意図、模擬イベントを一緒に確認します。</p>"
+      },
+      {
+        "title": "検証の範囲",
+        "body": "<p>公開ファクターの接続、設定、PIT 項目、注文計画と決定的なローカル処理の例です。実データ、証券会社、収益評価は含みません。既存の研究ディレクトリを出力先にせず、入力と結果を保存してください。</p>"
+      }
+    ],
+    "sourcePath": "docs/DEMO.md"
+  },
+  {
+    "slug": "ja/about",
+    "title": "プロジェクトについて",
+    "description": "GitHub で開発されるオープンソースの日本株リサーチ基盤。",
+    "sections": [
+      {
+        "title": "検査できる研究基盤",
+        "body": "<p>KabuForge はファクター・戦略研究、ポートフォリオ、リスク、証券会社に依存しない注文計画、バックテストとローカルペーパー処理をつなぎます。GitHub の Siyuan-chat が公開プロジェクトを維持しています。</p>"
+      },
+      {
+        "title": "貢献と問い合わせ",
+        "body": "<p>公開版、環境、再現可能な入力を添えて GitHub Issues で報告してください。貢献ガイドとセキュリティ方針を確認してください。</p>"
+      },
+      {
+        "title": "ライセンス",
+        "body": "<p>現在のプロジェクト所有コード、文書、独自素材は AGPL-3.0-only です。上流 MIT の通知と第三者条件は保持します。過去の Release は MIT のままです。フォントと市場データには別の条件があります。</p>"
+      }
+    ],
+    "sourcePath": "PROJECT_LICENSING.md"
+  },
+  {
+    "slug": "ja/releases",
+    "title": "バージョンとリリース",
+    "description": "現在のソースと旧 RC 配布物、各ライセンスを確認します。",
+    "sections": [
+      {
+        "title": "レビュー対象のソース",
+        "body": "<p>パッケージ版は <strong>0.1.0rc1</strong>、Python 3.12 以降。現在のプロジェクト所有物は AGPL-3.0-only です。</p><p>対象コミット：<code>c922d5439f6f018c140de14b6056f82b901dc434</code></p>"
+      },
+      {
+        "title": "過去の配布物",
+        "body": "<p><code>v0.1.0</code> は RC の wheel と sdist（0.1.0rc1）、当時の MIT 条件を保持します。新しい AGPL パッケージ公開ではありません。ソースは <code>e41fd6a672d9be99252604b41d4ca9744360d090</code> です。</p><a href=\"https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0\">Release とチェックサム</a>"
+      },
+      {
+        "title": "更新の前に",
+        "body": "<p>変更履歴と Release ノートを確認します。今後の AGPL 配布には新しい版と検証が必要です。旧ファイルを安定版 1.0 と呼び替えません。</p>"
+      }
+    ],
+    "sourcePath": "pyproject.toml"
+  }
+]

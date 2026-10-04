@@ -1,0 +1,4 @@
+---
+import Layout from '../layouts/Layout.astro';import pages from '../data/pages.json';export function getStaticPaths(){return pages.map(p=>({params:{slug:p.slug},props:p}));}
+---
+<Layout {...Astro.props}/>
