@@ -9,7 +9,7 @@ locale: zh_CN
 <!-- section:contract -->
 ## 契约
 
-按下列入口阅读。包版本仍为 0.1.0rc1，已发布 v0.1.0 Release 保留 RC 附件。不提供真实交易或完整历史 PIT 认证。
+按下列入口阅读。包版本为 0.1.1，已发布 v0.1.0 Release 保留 RC 附件。不提供真实交易或完整历史 PIT 认证。
 
 
 <a id="quick-start"></a>

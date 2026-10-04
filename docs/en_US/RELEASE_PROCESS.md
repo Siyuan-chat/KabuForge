@@ -9,7 +9,7 @@ locale: en_US
 <!-- section:contract -->
 ## Contract
 
-The public RC is `0.1.0rc1`, package `kabuforge`, published as GitHub pre-release `v0.1.0-rc.1`. Its public factor and runtime sources remain pinned to the already-published baseline. The private local workspace is a separate distribution and is never an input to public factor packaging. Publish only after tests, independent wheel installation, source/wheel/sdist boundary audits and CI pass. No release authorizes trading.
+The public formal release is `0.1.1`, package `kabuforge`, published as GitHub release `v0.1.1`. Its public factor and runtime sources remain pinned to the already-published baseline. The private local workspace is a separate distribution and is never an input to public factor packaging. Publish only after tests, independent wheel installation, source/wheel/sdist boundary audits and CI pass. No release authorizes trading.
 
 <!-- section:evidence -->
 ## Evidence

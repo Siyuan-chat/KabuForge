@@ -24,7 +24,7 @@ assert BRAND_DIR.is_relative_to(site) and (BRAND_DIR/'tokens.css').is_file()
 with tempfile.TemporaryDirectory() as temporary:
     root=Path(temporary)
     result=subprocess.run([sys.executable,'-m','kabuforge','doctor'],cwd=root,capture_output=True,text=True,check=True)
-    assert json.loads(result.stdout)['distribution']=='PUBLIC_RC'
+    assert json.loads(result.stdout)['distribution']=='PUBLIC'
     app=QApplication.instance() or QApplication([])
     with patch('framework_v2.data_connection.load_api_key',return_value=None):window=ProductWorkbench(root/'gui')
     assert not window.windowIcon().isNull() and window.brand_logo.renderer().isValid()

@@ -51,7 +51,7 @@ def check_homepages(root):
         for language_path in HOMEPAGES:
             if f']({language_path})' not in text:
                 errors.append('language entry mismatch: '+path+' '+language_path)
-        for token in ('AGPL-3.0-only','CITATION.cff','PROJECT_LICENSING.md','available_at','UNKNOWN','0.1.0rc1'):
+        for token in ('AGPL-3.0-only','CITATION.cff','PROJECT_LICENSING.md','available_at','UNKNOWN','0.1.1'):
             if token not in text: errors.append('homepage identity mismatch: '+path+' '+token)
         if 'license-MIT-' in text: errors.append('current license badge mismatch: '+path)
     return errors

@@ -9,7 +9,7 @@ locale: en_US
 <!-- section:contract -->
 ## Contract
 
-Choose a route below. Package version is 0.1.0rc1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
+Choose a route below. Package version is 0.1.1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
 
 
 <a id="quick-start"></a>

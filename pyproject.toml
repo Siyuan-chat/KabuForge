@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kabuforge"
-version = "0.1.0rc2"
+version = "0.1.1"
 description = "Open-source, local-first quantitative research framework for Japanese equities."
 requires-python = ">=3.12"
 license = "AGPL-3.0-only"

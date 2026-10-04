@@ -22,6 +22,6 @@ class MCPStdioTests(unittest.TestCase):
             self.assertEqual(process.returncode,0,process.stderr)
             responses=[json.loads(line) for line in process.stdout.splitlines()]
             self.assertEqual(len(responses),4)
-            self.assertEqual(responses[0]['result']['serverInfo']['version'],'0.1.0rc2')
+            self.assertEqual(responses[0]['result']['serverInfo']['version'],'0.1.1')
             self.assertTrue(responses[2]['result']['isError'])
             self.assertIn('contents',responses[3]['result'])

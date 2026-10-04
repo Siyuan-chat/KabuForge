@@ -9,7 +9,7 @@ locale: ja_JP
 <!-- section:contract -->
 ## 契約
 
-公開 RC は `0.1.0rc1`、package `kabuforge`、GitHub pre-release tag `v0.1.0-rc.1` です。公開 factor/runtime ソースは既存公開 baseline に固定します。非公開のローカル workspace は別配布物であり、公開 factor packaging の入力にしません。test、独立 wheel install、source/wheel/sdist 境界 audit、CI が成功した後に公開します。release は取引を許可しません。
+公開正式版は `0.1.1`、package `kabuforge`、GitHub release tag `v0.1.1` です。公開 factor/runtime ソースは既存公開 baseline に固定します。非公開のローカル workspace は別配布物であり、公開 factor packaging の入力にしません。test、独立 wheel install、source/wheel/sdist 境界 audit、CI が成功した後に公開します。release は取引を許可しません。
 
 <!-- section:evidence -->
 ## 証拠

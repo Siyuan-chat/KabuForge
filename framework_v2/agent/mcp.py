@@ -23,7 +23,7 @@ class MCPAdapter:
             if request.get('jsonrpc') != '2.0' or not isinstance(method,str): return error(-32600,'Invalid request')
             params = request.get('params',{})
             if method == 'initialize':
-                result = {"protocolVersion":"2024-11-05","capabilities":{"tools":{},"resources":{}},"serverInfo":{"name":"kabuforge","version":"0.1.0rc2"}}
+                result = {"protocolVersion":"2024-11-05","capabilities":{"tools":{},"resources":{}},"serverInfo":{"name":"kabuforge","version":"0.1.1"}}
             elif method == 'ping': result = {}
             elif method == 'tools/list':
                 tools = []

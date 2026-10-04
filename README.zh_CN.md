@@ -15,11 +15,11 @@
 
 [Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-当前包版本为 **0.1.0rc1**。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
+当前包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
-[![Package RC](https://img.shields.io/badge/package-0.1.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0-rc.1)
+[![Package](https://img.shields.io/badge/package-0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
 ## KabuForge 是什么？
 
@@ -151,6 +151,6 @@ Research / Risk / Planning
 
 ## 许可证
 
-当前项目自有代码、文档与资产采用 **AGPL-3.0-only**。见 [LICENSE](LICENSE) 及[许可范围与保留通知](PROJECT_LICENSING.md)。历史 tag、wheel、源码包和校验和保持原许可；既有 `v0.1.0-rc.1` 与 `v0.1.0` Release 仍为 MIT。未来 AGPL 发行物须使用新版本。
+当前项目自有代码、文档与资产采用 **AGPL-3.0-only**。见 [LICENSE](LICENSE) 及[许可范围与保留通知](PROJECT_LICENSING.md)。历史 tag、wheel、源码包和校验和保持原许可；既有 `v0.1.0-rc.1` 与 `v0.1.0` Release 仍为 MIT。正式版 `v0.1.1` 采用 AGPL-3.0-only。
 
 本软件用于研究与模拟，不构成投资建议。见 [DISCLAIMER.md](DISCLAIMER.md) 与 [SECURITY.md](SECURITY.md)。

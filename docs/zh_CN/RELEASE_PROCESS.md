@@ -9,7 +9,7 @@ locale: zh_CN
 <!-- section:contract -->
 ## 合约
 
-公开 RC 版本为 `0.1.0rc1`，包名 `kabuforge`，GitHub 预发行标签为 `v0.1.0-rc.1`。公开因子及 runtime 源码固定于既有已公开基底；私有本地工作区是独立发行物，不作为公开因子打包输入。须通过测试、独立 wheel 安装、源码/wheel/sdist 边界审计和 CI 后发布。发行不授予交易权限。
+公开正式版为 `0.1.1`，包名 `kabuforge`，GitHub 正式发行标签为 `v0.1.1`。公开因子及 runtime 源码固定于既有已公开基底；私有本地工作区是独立发行物，不作为公开因子打包输入。须通过测试、独立 wheel 安装、源码/wheel/sdist 边界审计和 CI 后发布。发行不授予交易权限。
 
 <!-- section:evidence -->
 ## 证据

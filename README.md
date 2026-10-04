@@ -15,11 +15,11 @@ An open-source, local-first research framework for Japanese equities, with facto
 
 [Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-Current package version: **0.1.0rc1**. Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
+Current package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
-[![Package RC](https://img.shields.io/badge/package-0.1.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.0-rc.1)
+[![Package](https://img.shields.io/badge/package-0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
 ## What is KabuForge?
 
@@ -151,6 +151,6 @@ For research or technical writing, cite this repository using [CITATION.cff](CIT
 
 ## License
 
-Current project-owned code, documentation and assets are licensed under **AGPL-3.0-only**. See [LICENSE](LICENSE) and [licensing scope and retained notices](PROJECT_LICENSING.md). Historical tags, wheels, source archives and checksums retain their original licenses; the existing `v0.1.0-rc.1` and `v0.1.0` Releases remain MIT. New AGPL distributions require a future version.
+Current project-owned code, documentation and assets are licensed under **AGPL-3.0-only**. See [LICENSE](LICENSE) and [licensing scope and retained notices](PROJECT_LICENSING.md). Historical tags, wheels, source archives and checksums retain their original licenses; the existing `v0.1.0-rc.1` and `v0.1.0` Releases remain MIT. Release `v0.1.1` uses AGPL-3.0-only.
 
 Research and simulation software; not investment advice. See [DISCLAIMER.md](DISCLAIMER.md) and [SECURITY.md](SECURITY.md).
