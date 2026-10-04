@@ -13,9 +13,9 @@
 
 开源、本地优先的日本股票研究框架，涵盖因子与策略研究、历史回测、本地纸上模拟及 MCP agent 接口。
 
-[Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [当前稳定版 v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [全部发行](https://github.com/Siyuan-chat/KabuForge/releases)
 
-当前包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
+当前稳定包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。历史 GitHub `v0.1.0` Release 保留 RC 包附件及该版本当时采用的 MIT 许可。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -40,7 +40,11 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 | 本地纸上模拟 | 本地账户与日志模拟；模拟成交不等于券商成交 | [Docs](docs/zh_CN/EXECUTION.md) |
 | MCP agents | 默认 R0/R1 检查和本地研究；R2 paper 写入必须显式启用 | [Docs](docs/zh_CN/AGENT_API.md) |
 | 券商映射 / mocks | 契约与 mock 验证层；真实 transport 尚未验证 | [Docs](docs/zh_CN/BROKER_API.md) |
-| 真实券商下单 | 当前 RC 未启用；预留 R3 接口处于禁用状态 | [Docs](docs/zh_CN/AGENT_API.md) |
+| 真实券商下单 | 当前发行版未启用；预留 R3 接口处于禁用状态 | [Docs](docs/zh_CN/AGENT_API.md) |
+
+## 适合谁
+
+适合希望在本地检查和扩展日本股票因子、策略流程，并进行可复现回测与 paper 模拟的研究者和开发者。模拟成交不等于券商成交；项目不提供投资绩效或完整历史 PIT 认证。
 
 <a id="quick-start"></a>
 ## 快速开始
@@ -48,7 +52,7 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 Python 3.12+
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
@@ -56,6 +60,8 @@ kabuforge demo --out output/demo
 kabuforge factors
 kabuforge strategies
 ```
+
+此命令固定到当前稳定版。若使用开发分支，请省略 `--branch v0.1.1`；`main` 可能包含尚未发行的改动。
 
 demo 使用离线合成数据，无需市场数据、J-Quants 密钥或券商账户。如需桌面 GUI，将安装参数 `.` 改为 `.[gui]`；Windows 可启动 `Launch_KabuForge.bat`。
 
@@ -118,7 +124,7 @@ Python / GUI / CLI / MCP
 Research / Risk / Planning
 ```
 
-共享应用服务负责验证、决策与规划；这一边界不向券商下单，也不写执行账本。历史回测与本地纸上流程共享研究及决策语义，同时明确执行价格与模拟成交的差异。MCP 默认启用 R0/R1，R2 paper 写入须显式启用，当前 RC 的 R3 外部动作保持禁用。
+共享应用服务负责验证、决策与规划；这一边界不向券商下单，也不写执行账本。历史回测与本地纸上流程共享研究及决策语义，同时明确执行价格与模拟成交的差异。MCP 默认启用 R0/R1，R2 paper 写入须显式启用，当前发行版的 R3 外部动作保持禁用。
 
 [架构](docs/zh_CN/ARCHITECTURE.md) · [Agent 边界](docs/zh_CN/AGENT_API.md)
 
@@ -134,7 +140,7 @@ Research / Risk / Planning
 
 ## 文档与验证
 
-[Documentation](docs/zh_CN/README.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
+[Documentation](docs/zh_CN/README.md) · [发行流程](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
 
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>

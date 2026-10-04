@@ -13,9 +13,9 @@
 
 An open-source, local-first research framework for Japanese equities, with factor and strategy research, backtesting, local paper simulation, and MCP agent interfaces.
 
-[Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Current stable release: v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [All releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-Current package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
+Current stable package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The historical `v0.1.0` GitHub Release retains RC package artifacts and the MIT license that applied to that release.
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -40,7 +40,11 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 | Local paper | Local account/journal simulation; simulated fills are not broker fills | [Docs](docs/en_US/EXECUTION.md) |
 | MCP agents | R0/R1 inspection and local research by default; R2 paper writes require explicit opt-in | [Docs](docs/en_US/AGENT_API.md) |
 | Broker mappings / mocks | Contract and mock validation layer; real transport remains unverified | [Docs](docs/en_US/BROKER_API.md) |
-| Real broker orders | Not enabled in this RC; reserved R3 interfaces are disabled | [Docs](docs/en_US/AGENT_API.md) |
+| Real broker orders | Not enabled in the current release; reserved R3 interfaces are disabled | [Docs](docs/en_US/AGENT_API.md) |
+
+## Who it is for
+
+KabuForge is for researchers and developers who want to inspect and extend Japanese-equity factor and strategy workflows locally, including reproducible backtests and paper simulations. Simulated fills are not broker fills; the project does not provide investment performance certification or complete historical PIT certification.
 
 <a id="quick-start"></a>
 ## Quick start
@@ -48,7 +52,7 @@ Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 Python 3.12+
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
@@ -56,6 +60,8 @@ kabuforge demo --out output/demo
 kabuforge factors
 kabuforge strategies
 ```
+
+This pins the current stable release. To use the moving development branch, omit `--branch v0.1.1`; `main` can contain unreleased changes.
 
 The demo is synthetic and offline: no market data, J-Quants key or broker account is needed. Install `.[gui]` instead of `.` for the optional desktop GUI; on Windows launch `Launch_KabuForge.bat`.
 
@@ -118,7 +124,7 @@ Python / GUI / CLI / MCP
 Research / Risk / Planning
 ```
 
-Shared application services validate, decide and plan; this boundary does not submit broker orders or write an execution ledger. Historical and local paper workflows share research and decision semantics while their execution prices and simulated fills remain explicit. R0/R1 MCP tools are enabled by default, R2 paper writes require opt-in, and R3 external actions remain disabled in this RC.
+Shared application services validate, decide and plan; this boundary does not submit broker orders or write an execution ledger. Historical and local paper workflows share research and decision semantics while their execution prices and simulated fills remain explicit. R0/R1 MCP tools are enabled by default, R2 paper writes require opt-in, and R3 external actions remain disabled in the current release.
 
 [Architecture](docs/en_US/ARCHITECTURE.md) · [Agent boundaries](docs/en_US/AGENT_API.md)
 
@@ -134,7 +140,7 @@ Shared application services validate, decide and plan; this boundary does not su
 
 ## Documentation and validation
 
-[Documentation](docs/en_US/README.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
+[Documentation](docs/en_US/README.md) · [Release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
 
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>
