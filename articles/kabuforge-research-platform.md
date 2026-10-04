@@ -2,7 +2,7 @@
 title: "日本株バックテストツールを研究基盤へ — KabuForge と公式サイトの紹介"
 emoji: "🔬"
 type: "tech"
-topics: ["python", "mcp", "個人開発", "バックテスト"]
+topics: ["python", "mcp", "バックテスト", "クオンツ", "jquants"]
 published: true
 ---
 
