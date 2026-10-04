@@ -6,14 +6,13 @@ locale: en_US
 
 # Changelog
 
-## Unreleased: current-source license and GitHub navigation
+## 0.1.0-rc.2 candidate: current-source license and GitHub navigation
 
 Project-owned material adopts AGPL-3.0-only at commit `3bdbb7e1b68de53fcb243abb92cd851801dcb7be`.
 The original MIT notice and external contribution provenance are retained in
 NOTICE / PROJECT_LICENSING.md. Existing v0.1.0-rc.1 and v0.1.0 releases, tags,
-wheel/sdist attachments and checksums remain MIT and unchanged. Package version
-is still 0.1.0rc1; local builds are validation-only, and a future AGPL release
-requires a new version. Runtime dependencies and APIs are unchanged.
+wheel/sdist attachments and checksums remain MIT and unchanged. Package version is 0.1.0rc2; this AGPL candidate is prepared for prerelease.
+It sorts below the existing 0.1.0 final release. Runtime dependencies and APIs are unchanged.
 
 The current-source update adds three-language capability evidence, research
 boundaries, citation, navigation, community forms and stricter document checks.

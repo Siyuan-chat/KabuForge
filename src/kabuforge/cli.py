@@ -24,7 +24,7 @@ def _main(argv=None):
     args = parser.parse_args(argv)
     from framework_v2.cli import main as legacy
     if args.command=='doctor':
-        print(json.dumps({'version':'0.1.0rc1','application_services':True,'mcp_stdio':True,'paper_requires_opt_in':True,'external_actions_enabled':False,'reserved_external_hooks':['request_order_approval','submit_order','cancel_order'],'distribution':'PUBLIC_RC','strategy_readiness':'NOT_EVALUATED'}))
+        print(json.dumps({'version':'0.1.0rc2','application_services':True,'mcp_stdio':True,'paper_requires_opt_in':True,'external_actions_enabled':False,'reserved_external_hooks':['request_order_approval','submit_order','cancel_order'],'distribution':'PUBLIC_RC','strategy_readiness':'NOT_EVALUATED'}))
         return
     if args.command=='factors':
         from framework_v2.application import ApplicationService
