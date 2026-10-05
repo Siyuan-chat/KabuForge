@@ -10,6 +10,8 @@ import sys
 import tomllib
 from pathlib import Path
 
+import check_geo
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL = "https://kabuforge.com/"
@@ -42,22 +44,54 @@ def assert_current_version(text: str, version: str, label: str) -> str:
     return found[0]
 
 
-def current_readme_facts(text: str, language: str, version: str, license_id: str) -> str:
+def validate_package_version(package_version: str, facts: dict) -> str:
+    require(package_version == facts.get("source_branch_package_version"),
+            "pyproject.toml version differs from source_branch_package_version in GEO facts")
+    require(bool(re.fullmatch(r"\d+\.\d+\.\d+(?:[a-zA-Z0-9.+!-]+)?", package_version)),
+            f"invalid source package version: {package_version!r}")
+    return package_version
+
+
+def validate_source_release_inputs(package_version: str, facts: dict,
+                                   changelogs: dict[str, list[str]]) -> dict[str, str]:
+    validate_package_version(package_version, facts)
+    version = str(facts["current_release"]["version"])
+    validated: dict[str, str] = {}
+    for label, headings in changelogs.items():
+        stable_heading = next((heading for heading in headings if version in versions(heading)), None)
+        require(stable_heading is not None,
+                f"changelog {label} has no current stable release heading {version}")
+        validated[label] = assert_current_version(stable_heading or "", version, f"stable changelog heading {label}")
+    return validated
+
+
+def validate_release_page(current_section: object, version: str, tag: str, license_id: str,
+                          repository: str, label: str) -> str:
+    current_text = json.dumps(current_section, ensure_ascii=False)
+    detected = assert_current_version(current_text, version, label)
+    require(license_id in current_text, f"{label} current release section lacks project license")
+    require(f"{repository}/releases/tag/{tag}" in current_text,
+            f"{label} current release section lacks stable release URL")
+    return detected
+
+
+def current_readme_facts(text: str, language: str, version: str, license_id: str,
+                         repository: str = REPOSITORY) -> str:
     markers = {
-        "en": "Latest stable release:",
-        "ja": "最新安定版は",
-        "zh": "最新稳定版为",
+        "en": "Current stable package version:",
+        "ja": "現在の安定パッケージ版は",
+        "zh": "当前稳定包版本为",
     }
     marker = markers[language]
     current_line = next((line for line in text.splitlines() if marker in line), None)
     require(current_line is not None, f"README {language} current stable release line missing")
     found = versions(current_line)
-    require(len(found) >= 2, f"README {language} stable line must state tag and package version")
-    require(found[0] == version and found[1] == version,
-            f"README {language} current tag/package disagree with pyproject {version}: {found[:2]}")
+    require(bool(found), f"README {language} current stable line has no stable version")
+    require(found[0] == version,
+            f"README {language} current release is {found[0]}; expected {version}")
     require(license_id in text, f"README {language} does not state current license {license_id}")
     require(CANONICAL in text, f"README {language} lacks canonical homepage")
-    require(f"{REPOSITORY}/releases/tag/v{version}" in text, f"README {language} lacks current stable release link")
+    require(f"{repository}/releases/tag/v{version}" in text, f"README {language} lacks current stable release link")
     require("ArcaViso" in text and "https://arcaviso.com/" in text,
             f"README {language} lacks the bounded ArcaViso research-context link")
 
@@ -78,7 +112,7 @@ def current_readme_facts(text: str, language: str, version: str, license_id: str
     return found[0]
 
 
-def check_release_snapshot(path: Path, version: str, tag: str) -> str:
+def check_release_snapshot(path: Path, version: str, tag: str, repository: str = REPOSITORY) -> str:
     try:
         release = json.loads(read(path))
     except json.JSONDecodeError as error:
@@ -89,7 +123,7 @@ def check_release_snapshot(path: Path, version: str, tag: str) -> str:
     require(release.get("draft") is not True, "GitHub latest release is a draft")
     name = str(release.get("name") or "")
     require(version in name or tag in name, f"GitHub latest release name does not identify {tag}: {name!r}")
-    require(release.get("html_url") == f"{REPOSITORY}/releases/tag/{tag}",
+    require(release.get("html_url") == f"{repository}/releases/tag/{tag}",
             "GitHub release URL does not match canonical repository and tag")
     return tag
 
@@ -101,31 +135,44 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
+        facts = json.loads(read(ROOT / "docs/geo-facts.json"))
+        current = facts["current_release"]
+        version = str(current["version"])
+        tag = str(current["tag"])
+        canonical = str(facts["website"])
+        repository = str(facts["repository"])
+        documentation_url = str(facts["documentation"])
+        license_id = str(facts["current_license"])
+        require(tag == f"v{version}", "GEO facts current release tag/version mismatch")
+        require(re.search(r"\d+\.\d+\.\d+", version) is not None, "GEO facts current release version is invalid")
+        source_errors = check_geo.check(ROOT)
+        require(not source_errors, f"source GEO checker failed: {source_errors}")
+
         project_file = ROOT / "pyproject.toml"
         pyproject = tomllib.loads(read(project_file))
         project = pyproject.get("project", {})
         project_urls = project.get("urls", {})
         project_name = str(project.get("name", ""))
-        version = str(project.get("version", ""))
-        license_id = str(project.get("license", ""))
-        tag = f"v{version}"
+        package_version = str(project.get("version", ""))
         require(project_name == "kabuforge", f"unexpected project name in pyproject.toml: {project_name!r}")
-        require(bool(re.fullmatch(r"\d+\.\d+\.\d+", version)), f"project version is not a stable semantic version: {version!r}")
         require(bool(license_id), "pyproject.toml must declare a project license")
-        require(project_urls.get("Homepage") == CANONICAL, "pyproject.toml Homepage must be canonical KabuForge website")
-        require(project_urls.get("Documentation") == f"{CANONICAL}docs/", "pyproject.toml Documentation URL is stale")
-        require(project_urls.get("Repository") == REPOSITORY, "pyproject.toml Repository URL is stale")
+        require(project.get("license") == license_id, "pyproject.toml license differs from GEO facts")
+        require(project_urls.get("Homepage") == canonical, "pyproject.toml Homepage differs from GEO facts")
+        require(project_urls.get("Documentation") == documentation_url, "pyproject.toml Documentation differs from GEO facts")
+        require(project_urls.get("Repository") == repository, "pyproject.toml Repository differs from GEO facts")
 
-        detected: dict[str, str | None] = {"pyproject": version}
+        detected: dict[str, str | None] = {"sourceBranchPackage": package_version, "stableRelease": version}
         changelogs = [
             ("changelog.en", ROOT / "docs/en_US/CHANGELOG.md"),
             ("changelog.ja", ROOT / "docs/ja_JP/CHANGELOG.md"),
             ("changelog.zh", ROOT / "docs/zh_CN/CHANGELOG.md"),
         ]
+        changelog_headings = {}
         for key, path in changelogs:
             headings = re.findall(r"^##\s+([^\n]+)", read(path), re.MULTILINE)
             require(bool(headings), f"changelog has no release heading: {path}")
-            detected[key] = assert_current_version(headings[0], version, f"latest changelog heading in {path.name}")
+            changelog_headings[key] = headings
+        detected.update(validate_source_release_inputs(package_version, facts, changelog_headings))
 
         readmes = [
             ("readme.en", ROOT / "README.md", "en"),
@@ -136,12 +183,12 @@ def main() -> int:
         for key, path, language in readmes:
             text = read(path)
             readme_texts[key] = text
-            detected[key] = current_readme_facts(text, language, version, license_id)
+            detected[key] = current_readme_facts(text, language, version, license_id, repository)
 
         citation_text = read(ROOT / "CITATION.cff")
-        require(re.search(rf"^url:\s*{re.escape(CANONICAL)}\s*$", citation_text, re.MULTILINE) is not None,
+        require(re.search(rf"^url:\s*{re.escape(canonical)}\s*$", citation_text, re.MULTILINE) is not None,
                 "CITATION.cff url must be the canonical website")
-        require(re.search(rf"^repository-code:\s*{re.escape(REPOSITORY)}\s*$", citation_text, re.MULTILINE) is not None,
+        require(re.search(rf"^repository-code:\s*{re.escape(repository)}\s*$", citation_text, re.MULTILINE) is not None,
                 "CITATION.cff repository-code must be the source repository")
         require(re.search(rf"^license:\s*{re.escape(license_id)}\s*$", citation_text, re.MULTILINE) is not None,
                 "CITATION.cff license differs from pyproject.toml")
@@ -157,7 +204,7 @@ def main() -> int:
             "homepage.en": read(website / "src/pages/index.astro"),
             "homepage.ja": read(website / "src/pages/ja/index.astro"),
         }
-        require(CANONICAL in layout and REPOSITORY in layout, "website layout canonical/repository identity mismatch")
+        require(canonical in layout and repository in layout, "website layout canonical/repository identity mismatch")
         schema_version = re.search(r"version:'([^']+)'", layout)
         require(schema_version is not None, "website SoftwareSourceCode schema has no version")
         detected["schema"] = schema_version.group(1)
@@ -185,10 +232,7 @@ def main() -> int:
                 "website localized docs, quickstarts, or release pages are missing")
         for key, release_page in (("releases.en", releases), ("releases.ja", ja_releases)):
             current_section = release_page.get("sections", [{}])[0]
-            current_text = json.dumps(current_section, ensure_ascii=False)
-            detected[key] = assert_current_version(current_text, version, key)
-            require(license_id in current_text, f"{key} current release section lacks project license")
-            require(f"{REPOSITORY}/releases/tag/{tag}" in current_text, f"{key} current release section lacks stable release URL")
+            detected[key] = validate_release_page(current_section, version, tag, license_id, repository, key)
         for key, doc, quickstart in zip(("docs.en", "docs.ja"), docs, quickstarts, strict=True):
             doc_text = json.dumps(doc, ensure_ascii=False)
             detected[key] = assert_current_version(doc_text, version, key)
@@ -199,10 +243,10 @@ def main() -> int:
 
         detected["llms"] = assert_current_version(llms, version, "llms.txt")
         require(license_id in llms, "llms.txt current project license is stale")
-        require(f"{REPOSITORY}/releases/tag/{tag}" in llms, "llms.txt lacks current stable release URL")
+        require(f"{repository}/releases/tag/{tag}" in llms, "llms.txt lacks current stable release URL")
 
         if args.release_json:
-            detected["releaseSnapshot"] = check_release_snapshot(args.release_json, version, tag)
+            detected["releaseSnapshot"] = check_release_snapshot(args.release_json, version, tag, repository)
         else:
             detected["releaseSnapshot"] = None
         print(json.dumps({"passed": True, "project": project_name, "version": version, "tag": tag,

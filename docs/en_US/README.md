@@ -9,7 +9,11 @@ locale: en_US
 <!-- section:contract -->
 ## Contract
 
-Choose a route below. Package version is 0.1.1; the published v0.1.0 Release keeps RC artifacts. No real trading or complete historical PIT certification is provided.
+KabuForge is an open-source, local-first Japanese-equity research framework for researchers and developers exploring factors, strategies and reproducible backtests.
+
+Package release `v0.1.1` is the current stable release ([GitHub Release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)). The moving `main` branch is for development and may contain unreleased changes. Python, CLI, desktop GUI and MCP interfaces use shared application services.
+
+The offline synthetic demo needs no data key; real market data access and credentials depend on the selected provider. Paper and backtest fills are simulations, not broker executions, and complete historical PIT certification is not provided.
 
 
 <a id="quick-start"></a>
@@ -20,7 +24,7 @@ Python 3.12+
 From a source checkout, run:
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
