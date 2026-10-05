@@ -15,7 +15,7 @@ An open-source, local-first research framework for Japanese equities, with facto
 
 [Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Current stable release: v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [All releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-Current stable package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The historical `v0.1.0` GitHub Release retains RC package artifacts and the MIT license that applied to that release.
+Current stable package version: **0.1.1**. Published 2026-10-04. Research and local simulation only; real broker order submission is disabled. The historical `v0.1.0` GitHub Release retains RC package artifacts and the MIT license that applied to that release.
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -24,6 +24,8 @@ Current stable package version: **0.1.1**. Research and local simulation only; r
 ## What is KabuForge?
 
 KabuForge connects factor and strategy research with portfolio construction, risk controls, broker-neutral order planning, historical backtesting, and local paper simulation. Shared application services are accessible through Python, CLI, desktop GUI, and MCP-compatible agents.
+
+Research notes and project context: [ArcaViso](https://arcaviso.com/).
 
 ```text
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent

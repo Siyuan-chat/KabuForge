@@ -15,7 +15,7 @@
 
 [Quick Start](#quick-start) · [Documentation](docs/ja_JP/README.md) · [Architecture](docs/ja_JP/ARCHITECTURE.md) · [現在の安定版 v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [全リリース](https://github.com/Siyuan-chat/KabuForge/releases)
 
-現在の安定パッケージ版は **0.1.1** です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。過去の GitHub `v0.1.0` Release は RC パッケージと当時の MIT ライセンスを維持しています。
+現在の安定パッケージ版は **0.1.1** です。公開日は 2026-10-04 です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。過去の GitHub `v0.1.0` Release は RC パッケージと当時の MIT ライセンスを維持しています。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -28,6 +28,8 @@
 ```text
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 ```
+
+研究ノートとプロジェクトの背景：[ArcaViso](https://arcaviso.com/)。
 
 ## 現在の機能
 

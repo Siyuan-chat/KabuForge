@@ -15,7 +15,7 @@
 
 [Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [当前稳定版 v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [全部发行](https://github.com/Siyuan-chat/KabuForge/releases)
 
-当前稳定包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。历史 GitHub `v0.1.0` Release 保留 RC 包附件及该版本当时采用的 MIT 许可。
+当前稳定包版本为 **0.1.1**。发布于 2026-10-04。仅用于研究与本地模拟，真实券商下单未启用。历史 GitHub `v0.1.0` Release 保留 RC 包附件及该版本当时采用的 MIT 许可。
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
@@ -28,6 +28,8 @@ KabuForge 将因子与策略研究连接到组合构建、风险控制、券商�
 ```text
 Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
 ```
+
+研究笔记和项目背景：[ArcaViso](https://arcaviso.com/)。
 
 ## 当前能力
 
