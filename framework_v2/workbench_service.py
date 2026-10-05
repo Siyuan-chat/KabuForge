@@ -4,7 +4,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import platform
 import sqlite3
+import sysconfig
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -20,6 +22,52 @@ def _digest(value: Any) -> str:
                               separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 
+FACTOR_CACHE_SELECTION_SCHEMA = "kabuforge.factor-cache-selection.v1"
+
+
+def normalize_factor_cache_selection(selection: dict[str, Any] | None, *,
+                                     mode: str, target_action: str | None,
+                                     has_factor_strategy: bool = True) -> dict[str, Any]:
+    """Resolve the single supported opt-in cache path inside the chosen workspace."""
+    if selection is None:
+        selection = {"schema": FACTOR_CACHE_SELECTION_SCHEMA, "enabled": False,
+                     "workspace_path": None}
+    if not isinstance(selection, dict) or set(selection) != {"schema", "enabled", "workspace_path"}:
+        raise ConfigError("invalid factor cache selection fields")
+    if selection.get("schema") != FACTOR_CACHE_SELECTION_SCHEMA:
+        raise ConfigError("unknown factor cache selection schema")
+    enabled = selection.get("enabled")
+    if type(enabled) is not bool:
+        raise ConfigError("factor cache enabled must be boolean")
+    workspace_value = selection.get("workspace_path")
+    if workspace_value is None and not enabled:
+        return {"schema": FACTOR_CACHE_SELECTION_SCHEMA, "enabled": False,
+                "workspace_path": None, "relative_path": None, "cache_path": None}
+    if not isinstance(workspace_value, str) or not workspace_value.strip():
+        raise ConfigError("explicit factor cache workspace identity is required")
+    workspace_input = Path(workspace_value)
+    if not workspace_input.is_absolute():
+        raise ConfigError("factor cache workspace identity must be absolute")
+    workspace = workspace_input.resolve(strict=True)
+    if not workspace.is_dir():
+        raise ConfigError("factor cache workspace must be a directory")
+    if enabled:
+        if mode != "backtest" or target_action != "history" or not has_factor_strategy:
+            raise ConfigError("factor cache is available only for backtest history with registered factors")
+        relative = Path("cache") / "history-factors.sqlite"
+        lexical_cache_path = workspace / relative
+        cache_path = lexical_cache_path.resolve()
+        if cache_path != lexical_cache_path or not cache_path.is_relative_to(workspace):
+            raise ConfigError("factor cache path escapes the selected workspace")
+    else:
+        relative = None
+        cache_path = None
+    return {"schema": FACTOR_CACHE_SELECTION_SCHEMA, "enabled": enabled,
+            "workspace_path": str(workspace),
+            "relative_path": relative.as_posix() if relative is not None else None,
+            "cache_path": str(cache_path) if cache_path is not None else None}
+
+
 class WorkbenchService:
     """Local inspection facade; only snapshot_run writes, under caller's new directory."""
 
@@ -32,6 +80,30 @@ class WorkbenchService:
         except Exception as exc:
             return {"compatible": False, "issues": [{"field": "$", "message": str(exc)}],
                     "kind": None, "conversion_required": True}
+
+    def preflight_price_research(self, market_manifest: str | Path, recipe: dict[str, Any],
+                                 regime_observer: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Validate explicit local price-research inputs without downloads or private bridges."""
+        try:
+            from .research_runtime import resolve_research_runtime
+            template = recipe.get("signal_template", "price_momentum") if isinstance(recipe, dict) else None
+            provider = recipe.get("signal_provider", "native") if isinstance(recipe, dict) else "native"
+            if template == "sma_crossover" and provider == "talib":
+                runtime = resolve_research_runtime(Path(__file__).resolve().parents[1],
+                    platform.python_version(), sysconfig.get_platform(), operation="indicators",
+                    choices={"provider": "talib"})
+            else:
+                runtime = resolve_research_runtime(Path(__file__).resolve().parents[1],
+                    platform.python_version(), sysconfig.get_platform(), operation="native")
+            if not runtime.get("enabled"):
+                raise ConfigError("selected price-research dependencies are unavailable: " +
+                                  str(runtime.get("reason") or "runtime unavailable"))
+            from .price_research import preflight_price_research
+            detail = preflight_price_research(market_manifest, recipe, regime_observer)
+            return {"ok": True, "issues": [], **detail}
+        except Exception as exc:
+            return {"ok": False, "issues": [{"field": "price_research", "message": str(exc)}],
+                    "fingerprint": None, "regime_observer": {"mode": "off"}}
 
     def catalog(self, directory: str | Path) -> list[dict[str, str]]:
         root = Path(directory).resolve()
@@ -52,18 +124,27 @@ class WorkbenchService:
     def preflight(self, run_path: str | Path, mode: str = "backtest", *,
                   timeline_path: str | Path | None = None,
                   execution_path: str | Path | None = None,
-                  decision_at: str | None = None) -> dict[str, Any]:
+                  decision_at: str | None = None,
+                  target_action: str | None = None,
+                  factor_cache: dict[str, Any] | None = None) -> dict[str, Any]:
         issues: list[dict[str, str]] = []
         result: dict[str, Any] = {"ok": False, "issues": issues, "strategy_hash": None,
                                   "fingerprint": None, "datasets": {}, "config_hashes": {},
                                   "file_hashes": {}, "mode": mode, "strategy_id": None,
-                                  "strategy_version": None, "account_id": None, "cutoff": None}
+                                  "strategy_version": None, "account_id": None, "cutoff": None,
+                                  "factor_cache": {"enabled": False, "cache_path": None,
+                                                    "relative_path": None}}
         if mode not in {"backtest", "paper", "fake", "broker"}:
             issues.append({"field": "mode", "message": "unknown mode"})
         if mode == "broker":
             issues.append({"field": "mode", "message": "broker execution is unavailable in the workbench"})
         try:
             resolved = ApplicationService().validate(run_path)
+            cache_selection = normalize_factor_cache_selection(
+                factor_cache, mode=mode, target_action=target_action,
+                has_factor_strategy=bool(resolved.strategy.get("factors")))
+            result["factor_cache"] = {key: cache_selection[key] for key in
+                ("enabled", "cache_path", "relative_path", "workspace_path")}
             hashes = dict(resolved.file_hashes)
             run = Path(run_path).resolve()
             result["strategy_hash"] = resolved.strategy_hash
@@ -142,6 +223,9 @@ class WorkbenchService:
                             raise ConfigError("unsupported or empty execution timeline")
             identity = {"file_hashes": hashes, "strategy_hash": resolved.strategy_hash,
                         "mode": mode, "decision_at": decision_at}
+            if cache_selection["enabled"]:
+                identity["factor_cache"] = result["factor_cache"]
+                identity["target_action"] = target_action
             result["fingerprint"] = _digest(identity)
             if mode != resolved.run["mode"]:
                 # Mode override is explicit and never changes strategy identity.

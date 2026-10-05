@@ -118,6 +118,32 @@
       }
     },
     {
+      "id": "gui_research_courses",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/GUI_RESEARCH_COURSES.md",
+        "zh_CN": "docs/zh_CN/GUI_RESEARCH_COURSES.md",
+        "ja_JP": "docs/ja_JP/GUI_RESEARCH_COURSES.md"
+      }
+    },
+    {
+      "id": "integrations",
+      "version": 1,
+      "sections": [
+        "contract",
+        "evidence"
+      ],
+      "locales": {
+        "en_US": "docs/en_US/INTEGRATIONS.md",
+        "zh_CN": "docs/zh_CN/INTEGRATIONS.md",
+        "ja_JP": "docs/ja_JP/INTEGRATIONS.md"
+      }
+    },
+    {
       "id": "security",
       "version": 1,
       "sections": [

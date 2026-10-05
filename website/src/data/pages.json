@@ -26,7 +26,7 @@
       },
       {
         "title": "Install and inspect",
-        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>This guide pins the reviewed public source commit. <code>doctor</code> reports version 0.1.0rc1, local capabilities, paper opt-in and disabled external actions. The demo needs no market-data key or broker account.</p>"
+        "body": "<div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div><p>This quickstart installs the source currently checked out. <code>doctor</code> reports package version <strong><!-- KABUFORGE:VERSION:QUICKSTART_EN:START -->0.2.0rc1<!-- KABUFORGE:VERSION:QUICKSTART_EN:END --></strong>, local capabilities, paper opt-in and disabled external actions. This candidate metadata is not proof of publication. The demo needs no market-data key or broker account.</p>"
       },
       {
         "title": "Read the outputs",
@@ -209,8 +209,8 @@
     "description": "Distinguish current KabuForge source from retained 0.1.0rc1 release artifacts and their licenses.",
     "sections": [
       {
-        "title": "Current reviewed source",
-        "body": "<p>Package version: <strong>0.1.0rc1</strong>. Python 3.12+. Current project-owned material: AGPL-3.0-only.</p><p>Reviewed commit: <code>c922d5439f6f018c140de14b6056f82b901dc434</code>. The quickstart pins this source identity.</p>"
+        "title": "Current candidate source",
+        "body": "<p>Package version: <strong><!-- KABUFORGE:VERSION:RELEASES_EN:START -->0.2.0rc1<!-- KABUFORGE:VERSION:RELEASES_EN:END --></strong>. Python 3.12+. This is candidate metadata, not proof of a published release. Current project-owned material: AGPL-3.0-only.</p><p>The earlier reviewed commit <code>c922d5439f6f018c140de14b6056f82b901dc434</code> belongs to the historical 0.1.0rc1 walkthrough; it is not the source identity for this candidate.</p>"
       },
       {
         "title": "Retained GitHub releases",
@@ -246,11 +246,11 @@
     "sections": [
       {
         "title": "環境を準備する",
-        "body": "<p>Python 3.12 以降と Git を用意し、新しい作業ディレクトリから開始します。以下は KabuForge のルートで実行します。仮想環境に導入し、レビュー対象の公開コミットを固定します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\ngit checkout c922d5439f6f018c140de14b6056f82b901dc434\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
+        "body": "<p>Python 3.12 以降と Git を用意し、新しい作業ディレクトリから開始します。以下は KabuForge のルートで実行します。仮想環境に導入し、レビュー対象の公開コミットを固定します。</p><div class=\"code\"><button type=\"button\" class=\"copy\">Copy</button><pre><code>git clone https://github.com/Siyuan-chat/KabuForge.git\ncd KabuForge\npython -m venv .venv\n# Windows PowerShell\n.venv\\Scripts\\Activate.ps1\n# macOS / Linux: source .venv/bin/activate\npython -m pip install .\nkabuforge doctor\nkabuforge demo --out output/demo\nkabuforge factors\nkabuforge strategies</code></pre><span class=\"copy-status\" role=\"status\"></span></div>"
       },
       {
         "title": "結果を確認する",
-        "body": "<p><code>doctor</code> は 0.1.0rc1、ローカル機能、ペーパー操作の明示的な許可、外部注文の無効状態を表示します。デモは架空データを使い、API キーや証券口座は不要です。</p><p><code>output/demo</code> の <code>paper.json</code>、<code>backtest.json</code>、<code>timeline.json</code> を確認します。</p>"
+        "body": "<p>このクイックスタートは現在 checkout しているソースを導入します。<code>doctor</code> は版 <strong><!-- KABUFORGE:VERSION:QUICKSTART_JA:START -->0.2.0rc1<!-- KABUFORGE:VERSION:QUICKSTART_JA:END --></strong>、ローカル機能、paper 操作の明示許可、外部注文の無効状態を表示します。この候補メタデータは公開済みの証明ではありません。デモは架空入力を使い、API キーや証券口座は不要です。</p><p><code>output/demo</code> の <code>paper.json</code>、<code>backtest.json</code>、<code>timeline.json</code> を確認します。</p>"
       },
       {
         "title": "失敗した場合",
@@ -409,8 +409,8 @@
     "description": "現在のソースと旧 RC 配布物、各ライセンスを確認します。",
     "sections": [
       {
-        "title": "レビュー対象のソース",
-        "body": "<p>パッケージ版は <strong>0.1.0rc1</strong>、Python 3.12 以降。現在のプロジェクト所有物は AGPL-3.0-only です。</p><p>対象コミット：<code>c922d5439f6f018c140de14b6056f82b901dc434</code></p>"
+        "title": "現在の候補ソース",
+        "body": "<p>パッケージ版: <strong><!-- KABUFORGE:VERSION:RELEASES_JA:START -->0.2.0rc1<!-- KABUFORGE:VERSION:RELEASES_JA:END --></strong>、Python 3.12 以降。この候補メタデータは公開済みを意味しません。現在のプロジェクト所有物は AGPL-3.0-only です。</p><p>以前レビューされたコミット <code>c922d5439f6f018c140de14b6056f82b901dc434</code> は、過去の 0.1.0rc1 手順の識別情報です。この候補のソース識別情報ではありません。</p>"
       },
       {
         "title": "過去の配布物",

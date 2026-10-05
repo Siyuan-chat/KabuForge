@@ -1,7 +1,9 @@
 """KabuForge local integration API (release candidate)."""
 from __future__ import annotations
 
-__version__ = "0.1.1"
+from framework_v2.version import get_version as _get_version
+
+__version__ = _get_version()
 
 # Facade modules preserve contract class identity across compatibility imports.
 

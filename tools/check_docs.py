@@ -1,6 +1,7 @@
 """Validate formal docs, homepage links/anchors, package mirrors and licensing."""
 from pathlib import Path
 import json
+import importlib.util
 import re
 import tomllib
 import hashlib
@@ -51,10 +52,23 @@ def check_homepages(root):
         for language_path in HOMEPAGES:
             if f']({language_path})' not in text:
                 errors.append('language entry mismatch: '+path+' '+language_path)
-        for token in ('AGPL-3.0-only','CITATION.cff','PROJECT_LICENSING.md','available_at','UNKNOWN','0.1.1'):
+        for token in ('AGPL-3.0-only','CITATION.cff','PROJECT_LICENSING.md','available_at','UNKNOWN','KABUFORGE:VERSION:START'):
             if token not in text: errors.append('homepage identity mismatch: '+path+' '+token)
         if 'license-MIT-' in text: errors.append('current license badge mismatch: '+path)
     return errors
+
+
+def check_homepage_versions(root):
+    tool_path = root/'tools'/'sync_version.py'
+    spec = importlib.util.spec_from_file_location('kabuforge_sync_version', tool_path)
+    if spec is None or spec.loader is None:
+        return ['homepage version checker could not be loaded']
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        return module.check_version_sync(root)
+    except (OSError, ValueError) as exc:
+        return [f'homepage version check failed: {exc}']
 
 
 def check_license(root):
@@ -108,6 +122,7 @@ def check(root):
         if (root/path).exists(): files.add(root/path)
     for file in sorted(files): errors.extend(local_links(root,file))
     errors.extend(check_homepages(root))
+    errors.extend(check_homepage_versions(root))
     errors.extend(check_license(root))
     return errors
 

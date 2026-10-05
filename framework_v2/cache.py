@@ -11,6 +11,9 @@ from collections.abc import Mapping
 import pandas as pd
 from .factors import FactorResult, FactorContractError
 
+class FactorCacheCorruptionError(FactorContractError):
+    """A stored cache entry exists but cannot be trusted or decoded."""
+
 def encode(value):
     if value is pd.NA: return ["NA"]
     if value is pd.NaT: return ["NaT"]
@@ -51,11 +54,28 @@ def decode(item):
     raise FactorContractError("unknown factor cache codec tag")
 
 class FactorCache:
-    def __init__(self,path):
-        self.path=Path(path)
+    def __init__(self,path,*,namespace=None):
+        self.path=Path(path).resolve()
+        if namespace is None:
+            self.namespace_identity=None
+        else:
+            if not isinstance(namespace,Mapping):
+                raise FactorContractError("factor cache namespace must be a mapping")
+            try:
+                canonical=json.dumps(dict(namespace),ensure_ascii=False,sort_keys=True,
+                                     separators=(",",":"),allow_nan=False)
+            except (TypeError,ValueError) as exc:
+                raise FactorContractError("factor cache namespace must be finite JSON") from exc
+            self.namespace_identity=hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         self.path.parent.mkdir(parents=True,exist_ok=True)
         with closing(sqlite3.connect(self.path)) as db, db:
             db.execute("CREATE TABLE IF NOT EXISTS factor_cache_v1(cache_key TEXT PRIMARY KEY,payload TEXT NOT NULL,sha256 TEXT NOT NULL)")
+
+    def _storage_key(self,key):
+        self._key(key)
+        if self.namespace_identity is None: return key
+        return hashlib.sha256(("framework_v2.factor_cache.namespace.v1:"+
+                               self.namespace_identity+":"+key).encode("ascii")).hexdigest()
 
     @staticmethod
     def _key(key):
@@ -63,21 +83,27 @@ class FactorCache:
             raise FactorContractError("invalid factor cache key")
 
     def get(self,key):
-        self._key(key)
+        storage_key=self._storage_key(key)
         with closing(sqlite3.connect(self.path)) as db, db:
-            row=db.execute("SELECT payload,sha256 FROM factor_cache_v1 WHERE cache_key=?",(key,)).fetchone()
+            row=db.execute("SELECT payload,sha256 FROM factor_cache_v1 WHERE cache_key=?",(storage_key,)).fetchone()
         if row is None: return None
-        if hashlib.sha256(row[0].encode()).hexdigest()!=row[1]: raise FactorContractError("corrupt factor cache checksum")
-        value=decode(json.loads(row[0]))
-        return FactorResult.from_legacy_dict(value["result"],binding_id=value["binding_id"])
+        try:
+            if hashlib.sha256(row[0].encode()).hexdigest()!=row[1]:
+                raise FactorCacheCorruptionError("corrupt factor cache checksum")
+            value=decode(json.loads(row[0]))
+            return FactorResult.from_legacy_dict(value["result"],binding_id=value["binding_id"])
+        except FactorCacheCorruptionError:
+            raise
+        except (FactorContractError,ValueError,TypeError,KeyError,IndexError,ArithmeticError) as exc:
+            raise FactorCacheCorruptionError("corrupt factor cache payload") from exc
 
     def put(self,key,result):
-        self._key(key)
+        storage_key=self._storage_key(key)
         payload=json.dumps(encode({"binding_id":result.binding_id,"result":result.to_legacy_dict()}),ensure_ascii=False,separators=(",",":"),allow_nan=False)
         digest=hashlib.sha256(payload.encode()).hexdigest()
         with closing(sqlite3.connect(self.path)) as db, db:
             db.execute("BEGIN IMMEDIATE")
-            previous=db.execute("SELECT payload FROM factor_cache_v1 WHERE cache_key=?",(key,)).fetchone()
+            previous=db.execute("SELECT payload FROM factor_cache_v1 WHERE cache_key=?",(storage_key,)).fetchone()
             if previous is not None:
                 if previous[0]!=payload: raise FactorContractError("different result for immutable factor cache key")
-            else: db.execute("INSERT INTO factor_cache_v1 VALUES(?,?,?)",(key,payload,digest))
+            else: db.execute("INSERT INTO factor_cache_v1 VALUES(?,?,?)",(storage_key,payload,digest))

@@ -9,38 +9,43 @@
   <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
 </picture>
 
-**日本株の再現可能なクオンツ研究。**
+**日本株の再現可能なクオンツ研究スタック。**
 
-日本株向けのオープンソース・ローカル優先の研究フレームワークです。ファクターと戦略の研究、バックテスト、ローカル paper シミュレーション、MCP agent インターフェースを提供します。
+オープンソースでローカル優先の研究スタックです。J-Quants または明示的に選択したローカルデータから、ファクター・ML研究、バックテスト、ポートフォリオ構築、リスク管理、日本の証券会社向け中立的な注文計画までをつなぎます。
 
 [Quick Start](#quick-start) · [Documentation](docs/ja_JP/README.md) · [Architecture](docs/ja_JP/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-現在のパッケージ版は **0.1.1** です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。公開済み GitHub `v0.1.0` Release は RC パッケージと従来の MIT ライセンスを維持しています。
+<!-- KABUFORGE:VERSION:START -->
+現在のパッケージ版は **0.2.0rc1** です。この候補メタデータは公開済みリリースを意味しません。研究とローカルシミュレーション用です。実端末の接続は未検証で、実注文の submit と cancel は無効です。
+
+[![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
+<!-- KABUFORGE:VERSION:END -->
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
-[![Package](https://img.shields.io/badge/package-0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
 ## KabuForge とは？
 
 ファクターと戦略の研究を、ポートフォリオ構築、リスク制御、ブローカー中立の注文計画、過去のバックテスト、ローカル paper シミュレーションへつなぎます。Python、CLI、デスクトップ GUI、MCP agent は共通のアプリケーションサービスを利用します。
 
 ```text
-Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
+J-Quants / ローカルデータ → ファクター・ML → バックテスト → ポートフォリオ → リスク → 日本の証券会社向け計画
 ```
 
 ## 現在の機能
 
 | 機能 | 状態と境界 | 証拠 |
 | --- | --- | --- |
+| J-Quants とローカルデータ | ユーザー自身の資格情報・データを使用。CSV、Parquet、凍結 manifest は明示的に選択します。市場データは同梱しません | [GUIコース](docs/ja_JP/GUI_RESEARCH_COURSES.md) |
 | PIT 可視性ゲート | 宣言された `available_at` と意思決定時刻を検査。完全な過去 PIT 認証ではありません | [Docs](docs/ja_JP/RESEARCH_METHODOLOGY.md) |
 | Factor / Strategy 拡張 | 登録・版管理された実装と必須 validator | [Docs](docs/ja_JP/FACTOR_API.md) |
+| 指標 / ML / エンジン候補 | TA-Lib、pandas-ta、LightGBM、CatBoost、VectorBT、Backtrader は任意の隔離ランタイムを使用。起動可否はローカル extras に依存 | [GUIコース](docs/ja_JP/GUI_RESEARCH_COURSES.md) |
 | Portfolio / Risk / Planner | 目標ポートフォリオ、リスク制約、ブローカー中立の注文意図 | [Docs](docs/ja_JP/ARCHITECTURE.md) |
 | 過去バックテスト | 研究価格と執行価格の意味を分離したローカルシミュレーション | [Docs](docs/ja_JP/EXECUTION.md) |
 | ローカル paper | ローカル口座・ジャーナルのシミュレーション。模擬約定は実約定ではありません | [Docs](docs/ja_JP/EXECUTION.md) |
 | MCP agents | R0/R1 の検査・ローカル研究が既定。R2 paper 書き込みは明示的 opt-in | [Docs](docs/ja_JP/AGENT_API.md) |
-| ブローカー mappings / mocks | 契約と mock の検証層。実 transport は未検証 | [Docs](docs/ja_JP/BROKER_API.md) |
-| 実ブローカー発注 | この RC では無効。予約済み R3 インターフェースも無効 | [Docs](docs/ja_JP/AGENT_API.md) |
+| 日本の証券会社向け mapping / 読取専用確認 | オフライン preview はローカル処理のみ。明示的に起動する localhost 資格情報参照診断は読取専用 GET を3件実行可能。実端末の接続は未検証 | [Docs](docs/ja_JP/BROKER_API.md) |
+| 実注文 | submit と cancel は無効。公開版の Regime ワークフローは既定でオフ | [Docs](docs/ja_JP/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## クイックスタート
@@ -57,7 +62,9 @@ kabuforge factors
 kabuforge strategies
 ```
 
-demo はオフラインの合成データを使用します。市場データ、J-Quants キー、ブローカー口座は不要です。GUI を使う場合は `.` の代わりに `.[gui]` をインストールし、Windows では `Launch_KabuForge.bat` を起動します。
+demo はオフラインの合成データを使用します。市場データ、J-Quants キー、ブローカー口座は不要です。GUI は `.[gui]` をインストールし、必要な場合だけ `.[analytics]`、`.[indicators]`、`.[models]`、`.[backends]` を追加します。Windows では `Launch_KabuForge.bat` を起動します。市場データと資格情報はユーザーが用意し、J-Quants 履歴は同梱されません。研究結果はすべて RESEARCH-ONLY で PIT 保証は false です。TOPIX は配当を含まない価格指数のみです。
+
+GUI では **Data Center** でローカル入力を明示選択し、**Backtest Results** でレポートを確認します。**Paper Trading → Real-market historical research replay** は隔離された履歴台帳を使い、**Broker Connections → Offline cash-equity mapping preview** はローカル mapping のみを作成します。preview は注文を送信しません。読取専用診断は別の明示操作で、資格情報参照が必要です。[日本語 GUI コース](docs/ja_JP/GUI_RESEARCH_COURSES.md)、[English course](docs/en_US/GUI_RESEARCH_COURSES.md)、[中文课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)を参照してください。
 
 ### Agent / MCP
 

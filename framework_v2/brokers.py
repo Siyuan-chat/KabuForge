@@ -1,5 +1,9 @@
 """Cash-equity broker protocol mappings.  No default transport or credentials.
 
+``KabuCashBroker.map_order`` is a local mapping operation only. The separate
+research preview workflow uses an injected no-call transport and does not
+resolve credentials or invoke submission, cancellation, or query methods.
+
 Official references:
 Kabu https://raw.githubusercontent.com/kabucom/kabusapi/master/reference/kabu_STATION_API.yaml
 Rakuten https://marketspeed.jp/ms2_rss/onlinehelp/ohm_002/ohm_002_06.html

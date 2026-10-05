@@ -9,38 +9,43 @@
   <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
 </picture>
 
-**可复现的日本股票量化研究。**
+**面向日本股票的可复现量化研究全链路。**
 
-开源、本地优先的日本股票研究框架，涵盖因子与策略研究、历史回测、本地纸上模拟及 MCP agent 接口。
+开源、本地优先的研究栈，将 J-Quants 或显式选择的本地数据连接到因子与机器学习研究、回测、组合构建、风险控制及日本券商中立规划。
 
 [Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-当前包版本为 **0.1.1**。仅用于研究与本地模拟，真实券商下单未启用。已发布的 GitHub `v0.1.0` Release 保留 RC 包附件及历史 MIT 许可。
+<!-- KABUFORGE:VERSION:START -->
+当前包版本为 **0.2.0rc1**。这是候选元数据，不表示该版本已发布。本项目用于研究与本地模拟；真实终端连通性尚未验证，真实订单提交与撤销保持禁用。
+
+[![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
+<!-- KABUFORGE:VERSION:END -->
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
-[![Package](https://img.shields.io/badge/package-0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
 ## KabuForge 是什么？
 
 KabuForge 将因子与策略研究连接到组合构建、风险控制、券商中立订单规划、历史回测和本地纸上模拟。Python、CLI、桌面 GUI 与 MCP agent 共用同一应用服务。
 
 ```text
-Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
+J-Quants / 本地数据 → 因子与机器学习 → 回测 → 组合 → 风险 → 日本券商规划
 ```
 
 ## 当前能力
 
 | 能力 | 状态与边界 | 证据 |
 | --- | --- | --- |
+| J-Quants 与本地数据 | 使用用户自己的凭证和数据；CSV、Parquet、冻结 manifest 均须显式选择。软件包不附带行情 | [GUI课程](docs/zh_CN/GUI_RESEARCH_COURSES.md) |
 | PIT 可见性门控 | 检查声明的 `available_at` 与决策时间；不代表完整历史 PIT 认证 | [Docs](docs/zh_CN/RESEARCH_METHODOLOGY.md) |
 | Factor / Strategy 扩展 | 注册、版本化实现与必需 validator | [Docs](docs/zh_CN/FACTOR_API.md) |
+| 指标 / ML / 引擎候选 | TA-Lib、pandas-ta、LightGBM、CatBoost、VectorBT、Backtrader 使用可选隔离运行时；能否启动取决于本地 extras | [GUI课程](docs/zh_CN/GUI_RESEARCH_COURSES.md) |
 | Portfolio / Risk / Planner | 目标组合、风险约束与券商中立订单意图 | [Docs](docs/zh_CN/ARCHITECTURE.md) |
 | 历史回测 | 本地模拟，明确研究价与执行价语义 | [Docs](docs/zh_CN/EXECUTION.md) |
 | 本地纸上模拟 | 本地账户与日志模拟；模拟成交不等于券商成交 | [Docs](docs/zh_CN/EXECUTION.md) |
 | MCP agents | 默认 R0/R1 检查和本地研究；R2 paper 写入必须显式启用 | [Docs](docs/zh_CN/AGENT_API.md) |
-| 券商映射 / mocks | 契约与 mock 验证层；真实 transport 尚未验证 | [Docs](docs/zh_CN/BROKER_API.md) |
-| 真实券商下单 | 当前 RC 未启用；预留 R3 接口处于禁用状态 | [Docs](docs/zh_CN/AGENT_API.md) |
+| 日本券商映射 / 只读检查 | 离线预览仅本地处理；明确触发的 localhost 凭证引用诊断可执行三个只读 GET。真实终端连通性仍未验证 | [Docs](docs/zh_CN/BROKER_API.md) |
+| 真实券商订单 | 提交与撤销均禁用；公开版 Regime 流程默认关闭 | [Docs](docs/zh_CN/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## 快速开始
@@ -57,7 +62,9 @@ kabuforge factors
 kabuforge strategies
 ```
 
-demo 使用离线合成数据，无需市场数据、J-Quants 密钥或券商账户。如需桌面 GUI，将安装参数 `.` 改为 `.[gui]`；Windows 可启动 `Launch_KabuForge.bat`。
+demo 使用离线合成数据，无需市场数据、J-Quants 密钥或券商账户。桌面 GUI 安装 `.[gui]`；仅在需要相应流程时再安装 `.[analytics]`、`.[indicators]`、`.[models]` 或 `.[backends]`。Windows 可启动 `Launch_KabuForge.bat`。行情与凭证由用户自行提供，包内没有 J-Quants 历史数据。研究输出均为 RESEARCH-ONLY，PIT 保证为 false。TOPIX 仅作价格指数参考，不含股息。
+
+GUI 中通过 **数据中心** 显式选择本地输入，在 **回测结果** 查看报告；**纸上交易 → 真实行情历史研究模拟** 使用隔离历史账本；**券商连接 → 离线现金股票映射预览** 仅生成本地映射。预览不提交订单；只读诊断是单独的显式操作，并需凭证引用。查看[中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)、[English course](docs/en_US/GUI_RESEARCH_COURSES.md)和[日本語コース](docs/ja_JP/GUI_RESEARCH_COURSES.md)。
 
 ### Agent / MCP
 

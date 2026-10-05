@@ -1,6 +1,7 @@
 """Unified PySide6 workbench. Legacy entry points remain untouched."""
 from __future__ import annotations
 import argparse,json,hashlib,os
+import math
 from decimal import Decimal
 from pathlib import Path
 import sys
@@ -8,7 +9,7 @@ from PySide6.QtCore import Qt,QSettings,QSignalBlocker,QTimer
 from PySide6.QtGui import QKeySequence,QShortcut,QFontDatabase,QFont
 from PySide6.QtWidgets import (QApplication,QMainWindow,QWidget,QVBoxLayout,QHBoxLayout,
     QGridLayout,QFormLayout,QSplitter,QListWidget,QListWidgetItem,QStackedWidget,QScrollArea,
-    QLabel,QPushButton,QLineEdit,QComboBox,QPlainTextEdit,QTabWidget,QGroupBox,QFileDialog,QMessageBox)
+    QLabel,QPushButton,QLineEdit,QComboBox,QSpinBox,QPlainTextEdit,QTabWidget,QGroupBox,QFileDialog,QMessageBox)
 from .workbench_theme import APP_STYLESHEET
 from .workbench_widgets import DataTable,SeriesChart,label
 from .workbench_jobs import JobController
@@ -30,15 +31,16 @@ class WorkbenchWindow(QMainWindow):
         self.workspace=Path(workspace).resolve(); self.workspace.mkdir(parents=True,exist_ok=True)
         self.service=service or WorkbenchService(); self.document=ConfigDocument()
         self.run_path=None; self.document_path=None; self.preflight_result=None; self.report=None
+        self._source_report=None; self._topix_base_report=None; self._topix_source_path=None
         self.json_invalid=False; self.form_errors={}; self.fields={}; self.tables=[]; self.catalog_rows=[]
         self.settings=QSettings(str(self.workspace/"ui.ini"),QSettings.Format.IniFormat)
         self.jobs=JobController(self.workspace,self); self.jobs.started.connect(self._job_started)
         self.jobs.finished.connect(self._job_finished); self.jobs.log.connect(self._job_log)
-        self.setWindowTitle("量化工作台 · Private Engine v2"); self.resize(1320,860); self.setMinimumSize(820,600)
+        self.setWindowTitle("KabuForge Workbench"); self.resize(1320,860); self.setMinimumSize(820,600)
         self.setStyleSheet(APP_STYLESHEET+"QPlainTextEdit {background:#11151C;color:#E9ECF2;border:1px solid #303744;} QTableView {alternate-background-color:#151A22;} QListWidget {border:0;} QLineEdit[invalid='true'] {border-color:#FF6B63;}")
         root=QWidget(); outer=QHBoxLayout(root); outer.setContentsMargins(0,0,0,0); outer.setSpacing(0); self.setCentralWidget(root)
         rail=QWidget(); rail.setObjectName("sideRail"); rail.setFixedWidth(182); side=QVBoxLayout(rail); side.setContentsMargins(14,22,14,12)
-        side.addWidget(label("PRIVATE ENGINE", "brandEyebrow")); side.addWidget(label("量化工作台", "brandTitle"))
+        side.addWidget(label("KABUFORGE", "brandEyebrow")); side.addWidget(label("Research Workbench", "brandTitle"))
         self.nav=QListWidget(); self.nav.addItems(PAGES); self.nav.setSpacing(5); side.addWidget(self.nav,1)
         self.help_button=QPushButton("设置与帮助"); self.help_button.clicked.connect(self.show_help); side.addWidget(self.help_button)
         side.addWidget(label("本地研究 / 模拟\n真实交易未启用","subtleText")); outer.addWidget(rail)
@@ -132,6 +134,17 @@ class WorkbenchWindow(QMainWindow):
         self.assumptions=label("模型：fictional_fixed_quote_matching_v1；费用取 run.fees。基准未提供时不绘制；该结果不代表真实成交。","detailText"); page.addWidget(self.assumptions)
         self.nav_chart=SeriesChart("净值 / 基准"); self.drawdown_chart=SeriesChart("回撤",True); page.addWidget(self.nav_chart); page.addWidget(self.drawdown_chart)
         self.result_summary=label("费用、换手及方法限制将在完成后显示。","subtleText"); page.addWidget(self.result_summary)
+        dashboard=QGroupBox("交互式绩效报告"); self.dashboard_group=dashboard; dashboard_layout=QGridLayout(dashboard)
+        self.dashboard_window=QSpinBox(); self.dashboard_window.setRange(2,365); self.dashboard_window.setValue(21)
+        self.dashboard_benchmark=QComboBox(); self.dashboard_benchmark.addItem("未载入本地 TOPIX",None); self.dashboard_benchmark.setEnabled(False)
+        self.dashboard_topix_button=self._button("选择本地 TOPIX 价格指数",self._load_local_topix)
+        self.dashboard_button=self._button("生成离线交互式报告",self._open_performance_dashboard)
+        self.dashboard_status=label("先打开至少 3 个 NAV 观测点的报告；交互 HTML 保存在本机。","detailText")
+        self.dashboard_window_label=QLabel("滚动窗口（观测点）")
+        dashboard_layout.addWidget(self.dashboard_window_label,0,0); dashboard_layout.addWidget(self.dashboard_window,0,1)
+        dashboard_layout.addWidget(self.dashboard_benchmark,0,2); dashboard_layout.addWidget(self.dashboard_topix_button,0,3)
+        dashboard_layout.addWidget(self.dashboard_button,1,0,1,2); dashboard_layout.addWidget(self.dashboard_status,1,2,1,2)
+        page.addWidget(dashboard); self._dashboard_dialog=None; self._source_report_path=None; self._source_report=None; self.report_source_path=None
         tabs=QTabWidget(); self.target_table=self._table("目标与风险"); self.trades_table=self._table("交易"); self.factor_table=self._table("因子诊断"); self.compare_table=self._table("运行比较")
         for title,table in (("原始目标 → 风险 → 订单",self.target_table),("交易",self.trades_table),("因子诊断",self.factor_table),("运行比较",self.compare_table)): tabs.addTab(table,title)
         tabs.setMinimumHeight(260); page.addWidget(tabs)
@@ -344,7 +357,7 @@ class WorkbenchWindow(QMainWindow):
                     if path and str(path).endswith(".json") and Path(path).is_file():
                         try:
                             document=self._read_report(path)
-                            if "decisions" in document or "plan" in document: self.show_report(document)
+                            if "decisions" in document or "plan" in document or "nav" in document: self.show_report(document,source_report_path=path)
                         except (ValueError,OSError): pass
         else:
             if job["action"]=="preflight": self.preflight_result=None
@@ -367,13 +380,13 @@ class WorkbenchWindow(QMainWindow):
             for path in root.rglob("*.json"):
                 try:
                     value=self._read_report(path)
-                    if "decisions" in value or "plan" in value: self.show_report(value); self.nav.setCurrentRow(3); return
+                    if "decisions" in value or "plan" in value or "nav" in value: self.show_report(value,source_report_path=path); self.nav.setCurrentRow(3); return
                 except (ValueError,OSError): continue
 
     def open_report(self):
         path,_=QFileDialog.getOpenFileName(self,"打开本地结果","","JSON (*.json)")
         if path:
-            try: self.show_report(self._read_report(path))
+            try: self.show_report(self._read_report(path),source_report_path=path)
             except Exception as exc: self.statusBar().showMessage(str(exc))
 
     def _read_report(self,path):
@@ -394,10 +407,35 @@ class WorkbenchWindow(QMainWindow):
             report={**report,"workbench_configs":configs}; break
         return report
 
-    def show_report(self,report):
-        self.report=report; nav=report.get("nav",[])
-        self.nav_chart.set_series([r["at"] for r in nav],[("策略净值",[r["nav"] for r in nav])] if nav else [])
-        self.drawdown_chart.set_series([r["at"] for r in nav],[("策略回撤",[r["drawdown"] for r in nav])] if nav else [])
+    def show_report(self,report,*,source_report_path=None):
+        source_identity=str(Path(source_report_path).expanduser().resolve(strict=True)) if source_report_path is not None else None
+        current_identity=getattr(self,"report_source_path",None)
+        provenance=report.get("benchmark_provenance") if isinstance(report,dict) else None
+        has_topix=(isinstance(provenance,dict) and provenance.get("benchmark")=="TOPIX"
+                   and provenance.get("adapter_version")=="topix-local-close-v1")
+        if not has_topix or source_identity!=current_identity:
+            self._topix_base_report=dict(report)
+            self._topix_source_path=None
+        self.report=report
+        self.report_source_path=None
+        if source_report_path is not None:
+            source=Path(source_report_path).expanduser().resolve(strict=True)
+            if not source.is_file(): raise ValueError("report source must be a readable file")
+            self.report_source_path=str(source)
+        self._source_report=dict(report)
+        nav=report.get("nav",[])
+        dates=[r["at"] for r in nav]
+        language=getattr(self,"language","zh_CN")
+        from .i18n import tr
+        nav_series=[(tr("策略净值",language),[r["nav"] for r in nav])] if nav else []
+        drawdown_series=[(tr("策略回撤",language),[r["drawdown"] for r in nav])] if nav else []
+        topix=self._validated_topix_preview(report,nav)
+        if topix is not None:
+            normalized,topix_drawdown=topix
+            nav_series.append((self._dashboard_text("topix_preview"),normalized))
+            drawdown_series.append((self._dashboard_text("topix_drawdown"),topix_drawdown))
+        self.nav_chart.set_series(dates,nav_series)
+        self.drawdown_chart.set_series(dates,drawdown_series)
         decisions=report.get("decisions",[report] if "plan" in report else [])
         target_rows=[]; factor_rows=[]; intents=[]
         for number,decision in enumerate(decisions):
@@ -420,6 +458,138 @@ class WorkbenchWindow(QMainWindow):
             self.journal_input.setText(report["execution"]["journal"])
         if self.mode.currentData() in {"paper","fake"}: self.nav.setCurrentRow(4)
         else: self.nav.setCurrentRow(3)
+        self._refresh_dashboard_controls()
+
+    @staticmethod
+    def _validated_topix_preview(report,nav_rows):
+        """Build a display-only, first-date-rebased TOPIX curve on exact NAV dates."""
+        provenance=report.get("benchmark_provenance") if isinstance(report,dict) else None
+        if not (isinstance(provenance,dict) and provenance.get("benchmark")=="TOPIX"
+                and provenance.get("adapter_version")=="topix-local-close-v1"):
+            return None
+        benchmark=report.get("benchmark_nav")
+        rows=benchmark.get("TOPIX") if isinstance(benchmark,dict) else None
+        if not isinstance(nav_rows,list) or not isinstance(rows,list) or len(rows)!=len(nav_rows) or not rows:
+            return None
+        try:
+            nav_dates=[row["at"] for row in nav_rows]
+            benchmark_dates=[row["at"] for row in rows]
+        except (KeyError,TypeError):
+            return None
+        if any(not isinstance(value,str) for value in nav_dates+benchmark_dates):
+            return None
+        if nav_dates!=benchmark_dates or len(set(nav_dates))!=len(nav_dates):
+            return None
+        levels=[]
+        for row in rows:
+            value=row.get("nav") if isinstance(row,dict) else None
+            if isinstance(value,bool) or not isinstance(value,(int,float)):
+                return None
+            number=float(value)
+            if not math.isfinite(number) or number<=0:
+                return None
+            levels.append(number)
+        base=levels[0]
+        normalized=[value/base for value in levels]
+        if any(not math.isfinite(value) or value<=0 for value in normalized):
+            return None
+        peak=0.0
+        drawdowns=[]
+        for value in normalized:
+            peak=max(peak,value)
+            drawdowns.append(value/peak-1.0)
+        return normalized,drawdowns
+
+    def _refresh_dashboard_controls(self):
+        if not hasattr(self,"dashboard_button"): return
+        language=getattr(self,"language","zh_CN")
+        provenance=(self.report or {}).get("benchmark_provenance",{})
+        if provenance.get("adapter_version")=="topix-local-close-v1" and provenance.get("benchmark")=="TOPIX":
+            self.dashboard_benchmark.clear()
+            self.dashboard_benchmark.addItem(self._dashboard_text("topix_loaded"),"TOPIX")
+            self.dashboard_benchmark.setEnabled(True)
+        else:
+            self.dashboard_benchmark.clear(); self.dashboard_benchmark.addItem(self._dashboard_text("topix_missing"),None)
+            self.dashboard_benchmark.setEnabled(False)
+        compatible=bool(self.report and len(self.report.get("nav") or [])>=3)
+        self.dashboard_topix_button.setEnabled(bool(self.report and self.report.get("model")=="daily_bar_next_open_research_v1"))
+        self.dashboard_button.setEnabled(compatible)
+        if not compatible:
+            self.dashboard_status.setText(self._dashboard_text("need_nav"))
+        else:
+            self.dashboard_status.setText(self._dashboard_text("ready"))
+
+    def _dashboard_text(self,key):
+        labels={
+            "zh_CN":{"topix_loaded":"TOPIX 价格指数（不含股息）","topix_missing":"未载入本地 TOPIX","topix_preview":"TOPIX价格指数（不含股息；首日归一）","topix_drawdown":"TOPIX回撤","need_nav":"请先载入至少 3 个有效 NAV 观测点。","ready":"本地依赖在点击后验证；生成过程在后台运行。","need_source":"请先打开带有明确源文件的价格研究报告。","choose_topix":"选择本地 TOPIX Parquet","missing_dates":"TOPIX 未完整覆盖所有 NAV 日期；已拒绝比较，未填补日期。","wrong_model":"该结果不是原始收盘估值模型，不能与 TOPIX 收盘价比较。","bad_topix":"TOPIX 缓存验证失败；未附加基准。"},
+            "ja_JP":{"topix_loaded":"TOPIX価格指数（配当なし）","topix_preview":"TOPIX価格指数（配当なし・初日=1）","topix_drawdown":"TOPIXドローダウン","topix_missing":"ローカルTOPIX未読込","need_nav":"有効なNAV観測を3件以上含むレポートを開いてください。","ready":"ローカル依存関係はクリック後に検証され、生成はバックグラウンドで実行されます。","need_source":"元ファイルが明確な価格研究レポートを開いてください。","choose_topix":"ローカルTOPIX Parquetを選択","missing_dates":"TOPIXが全NAV日をカバーしていないため比較を拒否しました。日付補完はしていません。","wrong_model":"この結果は終値評価モデルではないため、TOPIX終値と比較できません。","bad_topix":"TOPIXキャッシュを検証できませんでした。ベンチマークは追加されていません。"},
+            "en_US":{"topix_loaded":"TOPIX price index (dividends excluded)","topix_preview":"TOPIX price index (no dividends; first date rebased to 1)","topix_drawdown":"TOPIX drawdown","topix_missing":"Local TOPIX not loaded","need_nav":"Open a report with at least 3 valid NAV observations.","ready":"Local dependencies are checked on click; report generation runs in the background.","need_source":"Open a price research report with an explicit source file first.","choose_topix":"Select local TOPIX Parquet","missing_dates":"TOPIX does not cover every NAV date; comparison was rejected without filling dates.","wrong_model":"This report is not a raw-close valuation model and cannot be compared with TOPIX close.","bad_topix":"TOPIX cache validation failed; no benchmark was attached."},
+        }
+        return labels.get(getattr(self,"language","zh_CN"),labels["zh_CN"])[key]
+
+    def _load_local_topix(self):
+        language=getattr(self,"language","zh_CN")
+        if not self.report or not self.report_source_path:
+            self.dashboard_status.setText(self._dashboard_text("need_source")); return False
+        path,_=QFileDialog.getOpenFileName(self,self._dashboard_text("choose_topix"),str(Path(self.report_source_path).parent),"Parquet (*.parquet)")
+        if not path: return False
+        try:
+            from .topix_benchmark import attach_local_topix
+            self.report=attach_local_topix(self._topix_base_report or self._source_report,path)
+            self._topix_source_path=str(Path(path).resolve(strict=True))
+            self.show_report(self.report,source_report_path=self.report_source_path)
+            return True
+        except Exception as exc:
+            detail=str(exc)
+            if "missing" in detail and "strategy NAV dates" in detail:
+                message=self._dashboard_text("missing_dates")
+            elif "only daily_bar_next_open_research_v1" in detail or "raw-close" in detail:
+                message=self._dashboard_text("wrong_model")
+            else:
+                message=self._dashboard_text("bad_topix")
+            self.report=dict(self._topix_base_report or self._source_report or self.report)
+            self.show_report(self.report,source_report_path=self.report_source_path)
+            self.dashboard_status.setText(message); self.dashboard_status.setToolTip(detail); return False
+
+    def _open_performance_dashboard(self):
+        if not self.report: return False
+        from .report_dashboard import open_dashboard
+        from .i18n import tr
+        self.dashboard_button.setEnabled(False)
+        self.dashboard_status.setText({
+            "zh_CN":"正在生成本地交互报告…",
+            "ja_JP":"ローカルレポートを生成中…",
+            "en_US":"Building local interactive report…",
+        }.get(getattr(self,"language","zh_CN"),"正在生成本地交互报告…"))
+        run_directory=None
+        if (self.report_source_path and self.report.get("model")=="daily_bar_next_open_research_v1"
+                and Path(self.report_source_path).name=="report.json"):
+            run_directory=str(Path(self.report_source_path).parent)
+        self._dashboard_dialog=open_dashboard(self.report,self.workspace,
+            rolling_window=self.dashboard_window.value(),language=getattr(self,"language","zh_CN"),
+            benchmark_name=self.dashboard_benchmark.currentData(),research_run_directory=run_directory,
+            parent=self,status_callback=self._dashboard_status_changed)
+        return True
+
+    def _dashboard_status_changed(self,status):
+        self.dashboard_status.setText(status)
+        terminal=any(token in status for token in ("图表已渲染","报告失败","图表 DOM","チャート描画完了","レポート生成失敗","Charts rendered","Report failed","Chart DOM"))
+        self.dashboard_button.setEnabled(bool(self.report) and terminal)
+
+    def set_dashboard_language(self,language):
+        if not hasattr(self,"dashboard_button"): return
+        labels={
+            "zh_CN":("交互式绩效报告","滚动窗口（观测点）","选择本地 TOPIX 价格指数","生成离线交互式报告","本地依赖在点击后验证；生成过程在后台运行。"),
+            "ja_JP":("インタラクティブなパフォーマンスレポート","ローリング期間（観測数）","ローカル TOPIX 価格指数を選択","オフラインレポートを生成","ローカル依存関係はクリック後に検証し、生成はバックグラウンドで実行します。"),
+            "en_US":("Interactive performance report","Rolling window (observations)","Select local TOPIX price index","Build offline interactive report","Local dependencies are checked on click; generation runs in the background."),
+        }.get(language)
+        if not labels: return
+        title,window_text,topix_text,button_text,status_text=labels
+        self.dashboard_group.setTitle(title); self.dashboard_window_label.setText(window_text)
+        self.dashboard_topix_button.setText(topix_text); self.dashboard_button.setText(button_text)
+        if not self._dashboard_dialog:
+            self.dashboard_status.setText(status_text)
+        self._refresh_dashboard_controls()
 
     def compare_reports(self,other=None):
         if self.report is None: self.statusBar().showMessage("先打开一个结果"); return

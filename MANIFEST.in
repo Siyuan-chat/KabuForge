@@ -28,4 +28,4 @@ include NOTICE PROJECT_LICENSING.md CITATION.cff
 include README.en.md README.ja.md CONTRIBUTING.md SECURITY.md DISCLAIMER.md
 include docs/RELEASE_VALIDATION.md docs/LEGACY_README.md
 recursive-include brand/kabuforge *.svg *.png *.css *.md *.json
-recursive-include docs/demos *.gif *.html *.png
+recursive-include docs/demos *.gif *.html *.png *.json *.md

@@ -1,4 +1,9 @@
 """Offline manual source, maintained alongside the product workflow."""
+from dataclasses import dataclass
+from html import escape
+from pathlib import Path
+import re
+from urllib.parse import quote, urlsplit
 CHAPTERS = {
 "zh_CN": [
 ("start", "1. 首次启动与界面", "从 KabuForge 启动入口打开工作台。右上角选择简体中文、日本語或 English；语言会保存在当前工作区，切换不清除表单。左侧导航进入首页、我的策略、数据中心、回测结果、纸上交易、券商连接与运行记录。窄窗口下策略目录移到编辑区上方。", "有三条本地路径：合成演示、下载数据的价格研究、以及已准备好的本地真实研究包。普通向导表单不编辑已加载的 run；高级区用于打开、预检和审查声明式配置。", "next:demo"),
@@ -72,3 +77,240 @@ SUPPLEMENTS = {
 for locale,extra in SUPPLEMENTS.items():
     CHAPTERS[locale]=[(key,title,*body[:-1],extra[key],body[-1]) if key in extra else (key,title,*body)
                       for key,title,*body in CHAPTERS[locale]]
+
+# Additive chapters preserve all 13 historical public anchors.
+_RESEARCH_OVERVIEW = {
+ "zh_CN": [
+  ("indicators", "14. 技术指标研究", "指标课程分别演示 TA-Lib 与 pandas-ta 两个隔离运行时；Native 是价格策略执行路径，不是第三个 RSI/MACD/ATR 指标提供方。SMA、RSI、MACD 与 ATR 保留预热缺失值和实际日期。", "公开课程截图来自已验收的本地 GUI 版本。当前公开候选不保证可选运行时已安装或全部面板已接入；应以本机能力页、worker 回执和本地课程说明为准。", "next:research-studio"),
+  ("research-studio", "15. 因子与组合研究", "完整课程说明本地冻结行情、D-1 因子、独立 forward-label 评价、模型固定时间切分、Native/VectorBT/Backtrader 候选、历史 Paper 回放、券商离线映射与结果图的关联。各步骤保留输入身份和日志。", "上述工作流均为 RESEARCH-ONLY 且 PIT 保证为 false。研究 Paper 是历史逐日回放，不是实时模拟；离线券商映射不连接终端、不提交订单。先阅读课程中的边界、期望结果和错误恢复步骤。", "next:start"),
+ ],
+ "ja_JP": [
+  ("indicators", "14. テクニカル指標リサーチ", "指標コースでは TA-Lib と pandas-ta の二つの隔離ランタイムを別々に扱います。Native は価格戦略の実行経路であり、RSI/MACD/ATR の第三の指標プロバイダーではありません。SMA、RSI、MACD、ATR はウォームアップ欠損と実際の日付を保持します。", "公開コースの画像は、検証済みローカル GUI 版の参考です。公開候補にオプションランタイムや全パネルが導入済みとは限りません。ローカルの機能表示、worker レシート、コースの制約を確認してください。", "next:research-studio"),
+  ("research-studio", "15. ファクターとポートフォリオ研究", "コース全体では、ローカル凍結行情、D-1 ファクター、独立した forward-label 評価、固定時系列分割モデル、Native/VectorBT/Backtrader 候補、履歴 Paper 再生、証券会社オフラインマッピング、結果図を結び付けます。各段階の入力識別子とログを保持します。", "すべて RESEARCH-ONLY で PIT 保証は false です。研究用 Paper は過去日次の再生で、リアルタイムの模擬取引ではありません。オフライン注文マッピングは端末へ接続せず、注文を送信しません。期待値とエラー復旧をコースで確認してください。", "next:start"),
+ ],
+ "en_US": [
+  ("indicators", "14. Technical-indicator research", "The indicator course treats TA-Lib and pandas-ta as two isolated runtimes. Native is the price-strategy execution path, not a third RSI/MACD/ATR indicator provider. SMA, RSI, MACD and ATR retain warm-up missing values and actual dates.", "Public course images are references from the locally verified GUI build. The public candidate does not guarantee that optional runtimes are installed or every panel is integrated. Check the local capability page, worker receipt and course limitations.", "next:research-studio"),
+  ("research-studio", "15. Factor and portfolio research", "The complete course connects frozen local bars, D-1 factors, separate forward-label evaluation, fixed chronological model splits, Native/VectorBT/Backtrader candidates, historical Paper replay, offline broker mapping and result charts. Retain input identity and logs at each stage.", "Every workflow is RESEARCH-ONLY with PIT guarantee false. Research Paper is a historical daily replay, not live-forward paper trading. Offline broker mapping neither connects to a terminal nor submits orders. Read the course boundaries, expected outputs and recovery steps first.", "next:start"),
+ ],
+}
+for locale, additions in _RESEARCH_OVERVIEW.items():
+    CHAPTERS[locale].extend(additions)
+
+PACKAGE_DOCS_ROOT = Path(__file__).resolve().parent / "docs"
+_COURSE_FILE = "GUI_RESEARCH_COURSES.md"
+_COURSE_TITLES = {
+    "zh_CN": "GUI 研究课程",
+    "ja_JP": "GUI 研究コース",
+    "en_US": "GUI Research Courses",
+}
+_COURSE_ANCHORS = (
+    "course-input", "course-start", "course-demo-1", "course-demo-2",
+    "course-demo-3", "course-results", "course-demo-4", "course-demo-5",
+    "course-evidence",
+)
+_INLINE_MARKDOWN = re.compile(
+    r"!\[([^\]]*)\]\(([^)]+)\)|`([^`]+)`|\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\)"
+)
+_DEMO_HEADING = re.compile(r"\bDemo\s*([1-5])\b", re.IGNORECASE)
+_SAFE_FRAGMENT = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,80}$")
+
+
+@dataclass(frozen=True)
+class ResearchCourseSection:
+    """One localized, sanitized section from the packaged five-course guide."""
+
+    anchor: str
+    heading: str
+    searchable_text: str
+    html: str
+
+
+def _course_root(root: str | Path | None = None) -> Path:
+    candidate = Path(root) if root is not None else PACKAGE_DOCS_ROOT
+    resolved = candidate.resolve(strict=True)
+    if not resolved.is_dir():
+        raise ValueError("course documentation root is not a directory")
+    return resolved
+
+
+def _course_path(language: str, root: Path) -> Path:
+    if language not in CHAPTERS:
+        raise ValueError(f"unsupported manual language: {language}")
+    path = (root / language / _COURSE_FILE).resolve(strict=True)
+    if not path.is_relative_to(root) or not path.is_file():
+        raise ValueError("course document escapes the packaged documentation root")
+    if path.stat().st_size > 4 * 1024 * 1024:
+        raise ValueError("course document exceeds the size limit")
+    return path
+
+
+def _safe_png_url(destination: str, source_dir: Path, root: Path) -> str:
+    parsed = urlsplit(destination)
+    if (parsed.scheme or parsed.netloc or parsed.query or parsed.fragment
+            or destination.startswith(("/", "\\")) or "\\" in destination):
+        raise ValueError("course images must use package-relative paths")
+    image = (source_dir / parsed.path).resolve(strict=True)
+    if not image.is_relative_to(root) or not image.is_file() or image.suffix.lower() != ".png":
+        raise ValueError("course image is not an allowed packaged PNG")
+    return quote(image.relative_to(root).as_posix(), safe="/._-")
+
+
+def _inline_html(text: str, source_dir: Path, root: Path) -> str:
+    rendered = []
+    cursor = 0
+    for match in _INLINE_MARKDOWN.finditer(text):
+        rendered.append(escape(text[cursor:match.start()]))
+        image_alt, image_path, code, strong, link_text, link_target = match.groups()
+        if image_path is not None:
+            src = _safe_png_url(image_path, source_dir, root)
+            rendered.append(f'<img src="{escape(src, quote=True)}" alt="{escape(image_alt)}" '
+                            'loading="lazy" style="max-width:100%;height:auto;">')
+        elif code is not None:
+            rendered.append(f"<code>{escape(code)}</code>")
+        elif strong is not None:
+            rendered.append(f"<strong>{escape(strong)}</strong>")
+        else:
+            target = link_target or ""
+            if target.startswith("#") and _SAFE_FRAGMENT.fullmatch(target[1:]):
+                href = target
+            else:
+                href = _safe_png_url(target, source_dir, root)
+            rendered.append(f'<a href="{escape(href, quote=True)}">{escape(link_text or "")}</a>')
+        cursor = match.end()
+    rendered.append(escape(text[cursor:]))
+    return "".join(rendered)
+
+
+def _plain_text(markdown: str) -> str:
+    lines = []
+    for line in markdown.splitlines():
+        if line.startswith("```") or re.fullmatch(r"\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*", line):
+            continue
+        line = re.sub(r"!\[([^\]]*)\]\([^)]+\)", r"\1", line)
+        line = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", line)
+        line = re.sub(r"^#{1,6}\s+|^\s*(?:[-*+]\s+|\d+[.)]\s+)", "", line)
+        line = line.replace("`", "").replace("**", "")
+        if line.strip(" |:-"):
+            lines.append(line.strip(" |"))
+    return "\n".join(lines)
+
+
+def _render_markdown_blocks(markdown: str, source_dir: Path, root: Path) -> str:
+    output: list[str] = []
+    paragraph: list[str] = []
+    list_kind: str | None = None
+    code_lines: list[str] | None = None
+    table_rows: list[list[str]] = []
+
+    def flush_paragraph() -> None:
+        if paragraph:
+            output.append("<p>" + _inline_html(" ".join(paragraph), source_dir, root) + "</p>")
+            paragraph.clear()
+
+    def flush_list() -> None:
+        nonlocal list_kind
+        if list_kind:
+            output.append(f"</{list_kind}>")
+            list_kind = None
+
+    def flush_table() -> None:
+        if table_rows:
+            output.append("<table><tbody>")
+            for row_index, row in enumerate(table_rows):
+                tag = "th" if row_index == 0 else "td"
+                cells = "".join(f"<{tag}>{_inline_html(cell.strip(), source_dir, root)}</{tag}>" for cell in row)
+                output.append(f"<tr>{cells}</tr>")
+            output.append("</tbody></table>")
+            table_rows.clear()
+
+    for raw in markdown.splitlines():
+        line = raw.strip()
+        if code_lines is not None:
+            if line.startswith("```"):
+                output.append("<pre><code>" + escape("\n".join(code_lines)) + "</code></pre>")
+                code_lines = None
+            else:
+                code_lines.append(raw)
+            continue
+        if line.startswith("```"):
+            flush_paragraph(); flush_list(); flush_table()
+            code_lines = []
+            continue
+        heading = re.match(r"^(#{1,6})\s+(.+)$", line)
+        if heading:
+            flush_paragraph(); flush_list(); flush_table()
+            level = min(len(heading.group(1)) + 1, 6)
+            output.append(f"<h{level}>{_inline_html(heading.group(2), source_dir, root)}</h{level}>")
+            continue
+        if not line:
+            flush_paragraph(); flush_list(); flush_table()
+            continue
+        if line.startswith("|") and line.endswith("|"):
+            flush_paragraph(); flush_list()
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if not all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+                table_rows.append(cells)
+            continue
+        item = re.match(r"^(?:([-*+])\s+|(\d+)[.)]\s+)(.+)$", line)
+        if item:
+            flush_paragraph(); flush_table()
+            kind = "ol" if item.group(2) else "ul"
+            if list_kind != kind:
+                flush_list(); list_kind = kind; output.append(f"<{kind}>")
+            output.append("<li>" + _inline_html(item.group(3), source_dir, root) + "</li>")
+            continue
+        flush_list(); flush_table(); paragraph.append(line)
+    if code_lines is not None:
+        raise ValueError("unterminated code block in packaged course")
+    flush_paragraph(); flush_list(); flush_table()
+    return "".join(output)
+
+
+def _load_course_sections(language: str, root_arg: str | Path | None = None) -> tuple[ResearchCourseSection, ...]:
+    root = _course_root(root_arg)
+    path = _course_path(language, root)
+    markdown = path.read_text(encoding="utf-8")
+    headings = list(re.finditer(r"(?m)^##\s+(.+?)\s*$", markdown))
+    if len(headings) != len(_COURSE_ANCHORS):
+        raise ValueError("course heading outline does not match the stable five-course anchors")
+    seen_demos = set()
+    sections: list[ResearchCourseSection] = []
+    for index, match in enumerate(headings):
+        heading = match.group(1).strip()
+        demo = _DEMO_HEADING.search(heading)
+        if demo:
+            seen_demos.add(int(demo.group(1)))
+        start = match.end()
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(markdown)
+        body = markdown[start:end].strip()
+        if index == 0:
+            body = markdown[:headings[0].start()].strip() + "\n\n" + body
+        sections.append(ResearchCourseSection(
+            anchor=_COURSE_ANCHORS[index], heading=heading,
+            searchable_text=_plain_text(heading + "\n" + body),
+            html=_render_markdown_blocks(body, path.parent, root),
+        ))
+    if seen_demos != {1, 2, 3, 4, 5}:
+        raise ValueError("course document must contain all five numbered demos")
+    return tuple(sections)
+
+
+def research_course_sections(language: str) -> tuple[ResearchCourseSection, ...]:
+    """Load the locale course from fixed package docs; no directory scans or network."""
+    return _load_course_sections(language)
+
+
+def research_course_search_entries(language: str) -> tuple[tuple[str, str, str], ...]:
+    """Return stable anchor, heading, and complete plain text for manual search."""
+    return tuple((item.anchor, item.heading, item.searchable_text)
+                 for item in research_course_sections(language))
+
+
+def render_research_course(language: str) -> str:
+    """Render sanitized offline HTML with only contained package PNG references."""
+    sections = research_course_sections(language)
+    rendered = [f'<article id="research-courses"><h2 id="research-courses-title">{escape(_COURSE_TITLES[language])}</h2>']
+    for item in sections:
+        rendered.append(f'<section id="{item.anchor}"><h3>{escape(item.heading)}</h3>{item.html}</section>')
+    rendered.append("</article>")
+    return "".join(rendered)

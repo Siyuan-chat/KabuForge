@@ -54,6 +54,12 @@ class AgentCallRecord:
 
 STRING = {"type":"string", "minLength":1, "maxLength":256}
 PATH = {"type":"string", "minLength":1, "maxLength":512}
+SHA256 = {"type":"string", "pattern":"^[0-9a-fA-F]{64}$"}
+PAPER_CONFIRM = {"type":"boolean", "const":True}
+
+
+def _research_schema(properties=None, required=()):
+    return schema(properties, required)
 
 
 def schema(properties=None, required=()):
@@ -84,12 +90,54 @@ TOOLS = {
     "start_paper_simulation":(2,schema({"path":PATH,"timeline":PATH},["path","timeline"])),
     "stop_paper_simulation":(2,schema({"job_id":STRING},["job_id"])),
     "reconcile_local_state":(2,schema({"run_id":STRING},["run_id"])),
+    # Fixed ResearchApplicationService operations. File inputs are registered
+    # by explicit workspace-relative references; arbitrary code/interpreters
+    # are not accepted. Paper mutation tools are R2 and need both server and
+    # call-level opt-in plus the normal durable MCP idempotency fields.
+    "research_price":(1,_research_schema({"manifest_path":PATH,"recipe_path":PATH},["manifest_path","recipe_path"])),
+    "research_factor_diagnostics":(1,_research_schema({"manifest_path":PATH,"recipe_path":PATH},["manifest_path"])),
+    "research_factor_strategy":(1,_research_schema({"manifest_path":PATH,"score_path":PATH,"expected_artifact_sha256":SHA256,"score_source":{"type":"string","enum":["factor_feature_rows","model_predictions"]},"recipe_path":PATH},["manifest_path","score_path","expected_artifact_sha256","score_source"])),
+    "research_model_training":(1,_research_schema({"manifest_path":PATH,"factor_run_dir":PATH,"model_names":{"type":"array","items":{"type":"string","enum":["lightgbm","catboost"]},"minItems":1,"maxItems":2,"uniqueItems":True}},["manifest_path","factor_run_dir","model_names"])),
+    "research_engine_comparison":(1,_research_schema({"manifest_path":PATH,"recipes_path":PATH},["manifest_path","recipes_path"])),
+    "research_indicator":(1,_research_schema({"manifest_path":PATH,"code":STRING,"sma_period":{"type":"integer","minimum":2,"maximum":500,"default":20},"rsi_period":{"type":"integer","minimum":2,"maximum":100,"default":14},"atr_period":{"type":"integer","minimum":2,"maximum":100,"default":14},"provider":{"type":"string","enum":["talib","pandas-ta"],"default":"pandas-ta"}},["manifest_path","code"])),
+    "research_price_sensitivity":(1,_research_schema({"run_directory":PATH,"expected_report_sha256":SHA256},["run_directory","expected_report_sha256"])),
+    "research_paper_create":(2,_research_schema({"manifest_path":PATH,"strategy_report_path":PATH,"expected_report_sha256":SHA256,"confirm_paper":PAPER_CONFIRM},["manifest_path","strategy_report_path","expected_report_sha256","confirm_paper"])),
+    "research_paper_query":(0,_research_schema({"account_dir":PATH,"include_events":{"type":"boolean"}},["account_dir"])),
+    "research_paper_step":(2,_research_schema({"account_dir":PATH,"expected_cursor":{"type":"integer","minimum":0},"confirm_paper":PAPER_CONFIRM},["account_dir","expected_cursor","confirm_paper"])),
+    "research_paper_run_all":(2,_research_schema({"account_dir":PATH,"confirm_paper":PAPER_CONFIRM},["account_dir","confirm_paper"])),
+    "research_broker_workspace_create":(1,_research_schema({"config_path":PATH},["config_path"])),
+    "research_broker_order_preview":(1,_research_schema({"broker_workspace":PATH,"intent_path":PATH,"instrument_path":PATH,"now":STRING},["broker_workspace","intent_path","instrument_path","now"])),
+    "research_broker_readonly":(1,_research_schema({"broker_workspace":PATH,"confirm_read_only":PAPER_CONFIRM,"timeout":{"type":"number","exclusiveMinimum":0,"maximum":3,"default":2.0}},["broker_workspace","confirm_read_only"])),
 }
 
 MESSAGES = {
     "en_US":{"KF_AGENT_REJECTED":"Request rejected; inspect the validated input and capability boundary.","KF_AGENT_PATH":"Path must remain inside the configured workspace.","KF_AGENT_IDEMPOTENCY":"Idempotency key conflicts or previous completion is uncertain.","KF_AGENT_DISABLED":"This capability is disabled."},
     "zh_CN":{"KF_AGENT_REJECTED":"请求未通过，请核对输入格式与能力边界。","KF_AGENT_PATH":"路径必须位于指定工作区之内。","KF_AGENT_IDEMPOTENCY":"幂等键冲突，或此前调用完成状态不明。","KF_AGENT_DISABLED":"此项能力尚未启用。"},
     "ja_JP":{"KF_AGENT_REJECTED":"入力形式と機能の境界を確認してください。","KF_AGENT_PATH":"パスは指定されたワークスペース内に限られます。","KF_AGENT_IDEMPOTENCY":"冪等キーが競合しているか、前回の完了状態が不明です。","KF_AGENT_DISABLED":"この機能は無効です。"},
+}
+
+RESEARCH_TOOL_DESCRIPTIONS = {
+    "en_US": {
+        "research_broker_readonly": "Explicitly sends bounded read-only GETs to the configured localhost broker API; not a verified live-terminal connection. No submit/cancel.",
+        "research_paper_query": "Read an explicitly selected historical research-paper account; does not advance or append its journal.",
+        "research_paper_create": "Create a new isolated historical research-paper account; requires server and call-level opt-in plus idempotency.",
+        "research_paper_step": "Advance one session in an isolated historical research-paper account; requires server and call-level opt-in plus idempotency.",
+        "research_paper_run_all": "Replay the selected historical research-paper account to completion; requires server and call-level opt-in plus idempotency.",
+    },
+    "zh_CN": {
+        "research_broker_readonly": "显式向配置的本机 broker API 发送有界只读 GET；不代表已验证真实终端连接，不提交或撤销订单。",
+        "research_paper_query": "只读查询明确选定的历史研究 paper 账户；不推进、不追加账本。",
+        "research_paper_create": "创建全新隔离的历史研究 paper 账户；要求服务端和调用级双重 opt-in 与幂等键。",
+        "research_paper_step": "推进隔离历史研究 paper 账户一个观察日；要求服务端和调用级双重 opt-in 与幂等键。",
+        "research_paper_run_all": "回放所选历史研究 paper 账户至结束；要求服务端和调用级双重 opt-in 与幂等键。",
+    },
+    "ja_JP": {
+        "research_broker_readonly": "明示操作時のみ設定済み localhost broker API へ上限付き読み取り専用 GET を送信します。実端末接続の検証ではなく、注文送信・取消は行いません。",
+        "research_paper_query": "明示的に選択した過去の研究 paper 口座を読み取り専用で照会します。進行・追記はしません。",
+        "research_paper_create": "新しい隔離済み過去研究 paper 口座を作成します。サーバーと呼び出しの二重 opt-in と冪等キーが必要です。",
+        "research_paper_step": "隔離済み過去研究 paper 口座を1観測日進めます。サーバーと呼び出しの二重 opt-in と冪等キーが必要です。",
+        "research_paper_run_all": "選択した過去研究 paper 口座を最後まで再生します。サーバーと呼び出しの二重 opt-in と冪等キーが必要です。",
+    },
 }
 
 
@@ -181,9 +229,9 @@ class AgentCommandService:
 
     def tool_catalog(self):
         return [{"name":name,"risk_class":"R"+str(risk),"inputSchema":spec,
-                 "description":{"en_US":f"Local {name.replace('_',' ')}; no external order actions.",
+                 "description":RESEARCH_TOOL_DESCRIPTIONS.get(self.locale,{}).get(name, {"en_US":f"Local {name.replace('_',' ')}; research readiness only, no external order actions.",
                                 "zh_CN":f"本地接口 {name}；不执行外部下单。",
-                                "ja_JP":f"ローカル操作 {name}。外部注文は実行しません。"}[self.locale]}
+                                "ja_JP":f"ローカル操作 {name}。外部注文は実行しません。"}[self.locale])}
                 for name,(risk,spec) in TOOLS.items() if risk < 2 or self.enable_paper]
 
     def call(self, tool, arguments=None, *, agent_call_id=None, idempotency_key=None):
@@ -208,7 +256,8 @@ class AgentCommandService:
                         return json.loads(prior[2])
                     db.execute('INSERT INTO calls VALUES (?,?,?,?,?,?,?,?,?)',(call_id,idempotency_key,input_hash,None,None,now(),tool,'STARTED',None))
                 try:
-                    result = plain(self._dispatch(tool,arguments))
+                    result = plain(self._dispatch(tool,arguments,
+                        agent_call_id=agent_call_id,idempotency_key=idempotency_key))
                     _check_secrets(result,Path('agent-output'))
                     response = {"ok":True,"agent_call_id":call_id,"result":result}
                     with self._db() as db:
@@ -222,6 +271,17 @@ class AgentCommandService:
             code = exc.code if isinstance(exc,AgentError) else 'KF_AGENT_REJECTED'
             # Never return exception text, filesystem paths, supplied values or tracebacks.
             response = {"ok":False,"agent_call_id":call_id,"error":{"code":code,"message":MESSAGES[self.locale].get(code,MESSAGES[self.locale]['KF_AGENT_REJECTED'])}}
+            try:
+                from ..research_application import ResearchApplicationError
+                if isinstance(exc, ResearchApplicationError):
+                    evidence = {"stage": exc.stage}
+                    if exc.task_dir is not None:
+                        task_dir = Path(exc.task_dir).resolve(strict=False)
+                        if task_dir.is_relative_to(self.root):
+                            evidence["task_ref"] = task_dir.relative_to(self.root).as_posix()
+                    response["evidence"] = evidence
+            except Exception:
+                pass
             try:
                 try: rejected_hash = digest({'tool':tool,'arguments':arguments})
                 except Exception: rejected_hash = digest({'invalid_input':True})
@@ -242,10 +302,36 @@ class AgentCommandService:
         if not isinstance(run_id,str) or len(run_id)!=32 or any(c not in '0123456789abcdef' for c in run_id): raise AgentError('KF_AGENT_REJECTED')
         return self._path('agent_runs/'+run_id)
 
-    def _dispatch(self, tool, a):
+    def _research_service(self, *, paper_enabled=None):
+        from ..research_application import ResearchApplicationService
+        enabled = self.enable_paper if paper_enabled is None else (self.enable_paper and paper_enabled is True)
+        # Reuse the Agent workspace so every caller-supplied source reference
+        # is checked by _path first, while all new task artifacts remain below
+        # that same resolved workspace.
+        return ResearchApplicationService(self.root, enable_paper=enabled)
+
+    def _research_json(self, value):
+        return self._json(self._path(value))
+
+    @staticmethod
+    def _research_datetime(value):
+        from datetime import datetime
+        try:
+            parsed = datetime.fromisoformat(value)
+        except (TypeError, ValueError) as exc:
+            raise AgentError('KF_AGENT_REJECTED') from exc
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise AgentError('KF_AGENT_REJECTED')
+        return parsed
+
+    def _dispatch(self, tool, a, *, agent_call_id=None, idempotency_key=None):
         if tool == 'get_capabilities':
             from .external import ReservedExternalActions
-            return {"schema_version":"1.0","tools":self.tool_catalog(),"reserved_external_tools":ReservedExternalActions().catalog(),"locales":list(MESSAGES),"external_actions":False,"paper_enabled":self.enable_paper,"private_factors_in_local_install":not all(x.startswith('public.') for x in self.application.builtins.versions)}
+            research_ops = {name:{"risk_class":"R"+str(risk),
+                "adapter_enabled":risk < 2 or self.enable_paper,
+                "readiness":"RESEARCH-ONLY","pit_guarantee":False}
+                for name,(risk,_spec) in TOOLS.items() if name.startswith('research_')}
+            return {"schema_version":"1.0","tools":self.tool_catalog(),"reserved_external_tools":ReservedExternalActions().catalog(),"locales":list(MESSAGES),"external_actions":False,"paper_enabled":self.enable_paper,"research_readiness":"RESEARCH-ONLY","pit_guarantee":False,"research_operations":research_ops,"private_factors_in_local_install":not all(x.startswith('public.') for x in self.application.builtins.versions)}
         if tool == 'list_factors': return {"factors":plain(self.application.registry.catalog())}
         if tool == 'describe_factor':
             self.application.registry.require(a['implementation_id'],a['implementation_version'])
@@ -371,6 +457,85 @@ class AgentCommandService:
             if a['config'].get('kind')!='strategy': raise AgentError('KF_AGENT_REJECTED')
             path.parent.mkdir(parents=True,exist_ok=True); write_new(path,a['config'])
             return {"draft":str(path.relative_to(self.root)),"run_id":uuid.uuid4().hex,"config_hash":digest(a['config'])}
+        if tool.startswith('research_'):
+            service = self._research_service(paper_enabled=a.get('confirm_paper'))
+            manifest = lambda key='manifest_path': self._path(a[key])
+            if tool == 'research_price':
+                return service.run_price_research(manifest(), self._research_json(a['recipe_path']))
+            if tool == 'research_factor_diagnostics':
+                recipe = self._research_json(a['recipe_path']) if a.get('recipe_path') else None
+                return service.run_factor_diagnostics_task(manifest(), recipe)
+            if tool == 'research_factor_strategy':
+                recipe = self._research_json(a['recipe_path']) if a.get('recipe_path') else None
+                return service.run_factor_strategy(manifest(), self._path(a['score_path']),
+                    score_source=a['score_source'], expected_artifact_sha256=a['expected_artifact_sha256'],
+                    recipe=recipe)
+            if tool == 'research_model_training':
+                return service.run_model_training(manifest(), self._path(a['factor_run_dir']), a['model_names'])
+            if tool == 'research_engine_comparison':
+                doc = self._research_json(a['recipes_path'])
+                if set(doc) != {'recipes'} or not isinstance(doc['recipes'], list):
+                    raise AgentError('KF_AGENT_REJECTED')
+                return service.run_engine_comparison(manifest(), doc['recipes'])
+            if tool == 'research_indicator':
+                return service.run_indicator_research(manifest(), a['code'],
+                    sma_period=a.get('sma_period',20), rsi_period=a.get('rsi_period',14),
+                    atr_period=a.get('atr_period',14), provider=a.get('provider','pandas-ta'))
+            if tool == 'research_price_sensitivity':
+                return service.run_price_sensitivity(self._path(a['run_directory']),
+                    expected_report_sha256=a['expected_report_sha256'])
+            if tool == 'research_paper_create':
+                if a.get('confirm_paper') is not True or not agent_call_id or not idempotency_key:
+                    raise AgentError('KF_AGENT_IDEMPOTENCY')
+                return service.create_historical_paper(manifest(), self._path(a['strategy_report_path']),
+                    a['expected_report_sha256'], enable_paper=True, call_id=agent_call_id,
+                    idempotency_key=idempotency_key)
+            if tool == 'research_paper_query':
+                # Explicit existing path only; facade query opens the ledger
+                # read-only and never advances its cursor or writes its journal.
+                return service.query_historical_paper(self._path(a['account_dir']),
+                    include_events=a.get('include_events',False))
+            if tool == 'research_paper_step':
+                if a.get('confirm_paper') is not True or not agent_call_id or not idempotency_key:
+                    raise AgentError('KF_AGENT_IDEMPOTENCY')
+                return service.advance_historical_paper(self._path(a['account_dir']),
+                    expected_cursor=a['expected_cursor'], enable_paper=True, call_id=agent_call_id,
+                    idempotency_key=idempotency_key)
+            if tool == 'research_paper_run_all':
+                if a.get('confirm_paper') is not True or not agent_call_id or not idempotency_key:
+                    raise AgentError('KF_AGENT_IDEMPOTENCY')
+                return service.run_historical_paper_all(self._path(a['account_dir']),
+                    enable_paper=True, call_id=agent_call_id, idempotency_key=idempotency_key)
+            if tool == 'research_broker_workspace_create':
+                from ..broker_research import BrokerResearchConfig
+                config = self._research_json(a['config_path'])
+                if set(config) != {'environment','endpoint','account_id','account_type','exchange','credential_ref'}:
+                    raise AgentError('KF_AGENT_REJECTED')
+                return service.create_broker_workspace(BrokerResearchConfig(**config))
+            if tool == 'research_broker_order_preview':
+                from decimal import Decimal
+                from dataclasses import fields
+                from ..execution import Instrument, OrderIntent
+                intent = self._research_json(a['intent_path'])
+                instrument = self._research_json(a['instrument_path'])
+                intent_fields = {field.name for field in fields(OrderIntent)}
+                instrument_fields = {field.name for field in fields(Instrument)}
+                if set(intent) != intent_fields or set(instrument) - instrument_fields or not {'code','lot_size','tick_size'} <= set(instrument):
+                    raise AgentError('KF_AGENT_REJECTED')
+                for field_name in ('created_at','valid_until'):
+                    intent[field_name] = self._research_datetime(intent[field_name])
+                for field_name in ('limit_price','estimated_price','estimated_fee'):
+                    intent[field_name] = None if intent[field_name] is None else Decimal(str(intent[field_name]))
+                if instrument.get('expires_at') is not None:
+                    instrument['expires_at'] = self._research_datetime(instrument['expires_at'])
+                instrument['tick_size'] = Decimal(str(instrument['tick_size']))
+                return service.preview_broker_order(self._path(a['broker_workspace']),
+                    OrderIntent(**intent), Instrument(**instrument), now=self._research_datetime(a['now']))
+            if tool == 'research_broker_readonly':
+                if a.get('confirm_read_only') is not True:
+                    raise AgentError('KF_AGENT_REJECTED')
+                return service.check_broker_read_only(self._path(a['broker_workspace']),
+                    timeout=a.get('timeout',2.0))
         raise AgentError('KF_AGENT_DISABLED')
 
     def _named(self, folder, name):

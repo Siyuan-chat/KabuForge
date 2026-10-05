@@ -7,6 +7,8 @@ import sys
 import tempfile
 import unittest
 
+from framework_v2.version import get_version
+
 
 class MCPStdioTests(unittest.TestCase):
     def test_stdio_initialization_tools_and_reserved_calls(self):
@@ -22,6 +24,6 @@ class MCPStdioTests(unittest.TestCase):
             self.assertEqual(process.returncode,0,process.stderr)
             responses=[json.loads(line) for line in process.stdout.splitlines()]
             self.assertEqual(len(responses),4)
-            self.assertEqual(responses[0]['result']['serverInfo']['version'],'0.1.1')
+            self.assertEqual(responses[0]['result']['serverInfo']['version'], get_version())
             self.assertTrue(responses[2]['result']['isError'])
             self.assertIn('contents',responses[3]['result'])

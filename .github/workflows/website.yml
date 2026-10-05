@@ -1,9 +1,9 @@
 name: Website validation
 on:
   push:
-    paths: ['website/**', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README.md', 'README.zh_CN.md', 'README.ja_JP.md', '.github/workflows/website.yml']
   pull_request:
-    paths: ['website/**', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README.md', 'README.zh_CN.md', 'README.ja_JP.md', '.github/workflows/website.yml']
 permissions:
   contents: read
 jobs:
@@ -14,6 +14,12 @@ jobs:
         working-directory: website
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check shared version sources
+        working-directory: .
+        run: python tools/sync_version.py --check
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0

@@ -8,30 +8,82 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       QT_QPA_PLATFORM: offscreen
+      QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu
+      QT_QUICK_BACKEND: software
+      QT_OPENGL: software
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python tools/check_public_distribution.py .
       - if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
-      - run: python -m pip install -e '.[gui]' build
+      - run: python -m pip install -e '.[gui,analytics]' build
+      - run: python tools/sync_version.py --check
       - run: python -m unittest discover -s framework_v2/tests -p 'test_*.py' -q
       - run: python tools/check_docs.py
-      - run: python -m build
       - run: kabuforge demo --out output/ci_demo
       - run: kabuforge strategies
   gui:
     runs-on: windows-latest
     env:
       QT_QPA_PLATFORM: offscreen
+      QTWEBENGINE_CHROMIUM_FLAGS: --disable-gpu
+      QT_QUICK_BACKEND: software
+      QT_OPENGL: software
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -e '.[gui]'
+      - run: python tools/check_public_distribution.py .
+      - run: python -m pip install -e '.[gui,analytics]'
       - run: python -m unittest framework_v2.tests.test_workbench_qt framework_v2.tests.test_product_ui -q
+  dependency-resolution:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        extra: [analytics, indicators, models, backends]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/check_public_distribution.py .
+      - name: Install selected extra and the GUI/report requirements for analytics
+        run: |
+          if [ "${{ matrix.extra }}" = "analytics" ]; then
+            python -m pip install -e '.[gui,analytics]'
+          else
+            python -m pip install -e ".[${{ matrix.extra }}]"
+          fi
+      - run: python -m pip check
+      - name: Verify the declared extra resolves its distributions
+        env:
+          KABUFORGE_EXTRA: ${{ matrix.extra }}
+        run: |
+          python - <<'PY'
+          import importlib.metadata as metadata
+          import os
+          import tomllib
+          from pathlib import Path
+          extra = os.environ['KABUFORGE_EXTRA']
+          project = tomllib.loads(Path('pyproject.toml').read_text(encoding='utf-8'))['project']
+          requirements = project['optional-dependencies'][extra]
+          installed = {distribution.metadata['Name'].lower().replace('_', '-') for distribution in metadata.distributions() if distribution.metadata.get('Name')}
+          missing = []
+          for requirement in requirements:
+              name = requirement.split('[', 1)[0].split('=', 1)[0].split('<', 1)[0].split('>', 1)[0].strip().lower().replace('_', '-')
+              if name not in installed:
+                  missing.append(name)
+          if missing:
+              raise SystemExit('unresolved extra distributions: ' + ', '.join(missing))
+          print(f'{extra}: {len(requirements)} declared requirements installed')
+          PY
+      - name: Import declared providers and run representative workflow tests
+        run: python tools/check_optional_workflows.py "${{ matrix.extra }}"
   package:
     runs-on: ubuntu-latest
     steps:
@@ -39,15 +91,37 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Audit source before building artifacts
+        run: python tools/check_public_distribution.py .
       - run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
       - run: python -m pip install build
-      - run: python -m build
-      - run: python -m venv /tmp/kabuforge-clean
-      - run: /tmp/kabuforge-clean/bin/python -c "import glob,subprocess,sys; subprocess.run([sys.executable,'-m','pip','install',glob.glob('dist/*.whl')[0]+'[gui]'],check=True)"
-      - run: cd /tmp && /tmp/kabuforge-clean/bin/kabuforge demo --out /tmp/kabuforge-demo
-      - run: cd /tmp && /tmp/kabuforge-clean/bin/python "$GITHUB_WORKSPACE/tools/check_installed_package.py"
+      - name: Stage source and build outside the checkout
+        run: |
+          set -euo pipefail
+          SOURCE="$RUNNER_TEMP/kabuforge-source"
+          DIST="$RUNNER_TEMP/kabuforge-dist"
+          mkdir -p "$SOURCE" "$DIST"
+          git archive HEAD | tar -x -C "$SOURCE"
+          python -m build --outdir "$DIST" "$SOURCE"
+          printf 'KABUFORGE_DIST=%s\n' "$DIST" >> "$GITHUB_ENV"
+      - name: Audit wheel and source distribution
+        run: |
+          python tools/check_public_distribution.py "$KABUFORGE_DIST"/*.whl
+          python tools/check_public_distribution.py "$KABUFORGE_DIST"/*.tar.gz
+      - run: python -m venv "$RUNNER_TEMP/kabuforge-clean"
+      - name: Install and exercise the wheel outside the checkout
+        run: |
+          set -euo pipefail
+          WHEELS=("$KABUFORGE_DIST"/*.whl)
+          test "${#WHEELS[@]}" -eq 1
+          VENV_PY="$RUNNER_TEMP/kabuforge-clean/bin/python"
+          "$VENV_PY" -m pip install "${WHEELS[0]}[gui,analytics]"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/kabuforge-clean/bin/kabuforge" doctor
+          "$RUNNER_TEMP/kabuforge-clean/bin/kabuforge" demo --out "$RUNNER_TEMP/kabuforge-demo"
+          "$VENV_PY" -I "$GITHUB_WORKSPACE/tools/check_installed_package.py"
       - name: Verify tutorial from extracted sdist
-        run: /tmp/kabuforge-clean/bin/python -I tools/check_sdist_tutorial.py dist/*.tar.gz
+        run: "$RUNNER_TEMP/kabuforge-clean/bin/python -I $GITHUB_WORKSPACE/tools/check_sdist_tutorial.py $KABUFORGE_DIST/*.tar.gz"
   agent:
     runs-on: ubuntu-latest
     steps:
@@ -55,8 +129,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python tools/check_public_distribution.py .
       - run: python -m pip install -e .
-      - run: python -m unittest framework_v2.tests.test_agent framework_v2.tests.test_research_diagnostics -q
+      - run: python -m unittest framework_v2.tests.test_agent framework_v2.tests.test_research_diagnostics framework_v2.tests.test_research_interfaces framework_v2.tests.test_public_research_adapters -q
       - run: python tools/check_agent_catalog.py
   # Public artifacts are audited on every PR and push, before a release tag.
   public-distribution:
@@ -66,8 +141,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Audit source before building artifacts
+        run: python tools/check_public_distribution.py .
       - run: python -m pip install build
-      - run: python -m build
-      - run: python tools/check_public_distribution.py .
-      - run: python tools/check_public_distribution.py dist/*.whl
-      - run: python tools/check_public_distribution.py dist/*.tar.gz
+      - name: Build and audit in runner temporary storage
+        run: |
+          set -euo pipefail
+          SOURCE="$RUNNER_TEMP/kabuforge-public-source"
+          DIST="$RUNNER_TEMP/kabuforge-public-dist"
+          mkdir -p "$SOURCE" "$DIST"
+          git archive HEAD | tar -x -C "$SOURCE"
+          python -m build --outdir "$DIST" "$SOURCE"
+          python tools/check_public_distribution.py "$DIST"/*.whl
+          python tools/check_public_distribution.py "$DIST"/*.tar.gz

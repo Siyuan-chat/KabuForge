@@ -2,6 +2,7 @@
 import os
 os.environ.setdefault("QT_QPA_PLATFORM","offscreen")
 import tempfile,time,json,unittest
+import copy
 from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtWidgets import QApplication
@@ -16,7 +17,8 @@ class ProductTests(unittest.TestCase):
     def setUpClass(cls): cls.app=QApplication.instance() or QApplication([])
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(); self.root=Path(self.tmp.name)
-        with patch("framework_v2.data_connection.load_api_key",return_value=None): self.window=ProductWorkbench(self.root)
+        with patch("framework_v2.data_connection.load_api_key",side_effect=AssertionError("startup must not read credentials")):
+            self.window=ProductWorkbench(self.root)
         self.window.show(); self.app.processEvents()
     def tearDown(self):
         if self.window.jobs.busy: self.window.jobs.cancel(); self.wait_job()
@@ -32,6 +34,9 @@ class ProductTests(unittest.TestCase):
         return self.window.jobs.jobs[-1]
     def test_guided_demo_language_preserves_fields_and_history(self):
         w=self.window; w.strategy_name.setText("三语测试")
+        # The product default is real local price data; keep this older
+        # end-to-end test on its explicitly synthetic engineering fixture.
+        w.template.setCurrentIndex(w.template.findData("synthetic"))
         w.sentence.setText("每周选3只股票，等权"); self.assertTrue(w.parse_input())
         w.set_language("en_US"); self.assertEqual(w.holding_count.value(),3)
         self.assertEqual(w.strategy_name.text(),"三语测试"); self.assertEqual(w.nav.item(1).text(),"My strategies")
@@ -51,7 +56,7 @@ class ProductTests(unittest.TestCase):
         h.search.setText("Credential Manager"); self.assertEqual(h.contents.count(),1)
         h._select(h.contents.item(0)); self.assertEqual(h.chapter,"connect")
         self.assertTrue(h.find_match()); h.set_language("ja_JP"); self.assertEqual(h.chapter,"connect")
-        h.search.setText(""); self.assertEqual(h.contents.count(),len(CHAPTERS["ja_JP"]))
+        h.search.setText(""); self.assertEqual(h.contents.count(),len(CHAPTERS["ja_JP"])+9)
         from PySide6.QtCore import QUrl
         h._anchor(QUrl("#paper")); self.assertEqual(h.chapter,"paper")
         for locale,chapters in CHAPTERS.items():
@@ -73,6 +78,45 @@ class ProductTests(unittest.TestCase):
             self.assertLessEqual(w.minimumSizeHint().width(),1000)
             self.assertFalse(w.grab().isNull())
         self.assertFalse(w.catalog.wordWrap())
+
+    def test_external_report_localizes_without_guided_recipe_and_formats_fees(self):
+        w=self.window
+        report=research_bars(
+            [{"date":f"2024-01-{i:02}","code":code,"open":10+i*scale,"close":11+i*scale,"adjustment_factor":1}
+             for i in range(1,12) for code,scale in (("A",1),("B",2))],
+            {"count":1,"lookback":2,"cash":100000,"fee":.1,"frequency":"daily"},
+        )
+        report.update({"strategy_template":"external_recipe","strategy_name":"Readable strategy","fees":12345.6789})
+        original=copy.deepcopy(report)
+        w.product_ready=False  # External Studio/loaded report before guided-product setup.
+        w.show_report(report)
+        for language,prefix in (("zh_CN","策略："),("ja_JP","戦略："),("en_US","Strategy: ")):
+            w.set_language(language)
+            self.assertEqual(w.strategy_badge.text(),prefix+"Readable strategy")
+            self.assertIn("12,345.68 JPY",w.result_summary.text())
+            self.assertIn(str(report["nav"][-1]["at"]),w.cutoff_badge.text())
+        self.assertEqual(report,original,"display localization must not mutate the financial artifact")
+        self.assertEqual(w._fee_display(None),"—")
+        self.assertEqual(w._fee_display(float("nan")),"—")
+        self.assertEqual(w._fee_display(float("inf")),"—")
+
+    def test_external_report_uses_localized_name_when_identity_is_missing(self):
+        w=self.window
+        report=research_bars(
+            [{"date":f"2024-01-{i:02}","code":code,"open":10+i*scale,"close":11+i*scale,"adjustment_factor":1}
+             for i in range(1,12) for code,scale in (("A",1),("B",2))],
+            {"count":1,"lookback":2,"cash":100000,"fee":.1,"frequency":"daily"},
+        )
+        report["strategy_template"]="unknown"
+        w.show_report(report)
+        expected=(("zh_CN","策略：研究报告"),("ja_JP","戦略：研究レポート"),("en_US","Strategy: Research report"))
+        for language,text in expected:
+            w.set_language(language)
+            self.assertEqual(w.strategy_badge.text(),text)
+        report["strategy_id"]="external-score-id"
+        w.show_report(report)
+        w.set_language("en_US")
+        self.assertEqual(w.strategy_badge.text(),"Strategy: external-score-id")
 
 class ResearchTests(unittest.TestCase):
     def rows(self):

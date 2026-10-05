@@ -418,6 +418,405 @@
         "additionalProperties": false
       }
     },
+    "research_broker_order_preview": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "broker_workspace": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "intent_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "instrument_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "now": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "broker_workspace",
+          "intent_path",
+          "instrument_path",
+          "now"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_broker_readonly": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "broker_workspace": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "confirm_read_only": {
+            "type": "boolean",
+            "const": true
+          },
+          "timeout": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 3,
+            "default": 2.0
+          }
+        },
+        "required": [
+          "broker_workspace",
+          "confirm_read_only"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_broker_workspace_create": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "config_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "config_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_engine_comparison": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "recipes_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "manifest_path",
+          "recipes_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_factor_diagnostics": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "recipe_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "manifest_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_factor_strategy": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "score_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "expected_artifact_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "score_source": {
+            "type": "string",
+            "enum": [
+              "factor_feature_rows",
+              "model_predictions"
+            ]
+          },
+          "recipe_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "manifest_path",
+          "score_path",
+          "expected_artifact_sha256",
+          "score_source"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_indicator": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "sma_period": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 500,
+            "default": 20
+          },
+          "rsi_period": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 100,
+            "default": 14
+          },
+          "atr_period": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 100,
+            "default": 14
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "talib",
+              "pandas-ta"
+            ],
+            "default": "pandas-ta"
+          }
+        },
+        "required": [
+          "manifest_path",
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_model_training": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "factor_run_dir": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "model_names": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "lightgbm",
+                "catboost"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 2,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "manifest_path",
+          "factor_run_dir",
+          "model_names"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_paper_create": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "strategy_report_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "expected_report_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          },
+          "confirm_paper": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "manifest_path",
+          "strategy_report_path",
+          "expected_report_sha256",
+          "confirm_paper"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_paper_query": {
+      "risk_class": "R0",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_dir": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "include_events": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "account_dir"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_paper_run_all": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_dir": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "confirm_paper": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "account_dir",
+          "confirm_paper"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_paper_step": {
+      "risk_class": "R2",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_dir": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "expected_cursor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "confirm_paper": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "account_dir",
+          "expected_cursor",
+          "confirm_paper"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_price": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "manifest_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "recipe_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        },
+        "required": [
+          "manifest_path",
+          "recipe_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "research_price_sensitivity": {
+      "risk_class": "R1",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "run_directory": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "expected_report_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$"
+          }
+        },
+        "required": [
+          "run_directory",
+          "expected_report_sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
     "run_backtest": {
       "risk_class": "R1",
       "inputSchema": {

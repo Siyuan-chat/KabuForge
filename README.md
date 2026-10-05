@@ -9,38 +9,43 @@
   <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
 </picture>
 
-**Reproducible quantitative research for Japanese equities.**
+**A reproducible quantitative research stack for Japanese equities.**
 
-An open-source, local-first research framework for Japanese equities, with factor and strategy research, backtesting, local paper simulation, and MCP agent interfaces.
+An open-source, local-first stack connecting J-Quants or explicitly selected local data to factor and ML research, backtesting, portfolio construction, risk controls, and Japanese broker-neutral planning.
 
 [Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
 
-Current package version: **0.1.1**. Research and local simulation only; real broker order submission is disabled. The published `v0.1.0` GitHub Release retains RC package artifacts and the historical MIT license.
+<!-- KABUFORGE:VERSION:START -->
+Current package version: **0.2.0rc1**. This candidate metadata does not mean the version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
+
+[![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
+<!-- KABUFORGE:VERSION:END -->
 
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
-[![Package](https://img.shields.io/badge/package-0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
 ## What is KabuForge?
 
 KabuForge connects factor and strategy research with portfolio construction, risk controls, broker-neutral order planning, historical backtesting, and local paper simulation. Shared application services are accessible through Python, CLI, desktop GUI, and MCP-compatible agents.
 
 ```text
-Factor → Strategy → TargetPortfolio → Risk → Planner → OrderIntent
+J-Quants / local data → Factor + ML → Backtest → Portfolio → Risk → Japanese broker planning
 ```
 
 ## Current capabilities
 
 | Capability | Status and boundary | Evidence |
 | --- | --- | --- |
+| J-Quants and local data | User-supplied credentials/data only; local CSV, Parquet and frozen manifests are explicit inputs. No market data ships in this package | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
 | PIT visibility gates | Checks declared `available_at` against decision time; no complete historical PIT certification | [Docs](docs/en_US/RESEARCH_METHODOLOGY.md) |
 | Factor / Strategy extensions | Registered, versioned implementations and required validators | [Docs](docs/en_US/FACTOR_API.md) |
+| Indicators / ML / engine candidates | Optional isolated runtimes for TA-Lib, pandas-ta, LightGBM, CatBoost, VectorBT and Backtrader; runtime launchability depends on local extras | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
 | Portfolio / Risk / Planner | Targets, risk constraints and broker-neutral order intents | [Docs](docs/en_US/ARCHITECTURE.md) |
 | Historical backtest | Local simulation with explicit research and execution price semantics | [Docs](docs/en_US/EXECUTION.md) |
 | Local paper | Local account/journal simulation; simulated fills are not broker fills | [Docs](docs/en_US/EXECUTION.md) |
 | MCP agents | R0/R1 inspection and local research by default; R2 paper writes require explicit opt-in | [Docs](docs/en_US/AGENT_API.md) |
-| Broker mappings / mocks | Contract and mock validation layer; real transport remains unverified | [Docs](docs/en_US/BROKER_API.md) |
-| Real broker orders | Not enabled in this RC; reserved R3 interfaces are disabled | [Docs](docs/en_US/AGENT_API.md) |
+| Japanese broker mapping / read-only check | Offline preview is local-only; an explicit localhost credential-reference diagnostic can issue three read-only GETs. Actual terminal connectivity remains unverified | [Docs](docs/en_US/BROKER_API.md) |
+| Real broker orders | Submit and cancel are disabled. Public Regime workflow is off by default | [Docs](docs/en_US/AGENT_API.md) |
 
 <a id="quick-start"></a>
 ## Quick start
@@ -57,7 +62,9 @@ kabuforge factors
 kabuforge strategies
 ```
 
-The demo is synthetic and offline: no market data, J-Quants key or broker account is needed. Install `.[gui]` instead of `.` for the optional desktop GUI; on Windows launch `Launch_KabuForge.bat`.
+The demo is synthetic and offline: no market data, J-Quants key or broker account is needed. Install `.[gui]` for the optional desktop GUI; install `.[analytics]`, `.[indicators]`, `.[models]` or `.[backends]` only for workflows that need those optional runtimes. On Windows launch `Launch_KabuForge.bat`. Users provide their own data and credentials; the package does not bundle J-Quants history. All research outputs are RESEARCH-ONLY with no PIT guarantee. TOPIX is a price-only reference without dividends.
+
+In the GUI, use **Data Center** for explicitly selected local inputs, **Backtest Results** for reports, **Paper Trading → Real-market historical research replay** for isolated historical replay, and **Broker Connections → Offline cash-equity mapping preview** for local mapping. The preview does not submit orders; read-only diagnostics require a separate explicit action and a credential reference. See the [English GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md), [中文课程](docs/zh_CN/GUI_RESEARCH_COURSES.md), and [日本語コース](docs/ja_JP/GUI_RESEARCH_COURSES.md).
 
 ### Agent / MCP
 

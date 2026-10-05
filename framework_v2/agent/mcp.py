@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from .core import AgentCommandService, AgentResourceService, AgentError, schema, STRING
+from ..version import get_version
 from jsonschema import Draft202012Validator
 from ..config import _unique_pairs, _reject_constant
 
@@ -23,7 +24,7 @@ class MCPAdapter:
             if request.get('jsonrpc') != '2.0' or not isinstance(method,str): return error(-32600,'Invalid request')
             params = request.get('params',{})
             if method == 'initialize':
-                result = {"protocolVersion":"2024-11-05","capabilities":{"tools":{},"resources":{}},"serverInfo":{"name":"kabuforge","version":"0.1.1"}}
+                result = {"protocolVersion":"2024-11-05","capabilities":{"tools":{},"resources":{}},"serverInfo":{"name":"kabuforge","version":get_version()}}
             elif method == 'ping': result = {}
             elif method == 'tools/list':
                 tools = []
@@ -33,9 +34,13 @@ class MCPAdapter:
                     if item['risk_class']=='R2':
                         properties.update(agent_call_id=STRING,idempotency_key=STRING)
                         required.extend(['agent_call_id','idempotency_key'])
+                    is_readonly_get = item['name']=='research_broker_readonly'
                     tools.append({"name":item['name'],"description":item['description'],
                                   "inputSchema":schema(properties,required),
-                                  "annotations":{"readOnlyHint":item['risk_class']=='R0',"destructiveHint":False,"openWorldHint":False,"idempotentHint":item['risk_class']=='R2'}})
+                                  "annotations":{"readOnlyHint":item['risk_class']=='R0' or is_readonly_get,
+                                                 "destructiveHint":False,
+                                                 "openWorldHint":is_readonly_get,
+                                                 "idempotentHint":item['risk_class']=='R2'}})
                 result = {"tools":tools}
                 if self.expose_reserved_external:
                     from .external import ReservedExternalActions
