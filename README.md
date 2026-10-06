@@ -28,15 +28,37 @@ These screenshots come from the **current GUI research course** captured from th
 
 [Current GUI research course](docs/en_US/GUI_RESEARCH_COURSES.md) · [Current evidence summary](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
-<p align="center">
-  <img src="docs/demos/research-20261006/en_US/studio-factor-composite-results.png" width="100%" alt="KabuForge current Research Studio factor strategy results">
-</p>
+Click any screenshot below to open the original **1440×1080** capture.
 
-| Data Center · frozen input | Backtest Results |
-| :---: | :---: |
-| <img src="docs/demos/research-20261006/en_US/cache-frozen.png" alt="KabuForge current Data Center frozen-input view" width="100%"> | <img src="docs/demos/research-20261006/en_US/ma-native-results.png" alt="KabuForge current backtest results view" width="100%"> |
-| **Historical Paper · full replay** | **Broker Connections · offline mapping** |
-| <img src="docs/demos/research-20261006/en_US/paper-full-history.png" alt="KabuForge current historical paper replay view" width="100%"> | <img src="docs/demos/research-20261006/en_US/broker-valid-local-mapping.png" alt="KabuForge current offline broker mapping preview" width="100%"> |
+### Research Studio
+
+<a href="docs/demos/research-20261006/en_US/studio-factor-composite-results.png">
+  <img src="docs/demos/research-20261006/en_US/studio-factor-composite-results.png" width="100%" alt="KabuForge current Research Studio factor strategy results">
+</a>
+
+### Data Center · frozen input
+
+<a href="docs/demos/research-20261006/en_US/cache-frozen.png">
+  <img src="docs/demos/research-20261006/en_US/cache-frozen.png" width="100%" alt="KabuForge current Data Center frozen-input view">
+</a>
+
+### Backtest Results
+
+<a href="docs/demos/research-20261006/en_US/ma-native-results.png">
+  <img src="docs/demos/research-20261006/en_US/ma-native-results.png" width="100%" alt="KabuForge current backtest results view">
+</a>
+
+### Historical Paper · full replay
+
+<a href="docs/demos/research-20261006/en_US/paper-full-history.png">
+  <img src="docs/demos/research-20261006/en_US/paper-full-history.png" width="100%" alt="KabuForge current historical paper replay view">
+</a>
+
+### Broker Connections · offline mapping
+
+<a href="docs/demos/research-20261006/en_US/broker-valid-local-mapping.png">
+  <img src="docs/demos/research-20261006/en_US/broker-valid-local-mapping.png" width="100%" alt="KabuForge current offline broker mapping preview">
+</a>
 
 ## What is KabuForge?
 
