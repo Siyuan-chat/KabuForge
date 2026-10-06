@@ -32,15 +32,35 @@
 
 [当前中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md) · [当前证据摘要](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
-<p align="center">
-  <img src="docs/demos/research-20261006/zh_CN/studio-factor-composite-results.png" width="100%" alt="KabuForge 当前 Research Studio 因子策略结果界面">
-</p>
+### Research Studio
 
-| 数据中心 · 冻结输入 | 回测结果 |
-| :---: | :---: |
-| <img src="docs/demos/research-20261006/zh_CN/cache-frozen.png" alt="KabuForge 当前数据中心冻结输入界面" width="100%"> | <img src="docs/demos/research-20261006/zh_CN/ma-native-results.png" alt="KabuForge 当前回测结果界面" width="100%"> |
-| **历史 Paper · 全量回放** | **券商连接 · 离线映射** |
-| <img src="docs/demos/research-20261006/zh_CN/paper-full-history.png" alt="KabuForge 当前历史 Paper 全量回放界面" width="100%"> | <img src="docs/demos/research-20261006/zh_CN/broker-valid-local-mapping.png" alt="KabuForge 当前离线券商映射预览" width="100%"> |
+<a href="docs/demos/research-20261006/zh_CN/studio-factor-composite-results.png">
+  <img src="docs/demos/research-20261006/zh_CN/studio-factor-composite-results.png" width="100%" alt="KabuForge 当前 Research Studio 因子策略结果界面">
+</a>
+
+### 数据中心 · 冻结输入
+
+<a href="docs/demos/research-20261006/zh_CN/cache-frozen.png">
+  <img src="docs/demos/research-20261006/zh_CN/cache-frozen.png" width="100%" alt="KabuForge 当前数据中心冻结输入界面">
+</a>
+
+### 回测结果
+
+<a href="docs/demos/research-20261006/zh_CN/ma-native-results.png">
+  <img src="docs/demos/research-20261006/zh_CN/ma-native-results.png" width="100%" alt="KabuForge 当前回测结果界面">
+</a>
+
+### 历史 Paper · 全量回放
+
+<a href="docs/demos/research-20261006/zh_CN/paper-full-history.png">
+  <img src="docs/demos/research-20261006/zh_CN/paper-full-history.png" width="100%" alt="KabuForge 当前历史 Paper 全量回放界面">
+</a>
+
+### 券商连接 · 离线映射
+
+<a href="docs/demos/research-20261006/zh_CN/broker-valid-local-mapping.png">
+  <img src="docs/demos/research-20261006/zh_CN/broker-valid-local-mapping.png" width="100%" alt="KabuForge 当前离线券商映射预览">
+</a>
 
 ## KabuForge 是什么？
 
