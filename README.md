@@ -26,6 +26,20 @@ Current stable package version: **0.1.1**. Published 2026-10-04. Research and lo
   <a href="README.ja_JP.md">日本語</a>
 </p>
 
+## See KabuForge in action
+
+This is an **existing local GUI recording** of the research workflow. The historical NAV shown in these images does **not** represent the current public factors, the synthetic CLI demo, or investment performance. Source data, strategy configuration and account files from the recording are not distributed.
+
+[Demo context](docs/demos/en_US/index.html) · [GUI research course](docs/en_US/GUI_RESEARCH_COURSES.md)
+
+<p align="center">
+  <img src="docs/demos/en_US/workflow.gif" width="100%" alt="KabuForge English GUI workflow demo">
+</p>
+
+| Data | Results | History |
+| :---: | :---: | :---: |
+| <img src="docs/demos/en_US/data.png" alt="KabuForge Data view" width="100%"> | <img src="docs/demos/en_US/result.png" alt="KabuForge backtest results view" width="100%"> | <img src="docs/demos/en_US/history.png" alt="KabuForge history view" width="100%"> |
+
 ## What is KabuForge?
 
 KabuForge is an open-source Python research stack for **Japanese equity quantitative research**. It connects **J-Quants or explicitly selected local data** to factor and ML research, historical backtesting, portfolio construction, risk controls, local paper simulation, and Japanese broker-neutral order planning.
@@ -167,15 +181,6 @@ Current package version: **0.2.0rc1**. This candidate metadata does not mean the
 ## Documentation and validation
 
 [Documentation](docs/en_US/README.md) · [GEO release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
-
-<details>
-<summary>Workflow demo / 流程演示 / フローのデモ</summary>
-
-This is a historical interface/workflow recording. Its historical NAV does not represent current public factors, the new synthetic CLI demo, or investment performance. [Demo context](docs/demos/en_US/index.html).
-
-![KabuForge workflow](docs/demos/en_US/workflow.gif)
-
-</details>
 
 ## Citation
 
