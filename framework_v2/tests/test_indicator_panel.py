@@ -19,6 +19,96 @@ from PySide6.QtWidgets import QApplication
 from framework_v2.indicator_panel import IndicatorChart, IndicatorResearchPanel
 
 
+def _argv_option(argv, name):
+    matches = [index for index, value in enumerate(argv) if value == name]
+    if len(matches) != 1 or matches[0] + 1 >= len(argv):
+        return None
+    return argv[matches[0] + 1]
+
+
+def _same_path_entity(first, second):
+    if not isinstance(first, (str, os.PathLike)) or not isinstance(second, (str, os.PathLike)):
+        return False
+    if not os.fspath(first) or not os.fspath(second):
+        return False
+    try:
+        if os.path.samefile(first, second):
+            return True
+    except (OSError, TypeError, ValueError):
+        pass
+    try:
+        return Path(first).resolve(strict=True) == Path(second).resolve(strict=True)
+    except (OSError, RuntimeError, TypeError, ValueError):
+        return False
+
+
+def _worker_is_bound_to_launch(worker, launch, gui_pid):
+    qprocess_pid = launch.get("pid")
+    worker_pid = worker.get("pid")
+    if not isinstance(qprocess_pid, int) or not isinstance(worker_pid, int):
+        return False
+    if worker_pid != launch.get("python_worker_pid"):
+        return False
+    if worker.get("ppid") != launch.get("python_worker_ppid"):
+        return False
+    if not _same_path_entity(worker.get("executable", ""), launch.get("python_worker_executable", "")):
+        return False
+
+    worker_argv = worker.get("orig_argv") or worker.get("argv")
+    if worker_argv != launch.get("python_worker_argv"):
+        return False
+    if "framework_v2.indicator_research_worker" not in worker_argv:
+        return False
+    manifest_arg = _argv_option(worker_argv, "--manifest")
+    output_arg = _argv_option(worker_argv, "--output-dir")
+    expected_manifest = (launch.get("request") or {}).get("manifest")
+    expected_output = launch.get("output_dir")
+    if not manifest_arg or not expected_manifest or not _same_path_entity(manifest_arg, expected_manifest):
+        return False
+    if not output_arg or not expected_output or not _same_path_entity(output_arg, expected_output):
+        return False
+
+    if worker_pid == qprocess_pid:
+        # Native python.exe is the QProcess itself; its parent is the GUI.
+        return worker.get("ppid") == gui_pid and _same_path_entity(
+            launch.get("program", ""), worker.get("executable", ""))
+    # A Windows redirector is the QProcess and starts the base interpreter.
+    return worker.get("ppid") == qprocess_pid
+
+
+def _short_windows_path(path):
+    if os.name != "nt":
+        return None
+    import ctypes
+    from ctypes import wintypes
+
+    get_short_path = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+    get_short_path.argtypes = (wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD)
+    get_short_path.restype = wintypes.DWORD
+    needed = get_short_path(str(path), None, 0)
+    if not needed:
+        return None
+    buffer = ctypes.create_unicode_buffer(needed)
+    written = get_short_path(str(path), buffer, needed)
+    return buffer.value if written else None
+
+
+def _long_windows_temp_path(path):
+    if os.name != "nt":
+        return None
+    profile = os.environ.get("USERPROFILE")
+    if not profile:
+        return None
+    try:
+        relative = os.path.relpath(path, tempfile.gettempdir())
+        candidate = Path(profile) / "AppData" / "Local" / "Temp" / relative
+        if candidate.exists() and os.path.samefile(candidate, path):
+            return candidate
+    except (OSError, RuntimeError, ValueError):
+        return None
+    return None
+
+
 class _PreserveOnFailure:
     def __enter__(self):
         self.path = Path(tempfile.mkdtemp(prefix="indicator-qprocess-"))
@@ -81,6 +171,75 @@ class IndicatorPanelTests(unittest.TestCase):
         chart = IndicatorChart("RSI", "0–100")
         self.assertEqual(chart._y_range([49.0, 50.0, 51.0]), (0.0, 100.0))
         self.assertEqual(chart._y_range([0.0, 100.0]), (0.0, 100.0))
+
+    def _synthetic_binding(self, root: Path, *, direct: bool, manifest_arg=None, output_arg=None,
+                           expected_manifest=None, expected_output=None):
+        manifest = root / "manifest with spaces.json"
+        manifest.write_text("{}", encoding="utf-8")
+        output = root / "worker output"
+        output.mkdir(exist_ok=True)
+        qprocess_pid = 12001 if direct else 12002
+        worker_pid = qprocess_pid if direct else 12003
+        worker_ppid = os.getpid() if direct else qprocess_pid
+        args = ["-B", "-m", "framework_v2.indicator_research_worker", "--manifest",
+                str(manifest_arg or manifest), "--output-dir", str(output_arg or output)]
+        marker = {"pid": worker_pid, "ppid": worker_ppid, "executable": sys.executable,
+                  "argv": args[2:], "orig_argv": [sys.executable, *args]}
+        launch = {"pid": qprocess_pid, "program": sys.executable,
+                  "python_worker_pid": worker_pid, "python_worker_ppid": worker_ppid,
+                  "python_worker_executable": sys.executable,
+                  "python_worker_argv": marker["orig_argv"],
+                  "request": {"manifest": str(expected_manifest or manifest)},
+                  "output_dir": str(expected_output or output)}
+        return marker, launch
+
+    def test_direct_qprocess_topology_binding_accepts_and_rejects_wrong_parent(self):
+        with tempfile.TemporaryDirectory(prefix="indicator-direct-binding-") as tmp:
+            marker, launch = self._synthetic_binding(Path(tmp), direct=True)
+            self.assertTrue(_worker_is_bound_to_launch(marker, launch, os.getpid()))
+            wrong_parent = {**marker, "ppid": launch["pid"]}
+            wrong_parent_launch = {**launch, "python_worker_ppid": launch["pid"]}
+            self.assertFalse(_worker_is_bound_to_launch(
+                wrong_parent, wrong_parent_launch, os.getpid()))
+
+    def test_redirector_qprocess_topology_binding_accepts_and_rejects_wrong_parent(self):
+        with tempfile.TemporaryDirectory(prefix="indicator-redirector-binding-") as tmp:
+            marker, launch = self._synthetic_binding(Path(tmp), direct=False)
+            self.assertTrue(_worker_is_bound_to_launch(marker, launch, os.getpid()))
+            wrong_parent = {**marker, "ppid": os.getpid()}
+            wrong_parent_launch = {**launch, "python_worker_ppid": os.getpid()}
+            self.assertFalse(_worker_is_bound_to_launch(
+                wrong_parent, wrong_parent_launch, os.getpid()))
+
+    def test_worker_args_bind_manifest_and_output_by_path_identity(self):
+        with tempfile.TemporaryDirectory(prefix="indicator-qprocess-path-identity-") as tmp:
+            root = Path(tmp)
+            long_manifest = root / "manifest with spaces.json"
+            long_output = root / "worker output"
+            long_root = _long_windows_temp_path(root)
+            if long_root and os.path.normcase(str(long_root)) != os.path.normcase(str(root)):
+                short_root = _short_windows_path(long_root)
+                self.assertTrue(short_root, "expected an available short-path spelling for the temp fixture")
+                self.assertTrue(os.path.samefile(long_root, short_root))
+                short_manifest = Path(short_root) / long_manifest.name
+                short_output = Path(short_root) / long_output.name
+                marker, launch = self._synthetic_binding(
+                    root, direct=True, manifest_arg=short_manifest, output_arg=short_output,
+                    expected_manifest=long_manifest, expected_output=long_output)
+                self.assertNotEqual(os.path.normcase(short_manifest), os.path.normcase(long_manifest))
+            else:
+                marker, launch = self._synthetic_binding(root, direct=True)
+            self.assertTrue(_worker_is_bound_to_launch(marker, launch, os.getpid()))
+            wrong_manifest = list(marker["orig_argv"])
+            wrong_manifest[wrong_manifest.index("--manifest") + 1] = str(root / "missing.json")
+            wrong_manifest_launch = {**launch, "python_worker_argv": wrong_manifest}
+            self.assertFalse(_worker_is_bound_to_launch(
+                {**marker, "orig_argv": wrong_manifest}, wrong_manifest_launch, os.getpid()))
+            wrong_output = list(marker["orig_argv"])
+            wrong_output[wrong_output.index("--output-dir") + 1] = str(root / "different-output")
+            wrong_output_launch = {**launch, "python_worker_argv": wrong_output}
+            self.assertFalse(_worker_is_bound_to_launch(
+                {**marker, "orig_argv": wrong_output}, wrong_output_launch, os.getpid()))
 
     @unittest.skipUnless(os.name == "nt", "isolated extension runtime is validated for win_amd64")
     def test_real_pandas_ta_qprocess_has_dual_guards_and_restarts_after_failure(self):
@@ -201,10 +360,12 @@ class IndicatorPanelTests(unittest.TestCase):
             for worker_marker in worker_markers:
                 self.assertEqual(worker_marker["network_guard"], "ready")
                 self.assertEqual(worker_marker["credential_guard"], "ready")
-                self.assertTrue(any(
-                    worker_marker["pid"] == item["python_worker_pid"] and
-                    worker_marker["ppid"] == item["pid"] for item in all_launches),
-                    f"worker guard marker is not bound to an owned QProcess: {worker_marker}")
+                bound_launches = [item for item in all_launches
+                                  if worker_marker["pid"] == item["python_worker_pid"]]
+                self.assertEqual(len(bound_launches), 1,
+                    f"worker PID must bind to exactly one owned QProcess receipt: {worker_marker}")
+                self.assertTrue(_worker_is_bound_to_launch(worker_marker, bound_launches[0], os.getpid()),
+                    f"worker marker, input/output paths or process topology do not bind to launch receipt: {worker_marker}")
             self.assertNotIn("token", (completed_job / "worker.log").read_text(encoding="utf-8").lower())
             panel.close(); self.app.processEvents()
 
