@@ -32,6 +32,8 @@
 
 [当前中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md) · [当前证据摘要](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
+点击下方任意截图即可查看原始 **1440×1080** 大图。
+
 ### Research Studio
 
 <a href="docs/demos/research-20261006/zh_CN/studio-factor-composite-results.png">
