@@ -26,6 +26,20 @@
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
 
+## 实际界面与工作流
+
+下面展示的是 **KabuForge 既有本地 GUI 操作录制**。图中的历史净值曲线不代表当前公开因子、新的合成 CLI demo 结果或投资表现；录制所用原始数据、策略配置和账户文件不随演示发布。
+
+[Demo 说明](docs/demos/zh_CN/index.html) · [中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)
+
+<p align="center">
+  <img src="docs/demos/zh_CN/workflow.gif" width="100%" alt="KabuForge 中文 GUI 工作流演示">
+</p>
+
+| 数据 | 回测结果 | 历史记录 |
+| :---: | :---: | :---: |
+| <img src="docs/demos/zh_CN/data.png" alt="KabuForge 数据界面" width="100%"> | <img src="docs/demos/zh_CN/result.png" alt="KabuForge 回测结果界面" width="100%"> | <img src="docs/demos/zh_CN/history.png" alt="KabuForge 历史记录界面" width="100%"> |
+
 ## KabuForge 是什么？
 
 KabuForge 将因子与策略研究连接到组合构建、风险控制、券商中立订单规划、历史回测和本地纸上模拟。Python、CLI、桌面 GUI 与 MCP agent 共用同一应用服务。
@@ -150,15 +164,6 @@ Research / Risk / Planning
 ## 文档与验证
 
 [Documentation](docs/zh_CN/README.md) · [发行流程](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
-
-<details>
-<summary>Workflow demo / 流程演示 / フローのデモ</summary>
-
-这是历史界面与工作流录制；其中的历史 NAV 不代表当前公开因子、新的合成 CLI demo 结果或投资表现。 [Demo context](docs/demos/zh_CN/index.html).
-
-![KabuForge workflow](docs/demos/zh_CN/workflow.gif)
-
-</details>
 
 ## 引用
 
