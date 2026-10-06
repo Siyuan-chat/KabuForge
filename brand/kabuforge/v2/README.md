@@ -18,3 +18,5 @@ assets remain in Git history/tags; they are not rewritten or retrospectively
 relicensed. v2 is the current reviewed candidate.
 
 Social preview: 1280×640, opaque graphite, under 1 MB; no version or return data.
+
+GitHub README hero: `github-hero.svg` is a project-owned documentation graphic for the public research pipeline. It contains no performance, live-broker, or market-data claims and is intended for repository presentation rather than as a software screenshot.
