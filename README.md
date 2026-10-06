@@ -162,8 +162,6 @@ Current package version: **0.2.0rc1**. This candidate metadata does not mean the
 [![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
 <!-- KABUFORGE:VERSION:END -->
 
-Candidate metadata describes development state only; it does **not** mean that version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
-
 ## Documentation and validation
 
 [Documentation](docs/en_US/README.md) · [GEO release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
