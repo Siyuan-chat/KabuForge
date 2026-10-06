@@ -1,9 +1,9 @@
 name: Website validation
 on:
   push:
-    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README.md', 'README.zh_CN.md', 'README.ja_JP.md', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README*.md', 'CITATION.cff', 'docs/geo-facts.json', 'docs/en_US/CHANGELOG.md', 'docs/ja_JP/CHANGELOG.md', 'docs/zh_CN/CHANGELOG.md', 'tools/check_geo.py', 'tools/check_geo_consistency.py', 'tools/test_check_geo.py', 'tools/test_check_geo_consistency.py', '.github/workflows/website.yml']
   pull_request:
-    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README.md', 'README.zh_CN.md', 'README.ja_JP.md', '.github/workflows/website.yml']
+    paths: ['website/**', 'pyproject.toml', 'tools/sync_version.py', 'README*.md', 'CITATION.cff', 'docs/geo-facts.json', 'docs/en_US/CHANGELOG.md', 'docs/ja_JP/CHANGELOG.md', 'docs/zh_CN/CHANGELOG.md', 'tools/check_geo.py', 'tools/check_geo_consistency.py', 'tools/test_check_geo.py', 'tools/test_check_geo_consistency.py', '.github/workflows/website.yml']
 permissions:
   contents: read
 jobs:
@@ -20,6 +20,13 @@ jobs:
       - name: Check shared version sources
         working-directory: .
         run: python tools/sync_version.py --check
+      - name: Check release and website facts
+        working-directory: .
+        run: |
+          curl --fail --silent --show-error --location https://api.github.com/repos/Siyuan-chat/KabuForge/releases/latest --output "$RUNNER_TEMP/kabuforge-latest-release.json"
+          python tools/check_geo.py
+          python -m unittest discover -s tools -p 'test_check_geo*.py' -q
+          python tools/check_geo_consistency.py --website website --release-json "$RUNNER_TEMP/kabuforge-latest-release.json"
       - uses: pnpm/action-setup@v4
         with:
           version: 11.25.0

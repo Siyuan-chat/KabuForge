@@ -9,7 +9,9 @@ locale: en_US
 <!-- section:contract -->
 ## Contract
 
-KabuForge is a local-first quantitative research stack for Japanese equities: user-owned J-Quants or other local price data flows through factor and model research into backtests, portfolio/risk review, and broker planning. Price momentum is the default research strategy. The current source candidate is unpublished; read its version from `pyproject.toml` or `kabuforge doctor`. The [canonical homepage](https://kabuforge.com/) displays a generated version block from the same source. Published releases remain historical records and do not identify this candidate.
+KabuForge is an open-source, local-first Japanese-equity research stack for researchers and developers. User-owned J-Quants or explicitly selected local price data flows through factor and model research into backtests, portfolio/risk review, and broker planning. Price momentum is the default research strategy.
+
+Package release `v0.1.1` is the current stable release ([GitHub Release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)). The moving `main` branch is for development and may contain unreleased changes. This source checkout is the unpublished `0.2.0rc1` candidate; read its package version from `pyproject.toml` or `kabuforge doctor`. Published releases remain historical records and do not identify this candidate. The [canonical homepage](https://kabuforge.com/) displays a generated version block from the same source. Python, CLI, desktop GUI and MCP interfaces use shared application services.
 
 This is a research system, not a live-trading claim. Historical outputs are RESEARCH-ONLY with `pit_guarantee=false`; strict PIT, fresh forward validation, PAPER-READY status, and real terminal verification are not established. TOPIX is a price index without dividends and is aligned only on exact dates. The public build defaults Regime Off and does not include the private Regime bridge.
 
@@ -17,6 +19,16 @@ This is a research system, not a live-trading claim. Historical outputs are RESE
 ### Quick start / CLI
 
 Python 3.12 or later is required. The core package and each optional dependency group are defined in `pyproject.toml`; install only the groups needed for your selected workflow. The public source GUI/worker workflows and 14 CLI/MCP research routes have source-level validation. Clean-wheel and isolated installed-workflow acceptance are tracked separately; source screenshots do not certify an installed distribution. The current `0.2.0rc1` candidate is unpublished.
+
+For the current stable package, use the pinned release source:
+
+```shell
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
+python -m pip install .
+```
+
+For the moving development source, start from the `main` checkout. It may contain unreleased changes.
 
 ```shell
 python -m pip install .

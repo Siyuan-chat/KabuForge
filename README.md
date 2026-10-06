@@ -13,7 +13,9 @@
 
 An open-source, local-first stack connecting J-Quants or explicitly selected local data to factor and ML research, backtesting, portfolio construction, risk controls, and Japanese broker-neutral planning.
 
-[Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Current stable release: v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [All releases](https://github.com/Siyuan-chat/KabuForge/releases)
+
+Current stable package version: **0.1.1**. Published 2026-10-04. Research and local simulation only; real broker order submission is disabled. The historical `v0.1.0` GitHub Release retains its RC package artifacts and the MIT license that applied to that release.
 
 <!-- KABUFORGE:VERSION:START -->
 Current package version: **0.2.0rc1**. This candidate metadata does not mean the version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
@@ -27,6 +29,8 @@ Current package version: **0.2.0rc1**. This candidate metadata does not mean the
 ## What is KabuForge?
 
 KabuForge connects factor and strategy research with portfolio construction, risk controls, broker-neutral order planning, historical backtesting, and local paper simulation. Shared application services are accessible through Python, CLI, desktop GUI, and MCP-compatible agents.
+
+Research notes and project context: [ArcaViso](https://arcaviso.com/).
 
 ```text
 J-Quants / local data → Factor + ML → Backtest → Portfolio → Risk → Japanese broker planning
@@ -47,13 +51,15 @@ J-Quants / local data → Factor + ML → Backtest → Portfolio → Risk → Ja
 | Japanese broker mapping / read-only check | Offline preview is local-only; an explicit localhost credential-reference diagnostic can issue three read-only GETs. Actual terminal connectivity remains unverified | [Docs](docs/en_US/BROKER_API.md) |
 | Real broker orders | Submit and cancel are disabled. Public Regime workflow is off by default | [Docs](docs/en_US/AGENT_API.md) |
 
+The core research path is **Factor → Strategy → Portfolio → Risk → Planning**. KabuForge is for researchers and developers who inspect Japanese-equity research locally. Simulated fills are not broker fills, and there is no complete historical PIT certification.
+
 <a id="quick-start"></a>
 ## Quick start
 
 Python 3.12+
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
@@ -63,6 +69,8 @@ kabuforge strategies
 ```
 
 The demo is synthetic and offline: no market data, J-Quants key or broker account is needed. Install `.[gui]` for the optional desktop GUI; install `.[analytics]`, `.[indicators]`, `.[models]` or `.[backends]` only for workflows that need those optional runtimes. On Windows launch `Launch_KabuForge.bat`. Users provide their own data and credentials; the package does not bundle J-Quants history. All research outputs are RESEARCH-ONLY with no PIT guarantee. TOPIX is a price-only reference without dividends.
+
+This command pins the current stable release. To use the moving development branch, omit `--branch v0.1.1`; `main` can contain unreleased changes.
 
 In the GUI, use **Data Center** for explicitly selected local inputs, **Backtest Results** for reports, **Paper Trading → Real-market historical research replay** for isolated historical replay, and **Broker Connections → Offline cash-equity mapping preview** for local mapping. The preview does not submit orders; read-only diagnostics require a separate explicit action and a credential reference. See the [English GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md), [中文课程](docs/zh_CN/GUI_RESEARCH_COURSES.md), and [日本語コース](docs/ja_JP/GUI_RESEARCH_COURSES.md).
 
@@ -141,7 +149,7 @@ Shared application services validate, decide and plan; this boundary does not su
 
 ## Documentation and validation
 
-[Documentation](docs/en_US/README.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
+[Documentation](docs/en_US/README.md) · [GEO release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/en_US/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/en_US/CONTRIBUTING.md)
 
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>

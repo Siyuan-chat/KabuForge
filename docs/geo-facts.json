@@ -1,0 +1,22 @@
+{
+  "repository": "https://github.com/Siyuan-chat/KabuForge",
+  "website": "https://kabuforge.com/",
+  "documentation": "https://kabuforge.com/docs/",
+  "source_branch": "main",
+  "source_branch_package_version": "0.2.0rc1",
+  "current_release": {
+    "version": "0.1.1",
+    "tag": "v0.1.1",
+    "release_url": "https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1",
+    "commit": "7a38b1cbce2d755b3d1575e91889465598152143",
+    "verified_on": "2026-10-05",
+    "verification_source": "GitHub Releases API"
+  },
+  "historical_release": {
+    "version": "0.1.0",
+    "tag": "v0.1.0",
+    "license": "MIT",
+    "note": "retains its original RC package artifacts"
+  },
+  "current_license": "AGPL-3.0-only"
+}

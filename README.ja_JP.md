@@ -13,7 +13,9 @@
 
 オープンソースでローカル優先の研究スタックです。J-Quants または明示的に選択したローカルデータから、ファクター・ML研究、バックテスト、ポートフォリオ構築、リスク管理、日本の証券会社向け中立的な注文計画までをつなぎます。
 
-[Quick Start](#quick-start) · [Documentation](docs/ja_JP/README.md) · [Architecture](docs/ja_JP/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Quick Start](#quick-start) · [Documentation](docs/ja_JP/README.md) · [Architecture](docs/ja_JP/ARCHITECTURE.md) · [現在の安定版 v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [全リリース](https://github.com/Siyuan-chat/KabuForge/releases)
+
+現在の安定パッケージ版は **0.1.1** です。公開日は 2026-10-04 です。研究とローカルシミュレーション用で、実ブローカーへの発注は無効です。過去の GitHub `v0.1.0` Release は RC パッケージと当時の MIT ライセンスを維持しています。
 
 <!-- KABUFORGE:VERSION:START -->
 現在のパッケージ版は **0.2.0rc1** です。この候補メタデータは公開済みリリースを意味しません。研究とローカルシミュレーション用です。実端末の接続は未検証で、実注文の submit と cancel は無効です。
@@ -27,6 +29,8 @@
 ## KabuForge とは？
 
 ファクターと戦略の研究を、ポートフォリオ構築、リスク制御、ブローカー中立の注文計画、過去のバックテスト、ローカル paper シミュレーションへつなぎます。Python、CLI、デスクトップ GUI、MCP agent は共通のアプリケーションサービスを利用します。
+
+研究ノートとプロジェクトの背景：[ArcaViso](https://arcaviso.com/)。
 
 ```text
 J-Quants / ローカルデータ → ファクター・ML → バックテスト → ポートフォリオ → リスク → 日本の証券会社向け計画
@@ -47,13 +51,15 @@ J-Quants / ローカルデータ → ファクター・ML → バックテスト
 | 日本の証券会社向け mapping / 読取専用確認 | オフライン preview はローカル処理のみ。明示的に起動する localhost 資格情報参照診断は読取専用 GET を3件実行可能。実端末の接続は未検証 | [Docs](docs/ja_JP/BROKER_API.md) |
 | 実注文 | submit と cancel は無効。公開版の Regime ワークフローは既定でオフ | [Docs](docs/ja_JP/AGENT_API.md) |
 
+基本の研究経路は **Factor → Strategy → Portfolio → Risk → Planning** です。日本株研究をローカルで確認する研究者・開発者向けです。模擬約定は実約定ではなく、完全な過去 PIT 認証ではありません。
+
 <a id="quick-start"></a>
 ## クイックスタート
 
 Python 3.12+
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
@@ -63,6 +69,8 @@ kabuforge strategies
 ```
 
 demo はオフラインの合成データを使用します。市場データ、J-Quants キー、ブローカー口座は不要です。GUI は `.[gui]` をインストールし、必要な場合だけ `.[analytics]`、`.[indicators]`、`.[models]`、`.[backends]` を追加します。Windows では `Launch_KabuForge.bat` を起動します。市場データと資格情報はユーザーが用意し、J-Quants 履歴は同梱されません。研究結果はすべて RESEARCH-ONLY で PIT 保証は false です。TOPIX は配当を含まない価格指数のみです。
+
+この手順は現在の安定版に固定します。開発ブランチを使う場合は `--branch v0.1.1` を省略してください。`main` には未リリースの変更が含まれる場合があります。合成例は明示し、運用成績の証明には使いません。
 
 GUI では **Data Center** でローカル入力を明示選択し、**Backtest Results** でレポートを確認します。**Paper Trading → Real-market historical research replay** は隔離された履歴台帳を使い、**Broker Connections → Offline cash-equity mapping preview** はローカル mapping のみを作成します。preview は注文を送信しません。読取専用診断は別の明示操作で、資格情報参照が必要です。[日本語 GUI コース](docs/ja_JP/GUI_RESEARCH_COURSES.md)、[English course](docs/en_US/GUI_RESEARCH_COURSES.md)、[中文课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)を参照してください。
 
@@ -141,7 +149,7 @@ Research / Risk / Planning
 
 ## 文書と検証
 
-[Documentation](docs/ja_JP/README.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/ja_JP/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/ja_JP/CONTRIBUTING.md)
+[Documentation](docs/ja_JP/README.md) · [GEO release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/ja_JP/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/ja_JP/CONTRIBUTING.md)
 
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>

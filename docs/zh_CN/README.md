@@ -9,7 +9,9 @@ locale: zh_CN
 <!-- section:contract -->
 ## 契约
 
-KabuForge 是面向日本股票的本地优先量化研究栈：用户自有的 J-Quants 或其他本地行情进入因子与模型研究，再进入回测、组合与风险审阅、券商规划。默认研究策略是价格动量。当前源码候选版本尚未发布；请从 `pyproject.toml` 或 `kabuforge doctor` 查询版本。[官方首页](https://kabuforge.com/)显示由同一来源生成的版本信息。已发布版本仅代表历史发行，不标识当前候选源码。
+KabuForge 是面向研究者和开发者的开源本地优先日本股票研究栈。用户自有的 J-Quants 或显式选择的本地行情进入因子与模型研究，再进入回测、组合与风险审阅、券商规划。默认研究策略是价格动量。
+
+`v0.1.1` 是当前稳定发行版（[GitHub Release](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)）；`main` 是开发分支，可能包含尚未发行的改动。当前源码检出是尚未发布的 `0.2.0rc1` 候选；请从 `pyproject.toml` 或 `kabuforge doctor` 查询版本。[官方首页](https://kabuforge.com/)显示由同一来源生成的版本信息。已发布版本仅代表历史发行，不标识当前候选源码。Python、CLI、桌面 GUI 与 MCP 共用应用服务。
 
 这是研究系统，不代表实盘交易。历史输出均为 RESEARCH-ONLY，`pit_guarantee=false`；尚未证明严格 PIT、全新前向验证、PAPER-READY 或真实终端连接。TOPIX 是不含分红的价格指数，只按完全匹配的日期连接。公开版本默认关闭 Regime，不包含私有 Regime 桥接。
 
@@ -17,6 +19,16 @@ KabuForge 是面向日本股票的本地优先量化研究栈：用户自有的 
 ### 快速开始 / CLI
 
 需要 Python 3.12 或更高版本。核心依赖和可选依赖组定义在 `pyproject.toml`，只安装当前工作流所需的依赖组。公开源码中的 GUI/worker 工作流和 14 条 CLI/MCP 研究路由已经过源码级验证。干净 wheel 与隔离环境安装工作流的验收凭证单独跟踪；源码截图不能证明已安装发行包通过验收。当前 `0.2.0rc1` 候选尚未发布。
+
+使用当前稳定包时，请获取固定的发行源码：
+
+```shell
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
+cd KabuForge
+python -m pip install .
+```
+
+开发源码请使用 `main` 分支；其中可能包含尚未发行的改动。
 
 ```shell
 python -m pip install .

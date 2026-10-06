@@ -13,7 +13,9 @@
 
 开源、本地优先的研究栈，将 J-Quants 或显式选择的本地数据连接到因子与机器学习研究、回测、组合构建、风险控制及日本券商中立规划。
 
-[Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [Releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Quick Start](#quick-start) · [Documentation](docs/zh_CN/README.md) · [Architecture](docs/zh_CN/ARCHITECTURE.md) · [当前稳定版 v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [全部发行](https://github.com/Siyuan-chat/KabuForge/releases)
+
+当前稳定包版本为 **0.1.1**。发布于 2026-10-04。仅用于研究与本地模拟，真实券商下单未启用。历史 GitHub `v0.1.0` Release 保留 RC 包附件及该版本当时采用的 MIT 许可。
 
 <!-- KABUFORGE:VERSION:START -->
 当前包版本为 **0.2.0rc1**。这是候选元数据，不表示该版本已发布。本项目用于研究与本地模拟；真实终端连通性尚未验证，真实订单提交与撤销保持禁用。
@@ -27,6 +29,8 @@
 ## KabuForge 是什么？
 
 KabuForge 将因子与策略研究连接到组合构建、风险控制、券商中立订单规划、历史回测和本地纸上模拟。Python、CLI、桌面 GUI 与 MCP agent 共用同一应用服务。
+
+研究笔记和项目背景：[ArcaViso](https://arcaviso.com/)。
 
 ```text
 J-Quants / 本地数据 → 因子与机器学习 → 回测 → 组合 → 风险 → 日本券商规划
@@ -47,13 +51,15 @@ J-Quants / 本地数据 → 因子与机器学习 → 回测 → 组合 → 风�
 | 日本券商映射 / 只读检查 | 离线预览仅本地处理；明确触发的 localhost 凭证引用诊断可执行三个只读 GET。真实终端连通性仍未验证 | [Docs](docs/zh_CN/BROKER_API.md) |
 | 真实券商订单 | 提交与撤销均禁用；公开版 Regime 流程默认关闭 | [Docs](docs/zh_CN/AGENT_API.md) |
 
+核心研究流程是 **Factor → Strategy → Portfolio → Risk → Planning**，服务于希望在本地检查日本股票研究的研究者与开发者。模拟成交不等于券商成交，不代表完整历史 PIT 认证。真实券商下单未启用。
+
 <a id="quick-start"></a>
 ## 快速开始
 
 Python 3.12+
 
 ```shell
-git clone https://github.com/Siyuan-chat/KabuForge.git
+git clone --branch v0.1.1 --depth 1 https://github.com/Siyuan-chat/KabuForge.git
 cd KabuForge
 python -m pip install .
 kabuforge doctor
@@ -63,6 +69,8 @@ kabuforge strategies
 ```
 
 demo 使用离线合成数据，无需市场数据、J-Quants 密钥或券商账户。桌面 GUI 安装 `.[gui]`；仅在需要相应流程时再安装 `.[analytics]`、`.[indicators]`、`.[models]` 或 `.[backends]`。Windows 可启动 `Launch_KabuForge.bat`。行情与凭证由用户自行提供，包内没有 J-Quants 历史数据。研究输出均为 RESEARCH-ONLY，PIT 保证为 false。TOPIX 仅作价格指数参考，不含股息。
+
+此命令固定到当前稳定版。若使用开发分支，请省略 `--branch v0.1.1`；`main` 可能包含尚未发行的改动。合成示例须明确标识，不能证明绩效。
 
 GUI 中通过 **数据中心** 显式选择本地输入，在 **回测结果** 查看报告；**纸上交易 → 真实行情历史研究模拟** 使用隔离历史账本；**券商连接 → 离线现金股票映射预览** 仅生成本地映射。预览不提交订单；只读诊断是单独的显式操作，并需凭证引用。查看[中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)、[English course](docs/en_US/GUI_RESEARCH_COURSES.md)和[日本語コース](docs/ja_JP/GUI_RESEARCH_COURSES.md)。
 
@@ -141,7 +149,7 @@ Research / Risk / Planning
 
 ## 文档与验证
 
-[Documentation](docs/zh_CN/README.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
+[Documentation](docs/zh_CN/README.md) · [发行流程](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
 
 <details>
 <summary>Workflow demo / 流程演示 / フローのデモ</summary>
