@@ -26,19 +26,21 @@
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
 
-## 实际界面与工作流
+## 当前 GUI
 
-下面展示的是 **KabuForge 既有本地 GUI 操作录制**。图中的历史净值曲线不代表当前公开因子、新的合成 CLI demo 结果或投资表现；录制所用原始数据、策略配置和账户文件不随演示发布。
+以下截图来自**当前 GUI 研究课程**，由公开候选源码的 Qt 界面实际截取，反映新版界面，而不是旧版历史 demo。截图用于说明工作流，不代表投资表现，也不等同于 clean-wheel 安装认证；研究输出仍为 **RESEARCH-ONLY**，`pit_guarantee=false`。
 
-[Demo 说明](docs/demos/zh_CN/index.html) · [中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)
+[当前中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md) · [当前证据摘要](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
 <p align="center">
-  <img src="docs/demos/zh_CN/workflow.gif" width="100%" alt="KabuForge 中文 GUI 工作流演示">
+  <img src="docs/demos/research-20261006/zh_CN/studio-factor-composite-results.png" width="100%" alt="KabuForge 当前 Research Studio 因子策略结果界面">
 </p>
 
-| 数据 | 回测结果 | 历史记录 |
-| :---: | :---: | :---: |
-| <img src="docs/demos/zh_CN/data.png" alt="KabuForge 数据界面" width="100%"> | <img src="docs/demos/zh_CN/result.png" alt="KabuForge 回测结果界面" width="100%"> | <img src="docs/demos/zh_CN/history.png" alt="KabuForge 历史记录界面" width="100%"> |
+| 数据中心 · 冻结输入 | 回测结果 |
+| :---: | :---: |
+| <img src="docs/demos/research-20261006/zh_CN/cache-frozen.png" alt="KabuForge 当前数据中心冻结输入界面" width="100%"> | <img src="docs/demos/research-20261006/zh_CN/ma-native-results.png" alt="KabuForge 当前回测结果界面" width="100%"> |
+| **历史 Paper · 全量回放** | **券商连接 · 离线映射** |
+| <img src="docs/demos/research-20261006/zh_CN/paper-full-history.png" alt="KabuForge 当前历史 Paper 全量回放界面" width="100%"> | <img src="docs/demos/research-20261006/zh_CN/broker-valid-local-mapping.png" alt="KabuForge 当前离线券商映射预览" width="100%"> |
 
 ## KabuForge 是什么？
 

@@ -26,19 +26,21 @@ Current stable package version: **0.1.1**. Published 2026-10-04. Research and lo
   <a href="README.ja_JP.md">日本語</a>
 </p>
 
-## See KabuForge in action
+## Current GUI
 
-This is an **existing local GUI recording** of the research workflow. The historical NAV shown in these images does **not** represent the current public factors, the synthetic CLI demo, or investment performance. Source data, strategy configuration and account files from the recording are not distributed.
+These screenshots come from the **current GUI research course** captured from the public-candidate Qt source checkout. They show the newer interface used by the current documentation; they are public-source captures, not performance claims or clean-wheel certification. Research outputs remain **RESEARCH-ONLY** with `pit_guarantee=false`.
 
-[Demo context](docs/demos/en_US/index.html) · [GUI research course](docs/en_US/GUI_RESEARCH_COURSES.md)
+[Current GUI research course](docs/en_US/GUI_RESEARCH_COURSES.md) · [Current evidence summary](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
 <p align="center">
-  <img src="docs/demos/en_US/workflow.gif" width="100%" alt="KabuForge English GUI workflow demo">
+  <img src="docs/demos/research-20261006/en_US/studio-factor-composite-results.png" width="100%" alt="KabuForge current Research Studio factor strategy results">
 </p>
 
-| Data | Results | History |
-| :---: | :---: | :---: |
-| <img src="docs/demos/en_US/data.png" alt="KabuForge Data view" width="100%"> | <img src="docs/demos/en_US/result.png" alt="KabuForge backtest results view" width="100%"> | <img src="docs/demos/en_US/history.png" alt="KabuForge history view" width="100%"> |
+| Data Center · frozen input | Backtest Results |
+| :---: | :---: |
+| <img src="docs/demos/research-20261006/en_US/cache-frozen.png" alt="KabuForge current Data Center frozen-input view" width="100%"> | <img src="docs/demos/research-20261006/en_US/ma-native-results.png" alt="KabuForge current backtest results view" width="100%"> |
+| **Historical Paper · full replay** | **Broker Connections · offline mapping** |
+| <img src="docs/demos/research-20261006/en_US/paper-full-history.png" alt="KabuForge current historical paper replay view" width="100%"> | <img src="docs/demos/research-20261006/en_US/broker-valid-local-mapping.png" alt="KabuForge current offline broker mapping preview" width="100%"> |
 
 ## What is KabuForge?
 
