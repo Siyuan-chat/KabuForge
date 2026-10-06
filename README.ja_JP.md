@@ -32,6 +32,8 @@
 
 [現在の日本語 GUI コース](docs/ja_JP/GUI_RESEARCH_COURSES.md) · [現在の evidence summary](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
+以下の各画像をクリックすると、元の **1440×1080** 画像を確認できます。
+
 ### Research Studio
 
 <a href="docs/demos/research-20261006/ja_JP/studio-factor-composite-results.png">
