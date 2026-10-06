@@ -17,4 +17,6 @@ aliases and mirrored to framework_v2/assets/brand. Historical Segoe-based
 assets remain in Git history/tags; they are not rewritten or retrospectively
 relicensed. v2 is the current reviewed candidate.
 
-Social preview: 1280×640, opaque graphite, under 1 MB; no version or return data.
+Brand-only social preview: `social-preview-1280x640.png` is the 1280×640 opaque graphite asset with no version or return data.
+
+Current-UI social preview candidate: `social-preview-current-ui.png` reuses the current English Research Studio screenshot from `docs/demos/research-20261006/en_US/studio-factor-composite-results.png` (1440×1080). The website Open Graph/Twitter metadata uses the same current-UI capture so shared links match the interface shown in the current GUI course. The screenshot is research UI evidence, not a performance claim.
