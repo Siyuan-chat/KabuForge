@@ -139,13 +139,40 @@ class PriceSensitivityGuiTests(unittest.TestCase):
                 rows.append({"at":(start+timedelta(days=index)).isoformat(),"nav":nav,"drawdown":nav/peak-1})
             scenarios.append({"financial_path":{"nav":rows}})
         tmp=tempfile.TemporaryDirectory(); panel=PriceSensitivityPanel(Path(tmp.name),parent=None)
-        from PySide6.QtGui import QFont, QFontDatabase
-        if not QFontDatabase.hasFamily("Microsoft YaHei UI"):
-            font_path=Path(os.environ.get("WINDIR","C:/Windows"))/"Fonts"/"msyh.ttc"
-            self.assertTrue(font_path.is_file(),f"expected Windows CJK font for product GUI validation: {font_path}")
-            self.assertGreaterEqual(QFontDatabase.addApplicationFont(str(font_path)),0)
-        self.assertTrue(QFontDatabase.hasFamily("Microsoft YaHei UI"))
-        font=QFont("Microsoft YaHei UI",8)
+        from PySide6.QtGui import QFont, QFontDatabase, QFontMetrics
+        if sys.platform.startswith("win"):
+            expected_family_prefix = "Microsoft YaHei"
+            font_candidates = [Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts" / name
+                for name in ("msyh.ttc", "msyhbd.ttc")]
+            preferred_families = ("Microsoft YaHei UI", "Microsoft YaHei")
+        else:
+            expected_family_prefix = "Noto Sans CJK"
+            font_candidates = [Path(path) for path in (
+                "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+                "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+                "/usr/share/fonts/opentype/noto/NotoSansCJKjp-Regular.otf",
+                "/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf",
+            )]
+            preferred_families = ("Noto Sans CJK JP", "Noto Sans CJK SC",
+                "Noto Sans CJK TC", "Noto Sans CJK KR")
+        font_family = next((family for family in preferred_families
+            if QFontDatabase.hasFamily(family)), None)
+        if font_family is None:
+            for font_path in font_candidates:
+                if not font_path.is_file():
+                    continue
+                font_id = QFontDatabase.addApplicationFont(str(font_path))
+                if font_id < 0:
+                    continue
+                font_family = next((family for family in QFontDatabase.applicationFontFamilies(font_id)
+                    if family.startswith(expected_family_prefix)), None)
+                if font_family:
+                    break
+        self.assertIsNotNone(font_family,
+            f"expected platform CJK font ({expected_family_prefix}); checked {font_candidates}")
+        self.assertTrue(font_family.startswith(expected_family_prefix), font_family)
+        font=QFont(font_family,8)
+        font_metrics=QFontMetrics(font)
         panel.resize(1100,700); panel.chart.resize(1050,300); panel.chart.setFont(font)
         errors=[]; old_hook=sys.excepthook
         evidence_root=Path(os.environ.get("KABUFORGE_TEST_EVIDENCE_ROOT",tmp.name))
@@ -157,9 +184,10 @@ class PriceSensitivityGuiTests(unittest.TestCase):
                 panel.set_language(language)
                 labels=_TEXT[language]["chart_case"]
                 self.assertEqual(len(labels),3)
-                from PySide6.QtGui import QFont, QFontMetrics
-                metrics=QFontMetrics(font)
-                self.assertLessEqual(max(metrics.horizontalAdvance(text) for text in labels),150)
+                unsupported = sorted({char for text in labels for char in text
+                    if ord(char) > 127 and not font_metrics.inFontUcs4(ord(char))})
+                self.assertEqual(unsupported, [], f"{font_family} lacks {language} legend glyphs")
+                self.assertLessEqual(max(font_metrics.horizontalAdvance(text) for text in labels),150)
                 panel.chart.set_scenarios(scenarios,labels)
                 panel.show(); self.app.processEvents()
                 full=panel.grab(); chart_image=panel.chart.grab()

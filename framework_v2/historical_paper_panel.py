@@ -49,7 +49,9 @@ _TEXT = {
 
 
 class _PaperWorker(QObject):
-    began = Signal(int, int)
+    # Python thread identifiers are pointer-sized and can exceed Qt's signed
+    # 32-bit int signal payload on Linux. Keep the identifier as a Python object.
+    began = Signal(int, object)
     done = Signal(object, str, str)
     failed = Signal(str)
     finished = Signal()
@@ -62,7 +64,7 @@ class _PaperWorker(QObject):
 
     @Slot()
     def run(self):
-        self.began.emit(os.getpid(),threading.get_ident())
+        self.began.emit(os.getpid(),self._thread_ident())
         try:
             from .historical_paper_research import create_historical_paper_research, open_historical_paper_research
             if self.action == "create":
@@ -85,6 +87,10 @@ class _PaperWorker(QObject):
             self.failed.emit(f"{type(exc).__name__}: {exc}")
         finally:
             self.finished.emit()
+
+    @staticmethod
+    def _thread_ident():
+        return threading.get_ident()
 
 
 class HistoricalPaperPanel(QGroupBox):

@@ -90,8 +90,9 @@ class LocalCacheGuiTests(unittest.TestCase):
                         self.assertEqual(indicator_doc["source_identity"]["selected_data_sha256"],
                                          frozen["selected_data_sha256"])
                     else:
+                        window.set_language("zh_CN")
                         self.assertFalse(indicator.run(),"missing provider must not report a completed calculation")
-                        self.assertIn("dependency",indicator.status.text().lower())
+                        self.assertIn("缺少所选指标引擎所需依赖", indicator.status.text())
 
                     window.template.setCurrentIndex(window.template.findData("market"))
                     window.strategy_name.setText("Offline local momentum")

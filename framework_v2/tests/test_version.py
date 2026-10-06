@@ -70,17 +70,22 @@ class VersionTests(unittest.TestCase):
                              ("distribution-metadata", "owner-dist-fixture", "2.3.4"))
 
     def test_package_cli_doctor_and_mcp_initialize_share_candidate_version(self):
-        candidate_src = str(Path(__file__).resolve().parents[2] / "src")
-        self.assertTrue(candidate_src.replace("\\", "/").endswith("publish-rc2-20261004/src"))
+        candidate_root = Path(__file__).resolve().parents[2]
+        candidate_src_path = (candidate_root / "src").resolve()
+        self.assertTrue(candidate_src_path.is_dir())
+        candidate_src = str(candidate_src_path)
         sys.path.insert(0, candidate_src)
         try:
             import kabuforge
             from kabuforge.cli import _main
+            from framework_v2.agent import mcp as mcp_module
             from framework_v2.agent.mcp import MCPAdapter
 
             expected = get_version()
-            self.assertEqual(kabuforge.__file__ and Path(kabuforge.__file__).resolve().parent,
-                             Path(candidate_src).resolve() / "kabuforge")
+            package_origin = Path(kabuforge.__file__).resolve()
+            self.assertTrue(package_origin.is_relative_to(candidate_src_path), package_origin)
+            self.assertTrue(Path(_main.__code__.co_filename).resolve().is_relative_to(candidate_src_path))
+            self.assertTrue(Path(mcp_module.__file__).resolve().is_relative_to(candidate_root))
             self.assertEqual(kabuforge.__version__, expected)
             output = io.StringIO()
             with contextlib.redirect_stdout(output):

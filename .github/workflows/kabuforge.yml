@@ -18,8 +18,11 @@ jobs:
           python-version: '3.12'
       - run: python tools/check_public_distribution.py .
       - if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1
-      - run: python -m pip install -e '.[gui,analytics]' build
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libgl1 fonts-noto-cjk
+      - if: runner.os == 'Linux'
+        run: python -m pip install -e '.[gui,analytics]' build
+      - if: runner.os == 'Windows'
+        run: python -m pip install -e '.[gui,analytics,indicators]' build
       - run: python tools/sync_version.py --check
       - run: python -m unittest discover -s framework_v2/tests -p 'test_*.py' -q
       - run: python tools/check_docs.py

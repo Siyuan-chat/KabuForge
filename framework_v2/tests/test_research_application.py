@@ -65,13 +65,14 @@ class ResearchApplicationTests(unittest.TestCase):
                 "end": "2022-12-31"}, "pages": [{"code": "72030", "file": "page.json",
                 "sha256": hashlib.sha256(page_bytes).hexdigest(), "row_count": len(page_rows)}]}), encoding="utf-8")
             service = ResearchApplicationService(root / "workspace")
-            capabilities = service.capabilities()
-            if not capabilities["available"]["indicator_research"]:
-                reason = capabilities["unavailable_reasons"]["indicator_research"]
+            selected_runtime = service._extension_runtime("indicators", {"provider": "pandas-ta"})
+            if not selected_runtime.get("enabled"):
+                reason = selected_runtime.get("reason", "selected pandas-ta provider is unavailable")
                 self.assertTrue(reason)
-                with self.assertRaisesRegex(ResearchApplicationError, "isolated runtime"):
+                with self.assertRaises(ResearchApplicationError) as raised:
                     service.run_indicator_research(manifest, "7203", sma_period=5,
                         rsi_period=5, atr_period=5)
+                self.assertIn(reason, str(raised.exception))
                 return
             project_root = Path(__file__).resolve().parents[2]
             workspace = root / "workspace"
@@ -218,14 +219,18 @@ print("RESEARCH_APPLICATION_RESULT=" + json.dumps({
             source = root / "manifest.json"; source.write_text("{}", encoding="utf-8")
             service = ResearchApplicationService(workspace)
             junction = workspace / "factor-research"
-            pwsh = shutil.which("pwsh.exe")
-            self.assertIsNotNone(pwsh, "PowerShell 7 is required to create a Windows junction fixture")
-            env = {key: os.environ[key] for key in ("PATH", "SystemRoot", "TEMP", "TMP") if key in os.environ}
-            env.update({"KABU_TEST_JUNCTION":str(junction), "KABU_TEST_TARGET":str(external)})
-            script = "New-Item -ItemType Junction -Path $env:KABU_TEST_JUNCTION -Target $env:KABU_TEST_TARGET | Out-Null"
-            created = subprocess.run([pwsh, "-NoLogo", "-NoProfile", "-Command", script],
-                                     env=env, capture_output=True, text=True, timeout=15)
-            self.assertEqual(created.returncode, 0, created.stderr)
+            if os.name == "nt":
+                pwsh = shutil.which("pwsh.exe") or shutil.which("pwsh")
+                self.assertIsNotNone(pwsh, "PowerShell 7 is required to create a Windows junction fixture")
+                env = {key: os.environ[key] for key in ("PATH", "SystemRoot", "TEMP", "TMP") if key in os.environ}
+                env.update({"KABU_TEST_JUNCTION":str(junction), "KABU_TEST_TARGET":str(external)})
+                script = "New-Item -ItemType Junction -Path $env:KABU_TEST_JUNCTION -Target $env:KABU_TEST_TARGET | Out-Null"
+                created = subprocess.run([pwsh, "-NoLogo", "-NoProfile", "-Command", script],
+                                         env=env, capture_output=True, text=True, timeout=15)
+                self.assertEqual(created.returncode, 0, created.stderr)
+            else:
+                junction.symlink_to(external, target_is_directory=True)
+                self.assertTrue(junction.is_symlink(), "the POSIX containment fixture must be a real symlink")
             try:
                 with patch("framework_v2.factor_research.run_factor_research") as core:
                     with self.assertRaisesRegex(ResearchApplicationError, "inside the selected workspace"):
@@ -377,8 +382,16 @@ print("RESEARCH_APPLICATION_RESULT=" + json.dumps({
                         "pit_guarantee": False}), encoding="utf-8")
                     return 0
 
-            with patch("framework_v2.research_application.subprocess.Popen", FakeProcess):
+            # Static worker-protocol tests use a fake capability response. They
+            # must not depend on LightGBM/scikit-learn being installed.
+            capability = {"enabled": True, "paths": [],
+                "versions": {"lightgbm": "fixture-only", "scikit-learn": "fixture-only"},
+                "reason": "explicit test capability fixture"}
+            with patch.object(service, "_extension_runtime", return_value=capability) as probe, \
+                 patch("framework_v2.research_application.subprocess.Popen", FakeProcess):
                 response = service.run_model_training(manifest, factor, ["lightgbm"])
+            self.assertEqual(probe.call_count, 2)
+            probe.assert_any_call("model-training", {"model_names": ["lightgbm"]})
             req = json.loads((Path(response["task_dir"]) / "request.json").read_text(encoding="utf-8"))
             self.assertEqual(req["operation"], "model_training")
             self.assertEqual(req["model_names"], ["lightgbm"])

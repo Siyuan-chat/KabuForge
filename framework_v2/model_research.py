@@ -368,11 +368,14 @@ def run_model_research(factor_run_dir: str | Path, output_dir: str | Path,
     if target.exists():
         raise ModelResearchError("output_dir must be a new directory")
     report, factor_contract, feature_doc, evaluation_doc, source_hashes = _input_bundle(source_dir)
-    model_module, runtime = _model_runtime(model_name)
     recipe = validate_recipe(report["recipe"])
     feature_columns = _feature_columns(recipe)
     feature_rows = _index_rows(feature_doc["rows"], label_rows=False)
     samples, split_counts = _build_samples(feature_doc, evaluation_doc, feature_columns)
+    # Validate every supplied row and its D-1/label chronology before importing
+    # an optional estimator. Invalid research inputs should not be masked by a
+    # missing LightGBM/CatBoost installation.
+    model_module, runtime = _model_runtime(model_name)
     parameters = dict(_MODEL_PARAMETERS[model_name])
     training_label_end_max = max(row["label_end_date"] for row in samples["train"])
     contract = {

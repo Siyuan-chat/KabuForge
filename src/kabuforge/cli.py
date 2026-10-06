@@ -3,7 +3,8 @@ import argparse
 from datetime import datetime
 import hashlib
 import json
-from pathlib import Path
+import os
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
 def _main(argv=None):
@@ -97,15 +98,38 @@ def _research_command_names():
 
 
 def _selected_path(workspace, value):
-    path=Path(value).expanduser()
-    if not path.is_absolute(): path=workspace/path
-    resolved=path.resolve(strict=False)
-    if not resolved.is_relative_to(workspace):
+    root=Path(workspace).expanduser().resolve()
+    raw=str(value)
+    windows=PureWindowsPath(raw)
+    posix=PurePosixPath(raw.replace("\\", "/"))
+    if not raw or any(part == ".." for part in (*windows.parts, *posix.parts)):
         raise ValueError('selected inputs must be explicit files/directories inside the research workspace')
-    path=resolved.resolve(strict=True)
+    path=Path(raw).expanduser()
+    if windows.drive and not path.is_absolute():
+        raise ValueError('selected inputs must use a path native to this platform')
+    root_lexical=Path(os.path.abspath(root))
+    if path.is_absolute():
+        # Reject external drives and UNC paths lexically before resolve/stat can
+        # touch them (Windows may otherwise probe a network share).
+        path=Path(os.path.abspath(path))
+        if not path.is_relative_to(root_lexical) or path == root_lexical:
+            raise ValueError('selected inputs must be explicit files/directories inside the research workspace')
+    else:
+        # Accept either separator in CLI arguments so traversal policy does not
+        # change when a command moves between Windows and POSIX runners.
+        path=root / raw.replace("\\", "/")
+    resolved=path.resolve(strict=False)
+    if not resolved.is_relative_to(root) or resolved == root:
+        raise ValueError('selected inputs must be explicit files/directories inside the research workspace')
+    try:
+        resolved=resolved.resolve(strict=True)
+    except FileNotFoundError:
+        raise ValueError('selected inputs must be existing files/directories inside the research workspace') from None
     if not path.is_file() and not path.is_dir():
         raise ValueError('selected inputs must be explicit files/directories inside the research workspace')
-    return path
+    if not resolved.is_relative_to(root) or resolved == root:
+        raise ValueError('selected inputs must be explicit files/directories inside the research workspace')
+    return resolved
 
 
 def _research(args):

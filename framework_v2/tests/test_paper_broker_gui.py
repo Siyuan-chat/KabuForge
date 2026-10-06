@@ -72,6 +72,30 @@ class PaperBrokerGuiTests(unittest.TestCase):
             if panel.busy: self._wait(lambda:not panel.busy)
             panel.close(); self.app.processEvents()
 
+    def test_paper_worker_launch_receipt_preserves_wide_thread_identifier(self):
+        dates=["2021-01-04","2021-01-05","2021-01-06","2021-01-07"]
+        orders=[{"signal_date":dates[0],"execution_date":dates[1],"code":"4502",
+                 "side":"buy","quantity":10.0,"sizing_price":10.0}]
+        manifest,report=_workspace_inputs(self.root/"wide-thread-inputs",dates,orders)
+        panel=HistoricalPaperPanel(self.root,language="en_US")
+        panel.set_inputs(manifest,report,hashlib.sha256(report.read_bytes()).hexdigest())
+        account_path=self.root/"wide-thread-account"
+        panel.workspace_edit.setText(str(account_path)); panel.show(); self.app.processEvents()
+        thread_ident=(1 << 40)+123
+        try:
+            with patch("framework_v2.historical_paper_panel._PaperWorker._thread_ident",
+                       return_value=thread_ident):
+                self.assertTrue(panel.create_account())
+                self._wait(lambda:not panel.busy)
+            launch_path=Path(panel.operation_log.text())/"launch.json"
+            self.assertTrue(launch_path.is_file())
+            launch=json.loads(launch_path.read_text(encoding="utf-8"))
+            self.assertEqual(launch["thread_ident"],thread_ident)
+            self.assertEqual(panel.last_result["summary"]["status"],"IN_PROGRESS")
+        finally:
+            if panel.busy: self._wait(lambda:not panel.busy)
+            panel.close(); self.app.processEvents()
+
     def test_broker_panel_saves_reference_only_and_previews_without_transport(self):
         panel=BrokerResearchPanel(self.root,language="zh_CN")
         folder=self.root/"broker-config"; panel.workspace_edit.setText(str(folder))

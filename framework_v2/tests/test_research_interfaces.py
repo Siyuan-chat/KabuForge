@@ -57,9 +57,58 @@ class PublicResearchCliTests(unittest.TestCase):
 
     def test_paths_cannot_escape_workspace(self):
         with patch("framework_v2.research_application.ResearchApplicationService") as facade_type:
-            with self.assertRaises(ValueError):
-                self._run(["price", "--manifest", "..\\outside.json", "--recipe", "recipes/price.json"])
+            for escaped in ("../outside.json", "..\\outside.json",
+                            str(self.workspace.parent / "outside.json")):
+                with self.subTest(path=escaped), self.assertRaises(ValueError):
+                    self._run(["price", "--manifest", escaped,
+                               "--recipe", "recipes/price.json"])
         facade_type.return_value.run_price_research.assert_not_called()
+
+    def test_relative_paths_accept_both_separator_styles(self):
+        with patch("framework_v2.research_application.ResearchApplicationService") as facade_type:
+            facade_type.return_value.run_price_research.return_value = {
+                "readiness": "RESEARCH-ONLY", "pit_guarantee": False}
+            result = self._run(["price", "--manifest", r"bars\manifest.json",
+                                "--recipe", r"recipes\price.json"])
+        self.assertIs(result["pit_guarantee"], False)
+        args = facade_type.return_value.run_price_research.call_args.args
+        self.assertEqual(args[0], self.workspace / "bars" / "manifest.json")
+        self.assertEqual(args[1], {"lookback": 20})
+
+    def test_absolute_workspace_paths_and_missing_or_foreign_paths(self):
+        with patch("framework_v2.research_application.ResearchApplicationService") as facade_type:
+            facade_type.return_value.run_price_research.return_value = {
+                "readiness": "RESEARCH-ONLY", "pit_guarantee": False}
+            self._run(["price", "--manifest", str(self.workspace / "bars" / "manifest.json"),
+                       "--recipe", str(self.workspace / "recipes" / "price.json")])
+        self.assertEqual(facade_type.return_value.run_price_research.call_args.args[0],
+                         self.workspace / "bars" / "manifest.json")
+
+        with patch("framework_v2.research_application.ResearchApplicationService") as facade_type:
+            for missing in (str(self.workspace / "bars" / "missing.json"),
+                            r"Z:\outside\manifest.json",
+                            r"\\server\share\manifest.json"):
+                with self.subTest(path=missing), self.assertRaises(ValueError):
+                    self._run(["price", "--manifest", missing,
+                               "--recipe", "recipes/price.json"])
+        facade_type.return_value.run_price_research.assert_not_called()
+
+    def test_invalid_model_d1_contract_is_rejected_before_optional_import(self):
+        from framework_v2 import model_research
+        from framework_v2.factor_research import validate_recipe
+
+        recipe = validate_recipe()
+        feature_doc = {"rows": [{"code": "4502", "signal_date": "2018-01-02",
+                                  "d1_cutoff_date": "2018-01-01",
+                                  "execution_date": "2018-01-03"}]}
+        bundle = ({"recipe": recipe}, {}, feature_doc, {"rows": []}, {})
+        with patch.object(model_research, "_input_bundle", return_value=bundle), \
+             patch.object(model_research, "_model_runtime") as optional_runtime:
+            with self.assertRaisesRegex(model_research.ModelResearchError,
+                                        "D-1 feature cutoff"):
+                model_research.run_model_research(self.workspace,
+                    self.workspace / "model-output", "lightgbm")
+        optional_runtime.assert_not_called()
 
     def test_paper_mutation_requires_both_optins_and_fixed_ids(self):
         report = self.workspace / "bars" / "strategy.json"
