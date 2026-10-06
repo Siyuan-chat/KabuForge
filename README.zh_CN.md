@@ -4,6 +4,20 @@
 
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
+## 实际界面与工作流
+
+下面展示的是 **KabuForge 既有本地 GUI 操作录制**。图中的历史净值曲线不代表当前公开因子、新的合成 CLI demo 结果或投资表现；录制所用原始数据、策略配置和账户文件不随演示发布。
+
+[Demo 说明](docs/demos/zh_CN/index.html) · [中文 GUI 课程](docs/zh_CN/GUI_RESEARCH_COURSES.md)
+
+<p align="center">
+  <img src="docs/demos/zh_CN/workflow.gif" width="100%" alt="KabuForge 中文 GUI 工作流演示">
+</p>
+
+| 数据 | 回测结果 | 历史记录 |
+| :---: | :---: | :---: |
+| <img src="docs/demos/zh_CN/data.png" alt="KabuForge 数据界面" width="100%"> | <img src="docs/demos/zh_CN/result.png" alt="KabuForge 回测结果界面" width="100%"> | <img src="docs/demos/zh_CN/history.png" alt="KabuForge 历史记录界面" width="100%"> |
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v2/logo-horizontal-dark.svg">
   <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
@@ -150,15 +164,6 @@ Research / Risk / Planning
 ## 文档与验证
 
 [Documentation](docs/zh_CN/README.md) · [发行流程](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/zh_CN/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/zh_CN/CONTRIBUTING.md)
-
-<details>
-<summary>Workflow demo / 流程演示 / フローのデモ</summary>
-
-这是历史界面与工作流录制；其中的历史 NAV 不代表当前公开因子、新的合成 CLI demo 结果或投资表现。 [Demo context](docs/demos/zh_CN/index.html).
-
-![KabuForge workflow](docs/demos/zh_CN/workflow.gif)
-
-</details>
 
 ## 引用
 
