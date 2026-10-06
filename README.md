@@ -26,6 +26,12 @@ Current stable package version: **0.1.1**. Published 2026-10-04. Research and lo
   <a href="README.ja_JP.md">日本語</a>
 </p>
 
+<p align="center">
+  <a href="docs/en_US/ARCHITECTURE.md">
+    <img src="brand/kabuforge/v2/github-hero.svg" width="100%" alt="KabuForge research pipeline: J-Quants or local data to Factor and ML research, historical backtesting, portfolio and risk, then broker-neutral planning.">
+  </a>
+</p>
+
 ## What is KabuForge?
 
 KabuForge is an open-source Python research stack for **Japanese equity quantitative research**. It connects **J-Quants or explicitly selected local data** to factor and ML research, historical backtesting, portfolio construction, risk controls, local paper simulation, and Japanese broker-neutral order planning.
