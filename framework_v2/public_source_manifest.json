@@ -87,7 +87,7 @@
       "framework_v2/workbench_qt.py": "195bbd1fd91ffcb7a0ee46ea267293a76a3b546ba975611f0d24c1a41f687bd9",
       "framework_v2/workbench_service.py": "063736f87cf07886ed1f3616d18be12ccfa89bc3d56b330535e4446ac06fccc6",
       "framework_v2/workbench_worker.py": "855da3f4b35cf86b55c9942aa3d95d662184797ceb41eed4991133f2a298db63",
-      "pyproject.toml": "ce46f35dc31464518577e0f54a83c2f31fb464af58997eca23b2f2e7aa1ecaf8",
+      "pyproject.toml": "1ea205893432ee328798c1e7f02b121c0ee256fe6274762e13cb7cdbad04c0cd",
       "src/kabuforge/__init__.py": "9eda58f99d8a2e364823acf2d1aca1b7bd8086067b69d52ea4c4a55a1323b93b",
       "src/kabuforge/cli.py": "05b07dad74b1af025a4fa14a361224bf2d0b1baedff0447241b53efaf65f4ba2",
       "tools/check_docs.py": "ce47ec608a8f88d38feb82083b0f846763773f5d78e770fb2cf412f2841c7a3f",

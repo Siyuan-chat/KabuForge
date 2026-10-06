@@ -124,7 +124,7 @@ jobs:
           "$RUNNER_TEMP/kabuforge-clean/bin/kabuforge" doctor
           "$RUNNER_TEMP/kabuforge-clean/bin/kabuforge" demo --out "$RUNNER_TEMP/kabuforge-demo"
           "$VENV_PY" -I "$GITHUB_WORKSPACE/tools/check_installed_package.py"
-      - name: Verify tutorial from extracted sdist
+      - name: Verify tutorial and canonical recipes from extracted sdist
         run: "$RUNNER_TEMP/kabuforge-clean/bin/python -I $GITHUB_WORKSPACE/tools/check_sdist_tutorial.py $KABUFORGE_DIST/*.tar.gz"
   agent:
     runs-on: ubuntu-latest

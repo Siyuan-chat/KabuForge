@@ -94,19 +94,31 @@ class SdistTutorialCheckTests(unittest.TestCase):
             demo_output = json.dumps({"synthetic": True, "orders_submitted": False,
                                       "planned_order_count": 1})
             completed = subprocess.CompletedProcess([], 0, stdout=demo_output)
+            def execute(command, **kwargs):
+                if any(str(arg).endswith("canonical_recipes.py") for arg in command):
+                    output = Path(command[command.index("--out") + 1])
+                    output.mkdir()
+                    envelope = {"status": "COMPLETED", "readiness": "RESEARCH-ONLY", "pit_guarantee": False}
+                    results = {name: envelope for name in (
+                        "momentum", "factor_diagnostics", "factor_to_portfolio", "historical_paper_replay")}
+                    results.update(readiness="RESEARCH-ONLY", pit_guarantee=False)
+                    (output / "canonical-results.json").write_text(json.dumps(results), encoding="utf-8")
+                return completed
             with patch.dict(os.environ, {"PYTHONPATH": str(ROOT), "PYTHONHOME": "bad"}):
-                with patch.object(checker.subprocess, "run", return_value=completed) as run:
+                with patch.object(checker.subprocess, "run", side_effect=execute) as run:
                     report = checker.check_sdist(archive)
             self.assertEqual(report["tutorial_tests"], "passed")
-            self.assertEqual(run.call_count, 3)
+            self.assertEqual(report["canonical_recipes"], "passed")
+            self.assertEqual(run.call_count, 4)
             for call in run.call_args_list:
                 self.assertEqual(call.args[0][:2], [checker.sys.executable, "-I"])
-                self.assertEqual(call.kwargs["cwd"].name, "kabuforge-test")
                 self.assertNotEqual(call.kwargs["cwd"], ROOT)
                 self.assertNotIn("PYTHONPATH", call.kwargs["env"])
                 self.assertNotIn("PYTHONHOME", call.kwargs["env"])
                 self.assertTrue(call.kwargs["check"])
-            self.assertIn("test_extension_example.py", run.call_args_list[-1].args[0])
+            self.assertIn("test_extension_example.py", run.call_args_list[-2].args[0])
+            self.assertEqual(run.call_args_list[-2].kwargs["cwd"].name, "kabuforge-test")
+            self.assertEqual(run.call_args_list[-1].kwargs["cwd"], run.call_args_list[-2].kwargs["cwd"].parent.parent)
             self.assertFalse(run.call_args.kwargs["cwd"].exists())
 
     def test_failed_tutorial_tests_propagate(self):
