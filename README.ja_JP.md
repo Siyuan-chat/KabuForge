@@ -4,6 +4,20 @@
 
 [English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
+## 実際の画面とワークフロー
+
+以下は **KabuForge の既存ローカル GUI 操作記録**です。画像内の過去 NAV は、現在の公開ファクター、新しい合成 CLI demo の結果、または投資実績を示すものではありません。記録に使用した元データ、戦略設定、口座ファイルは配布されません。
+
+[Demo の説明](docs/demos/ja_JP/index.html) · [日本語 GUI コース](docs/ja_JP/GUI_RESEARCH_COURSES.md)
+
+<p align="center">
+  <img src="docs/demos/ja_JP/workflow.gif" width="100%" alt="KabuForge 日本語 GUI ワークフロー">
+</p>
+
+| データ | バックテスト結果 | 履歴 |
+| :---: | :---: | :---: |
+| <img src="docs/demos/ja_JP/data.png" alt="KabuForge データ画面" width="100%"> | <img src="docs/demos/ja_JP/result.png" alt="KabuForge バックテスト結果画面" width="100%"> | <img src="docs/demos/ja_JP/history.png" alt="KabuForge 履歴画面" width="100%"> |
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v2/logo-horizontal-dark.svg">
   <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
@@ -150,15 +164,6 @@ Research / Risk / Planning
 ## 文書と検証
 
 [Documentation](docs/ja_JP/README.md) · [GEO release process](docs/GEO_RELEASE_PROCESS.md) · [CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml) · [Release validation](docs/RELEASE_VALIDATION.md) · [Changelog](docs/ja_JP/CHANGELOG.md) · [Security](SECURITY.md) · [Contributing](docs/ja_JP/CONTRIBUTING.md)
-
-<details>
-<summary>Workflow demo / 流程演示 / フローのデモ</summary>
-
-これは過去の画面・ワークフローの録画です。表示された過去 NAV は、現在の公開ファクター、新しい合成 CLI demo の結果、投資実績を示しません。 [Demo context](docs/demos/ja_JP/index.html).
-
-![KabuForge workflow](docs/demos/ja_JP/workflow.gif)
-
-</details>
 
 ## 引用
 
