@@ -1,57 +1,45 @@
-# KabuForge
-
-[Website](https://kabuforge.com/) · [Quickstart](https://kabuforge.com/docs/quickstart/) · [Documentation](https://kabuforge.com/docs/) · [日本語](https://kabuforge.com/ja/)
-
-[English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
+<div align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v2/logo-horizontal-dark.svg">
-  <img width="420" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
+  <img width="460" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">
 </picture>
 
-**A reproducible quantitative research stack for Japanese equities.**
+**Open-source Japanese equity quant research — local-first, reproducible, agent-compatible.**
 
-An open-source, local-first stack connecting J-Quants or explicitly selected local data to factor and ML research, backtesting, portfolio construction, risk controls, and Japanese broker-neutral planning.
+KabuForge connects **J-Quants or explicit local data** to **factor & ML research, backtesting, portfolio construction, risk controls, local paper simulation, and broker-neutral planning**.
 
-[Quick Start](#quick-start) · [Documentation](docs/en_US/README.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Current stable release: v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1) · [All releases](https://github.com/Siyuan-chat/KabuForge/releases)
+[Website](https://kabuforge.com/) · [Quickstart](https://kabuforge.com/docs/quickstart/) · [Documentation](https://kabuforge.com/docs/) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Stable release v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
-Current stable package version: **0.1.1**. Published 2026-10-04. Research and local simulation only; real broker order submission is disabled. The historical `v0.1.0` GitHub Release retains its RC package artifacts and the MIT license that applied to that release.
-
-<!-- KABUFORGE:VERSION:START -->
-Current package version: **0.2.0rc1**. This candidate metadata does not mean the version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
-
-[![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
-<!-- KABUFORGE:VERSION:END -->
-
+[![Stable](https://img.shields.io/badge/stable-v0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-292F33)](pyproject.toml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/license-AGPL--3.0--only-292F33)](LICENSE)
+
+</div>
+
+<p align="center">
+  <a href="README.md">English</a> ·
+  <a href="README.zh_CN.md">简体中文</a> ·
+  <a href="README.ja_JP.md">日本語</a>
+</p>
 
 ## What is KabuForge?
 
-KabuForge connects factor and strategy research with portfolio construction, risk controls, broker-neutral order planning, historical backtesting, and local paper simulation. Shared application services are accessible through Python, CLI, desktop GUI, and MCP-compatible agents.
-
-Research notes and project context: [ArcaViso](https://arcaviso.com/).
+KabuForge is an open-source Python research stack for **Japanese equity quantitative research**. It connects **J-Quants or explicitly selected local data** to factor and ML research, historical backtesting, portfolio construction, risk controls, local paper simulation, and Japanese broker-neutral order planning.
 
 ```text
 J-Quants / local data → Factor + ML → Backtest → Portfolio → Risk → Japanese broker planning
 ```
 
-## Current capabilities
-
-| Capability | Status and boundary | Evidence |
+| Research | Reproduce | Integrate |
 | --- | --- | --- |
-| J-Quants and local data | User-supplied credentials/data only; local CSV, Parquet and frozen manifests are explicit inputs. No market data ships in this package | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
-| PIT visibility gates | Checks declared `available_at` against decision time; no complete historical PIT certification | [Docs](docs/en_US/RESEARCH_METHODOLOGY.md) |
-| Factor / Strategy extensions | Registered, versioned implementations and required validators | [Docs](docs/en_US/FACTOR_API.md) |
-| Indicators / ML / engine candidates | Optional isolated runtimes for TA-Lib, pandas-ta, LightGBM, CatBoost, VectorBT and Backtrader; runtime launchability depends on local extras | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
-| Portfolio / Risk / Planner | Targets, risk constraints and broker-neutral order intents | [Docs](docs/en_US/ARCHITECTURE.md) |
-| Historical backtest | Local simulation with explicit research and execution price semantics | [Docs](docs/en_US/EXECUTION.md) |
-| Local paper | Local account/journal simulation; simulated fills are not broker fills | [Docs](docs/en_US/EXECUTION.md) |
-| MCP agents | R0/R1 inspection and local research by default; R2 paper writes require explicit opt-in | [Docs](docs/en_US/AGENT_API.md) |
-| Japanese broker mapping / read-only check | Offline preview is local-only; an explicit localhost credential-reference diagnostic can issue three read-only GETs. Actual terminal connectivity remains unverified | [Docs](docs/en_US/BROKER_API.md) |
-| Real broker orders | Submit and cancel are disabled. Public Regime workflow is off by default | [Docs](docs/en_US/AGENT_API.md) |
+| Versioned factors, strategies, indicators and ML candidates | Explicit data inputs, decision-time visibility gates, durable identities and receipts | Python, CLI, desktop GUI and workspace-bounded MCP agents |
+| Portfolio targets and risk constraints | Historical backtests and local paper simulation with explicit execution semantics | Broker-neutral planning with real submit/cancel disabled |
 
-The core research path is **Factor → Strategy → Portfolio → Risk → Planning**. KabuForge is for researchers and developers who inspect Japanese-equity research locally. Simulated fills are not broker fills, and there is no complete historical PIT certification.
+KabuForge is built for researchers and developers who want a local, inspectable workflow for Japanese-equity factor research and backtesting. **Research and local simulation only:** real broker order submission/cancel remain disabled, and no complete historical PIT certification is claimed.
+
+Research notes and project context: [ArcaViso](https://arcaviso.com/).
 
 <a id="quick-start"></a>
 ## Quick start
@@ -94,17 +82,6 @@ KabuForge keeps research ideas in explicit Factor and Strategy contracts, then c
 | Shared interfaces | Python, GUI, CLI and MCP use the same application contracts; agent access adds workspace and receipt boundaries |
 | Inspectable decisions | Declared visibility times, content identities and durable receipts support review, with external-data limits kept explicit |
 
-## Bring your own Factor and Strategy
-
-```text
-FactorSpec + FactorContext → FactorResult
-FactorResult(s) → StrategyDecision → TargetPortfolio
-```
-
-Trusted application code registers factor implementations with spec validators, and strategy factories by implementation ID and version. Unknown or duplicate identities fail; configuration cannot request arbitrary Python imports or evaluation. Strategies receive registered factor results, PIT context, state and decision identity, then return a target or no-rebalance decision. Risk policy and the planner apply execution constraints afterwards.
-
-[Factor contracts](docs/en_US/FACTOR_API.md) · [Strategy contracts](docs/en_US/STRATEGY_API.md)
-
 ## Architecture and interfaces
 
 ```mermaid
@@ -137,6 +114,34 @@ Shared application services validate, decide and plan; this boundary does not su
 
 [Architecture](docs/en_US/ARCHITECTURE.md) · [Agent boundaries](docs/en_US/AGENT_API.md)
 
+## Current capabilities and boundaries
+
+| Capability | Status and boundary | Evidence |
+| --- | --- | --- |
+| J-Quants and local data | User-supplied credentials/data only; local CSV, Parquet and frozen manifests are explicit inputs. No market data ships in this package | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
+| PIT visibility gates | Checks declared `available_at` against decision time; no complete historical PIT certification | [Docs](docs/en_US/RESEARCH_METHODOLOGY.md) |
+| Factor / Strategy extensions | Registered, versioned implementations and required validators | [Docs](docs/en_US/FACTOR_API.md) |
+| Indicators / ML / engine candidates | Optional isolated runtimes for TA-Lib, pandas-ta, LightGBM, CatBoost, VectorBT and Backtrader; runtime launchability depends on local extras | [GUI courses](docs/en_US/GUI_RESEARCH_COURSES.md) |
+| Portfolio / Risk / Planner | Targets, risk constraints and broker-neutral order intents | [Docs](docs/en_US/ARCHITECTURE.md) |
+| Historical backtest | Local simulation with explicit research and execution price semantics | [Docs](docs/en_US/EXECUTION.md) |
+| Local paper | Local account/journal simulation; simulated fills are not broker fills | [Docs](docs/en_US/EXECUTION.md) |
+| MCP agents | R0/R1 inspection and local research by default; R2 paper writes require explicit opt-in | [Docs](docs/en_US/AGENT_API.md) |
+| Japanese broker mapping / read-only check | Offline preview is local-only; an explicit localhost credential-reference diagnostic can issue three read-only GETs. Actual terminal connectivity remains unverified | [Docs](docs/en_US/BROKER_API.md) |
+| Real broker orders | Submit and cancel are disabled. Public Regime workflow is off by default | [Docs](docs/en_US/AGENT_API.md) |
+
+The core research path is **Factor → Strategy → Portfolio → Risk → Planning**. KabuForge is for researchers and developers who inspect Japanese-equity research locally. Simulated fills are not broker fills, and there is no complete historical PIT certification.
+
+## Bring your own Factor and Strategy
+
+```text
+FactorSpec + FactorContext → FactorResult
+FactorResult(s) → StrategyDecision → TargetPortfolio
+```
+
+Trusted application code registers factor implementations with spec validators, and strategy factories by implementation ID and version. Unknown or duplicate identities fail; configuration cannot request arbitrary Python imports or evaluation. Strategies receive registered factor results, PIT context, state and decision identity, then return a target or no-rebalance decision. Risk policy and the planner apply execution constraints afterwards.
+
+[Factor contracts](docs/en_US/FACTOR_API.md) · [Strategy contracts](docs/en_US/STRATEGY_API.md)
+
 ## Research correctness
 
 - Timezone-aware `available_at` declares when an input became visible; future rows require a decision-time gate.
@@ -146,6 +151,18 @@ Shared application services validate, decide and plan; this boundary does not su
 - Synthetic examples are labeled and do not establish performance. Vendor timing, revisions, survivorship, corporate actions and universe construction still need separate checks.
 
 [Research Methodology](docs/en_US/RESEARCH_METHODOLOGY.md) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Factor API](docs/en_US/FACTOR_API.md) · [Strategy API](docs/en_US/STRATEGY_API.md) · [Agent API](docs/en_US/AGENT_API.md)
+
+## Development status
+
+The current stable release is **v0.1.1**, published 2026-10-04 under AGPL-3.0-only. For reproducible use, pin the stable tag as shown in the Quick start. The `main` branch can contain unreleased work.
+
+<!-- KABUFORGE:VERSION:START -->
+Current package version: **0.2.0rc1**. This candidate metadata does not mean the version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
+
+[![Package](https://img.shields.io/badge/package-0.2.0rc1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases)
+<!-- KABUFORGE:VERSION:END -->
+
+Candidate metadata describes development state only; it does **not** mean that version has been released. Research and local simulation only; actual terminal connectivity is unverified, and real order submission/cancel remain disabled.
 
 ## Documentation and validation
 
