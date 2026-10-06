@@ -98,6 +98,11 @@ def check_sdist(archive: Path) -> dict[str, object]:
                 or summary.get("planned_order_count", 0) < 1):
             raise ValueError("unexpected synthetic tutorial result: " + demo.stdout)
         print(json.dumps({"tutorial_output": summary}), flush=True)
+        subprocess.run(
+            python + ["-m", "unittest", "discover", "-s", "framework_v2/tests",
+                      "-p", "test_extension_example.py", "-v"],
+            cwd=root, env=env, check=True, timeout=180,
+        )
         canonical_out = Path(temp) / "canonical-output"
         subprocess.run(
             python + [str(root / "examples/canonical_recipes.py"),
@@ -109,13 +114,11 @@ def check_sdist(archive: Path) -> dict[str, object]:
                          "historical_paper_replay"):
             if results[workflow].get("status") != "COMPLETED":
                 raise ValueError("canonical workflow failed: " + workflow)
+            if (results[workflow].get("readiness") != "RESEARCH-ONLY"
+                    or results[workflow].get("pit_guarantee") is not False):
+                raise ValueError("canonical workflow boundaries changed: " + workflow)
         if results.get("readiness") != "RESEARCH-ONLY" or results.get("pit_guarantee") is not False:
             raise ValueError("canonical research boundaries changed")
-        subprocess.run(
-            python + ["-m", "unittest", "discover", "-s", "framework_v2/tests",
-                      "-p", "test_extension_example.py", "-v"],
-            cwd=root, env=env, check=True, timeout=180,
-        )
     return {"sdist": archive.name, "required_files": list(REQUIRED_FILES),
             "tutorial": "passed", "tutorial_tests": "passed", "canonical_recipes": "passed"}
 
