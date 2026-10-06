@@ -11,6 +11,8 @@ KabuForge connects **J-Quants or explicit local data** to **factor & ML research
 
 [Website](https://kabuforge.com/) · [Quickstart](https://kabuforge.com/docs/quickstart/) · [Documentation](https://kabuforge.com/docs/) · [Architecture](docs/en_US/ARCHITECTURE.md) · [Stable release v0.1.1](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 
+Current stable package version: **0.1.1**. Published 2026-10-04. Research and local simulation only; real broker order submission is disabled.
+
 [![Stable](https://img.shields.io/badge/stable-v0.1.1-E65324)](https://github.com/Siyuan-chat/KabuForge/releases/tag/v0.1.1)
 [![CI](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml/badge.svg)](https://github.com/Siyuan-chat/KabuForge/actions/workflows/kabuforge.yml)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-292F33)](pyproject.toml)
