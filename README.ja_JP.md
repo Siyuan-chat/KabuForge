@@ -32,15 +32,35 @@
 
 [現在の日本語 GUI コース](docs/ja_JP/GUI_RESEARCH_COURSES.md) · [現在の evidence summary](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
-<p align="center">
-  <img src="docs/demos/research-20261006/ja_JP/studio-factor-composite-results.png" width="100%" alt="KabuForge 現在の Research Studio 因子戦略結果画面">
-</p>
+### Research Studio
 
-| Data Center · 凍結入力 | Backtest Results |
-| :---: | :---: |
-| <img src="docs/demos/research-20261006/ja_JP/cache-frozen.png" alt="KabuForge 現在の Data Center 凍結入力画面" width="100%"> | <img src="docs/demos/research-20261006/ja_JP/ma-native-results.png" alt="KabuForge 現在のバックテスト結果画面" width="100%"> |
-| **Historical Paper · 全期間 replay** | **Broker Connections · offline mapping** |
-| <img src="docs/demos/research-20261006/ja_JP/paper-full-history.png" alt="KabuForge 現在の Historical Paper 全期間 replay 画面" width="100%"> | <img src="docs/demos/research-20261006/ja_JP/broker-valid-local-mapping.png" alt="KabuForge 現在の offline broker mapping preview" width="100%"> |
+<a href="docs/demos/research-20261006/ja_JP/studio-factor-composite-results.png">
+  <img src="docs/demos/research-20261006/ja_JP/studio-factor-composite-results.png" width="100%" alt="KabuForge 現在の Research Studio 因子戦略結果画面">
+</a>
+
+### Data Center · 凍結入力
+
+<a href="docs/demos/research-20261006/ja_JP/cache-frozen.png">
+  <img src="docs/demos/research-20261006/ja_JP/cache-frozen.png" width="100%" alt="KabuForge 現在の Data Center 凍結入力画面">
+</a>
+
+### Backtest Results
+
+<a href="docs/demos/research-20261006/ja_JP/ma-native-results.png">
+  <img src="docs/demos/research-20261006/ja_JP/ma-native-results.png" width="100%" alt="KabuForge 現在のバックテスト結果画面">
+</a>
+
+### Historical Paper · 全期間 replay
+
+<a href="docs/demos/research-20261006/ja_JP/paper-full-history.png">
+  <img src="docs/demos/research-20261006/ja_JP/paper-full-history.png" width="100%" alt="KabuForge 現在の Historical Paper 全期間 replay 画面">
+</a>
+
+### Broker Connections · offline mapping
+
+<a href="docs/demos/research-20261006/ja_JP/broker-valid-local-mapping.png">
+  <img src="docs/demos/research-20261006/ja_JP/broker-valid-local-mapping.png" width="100%" alt="KabuForge 現在の offline broker mapping preview">
+</a>
 
 ## KabuForge とは？
 
