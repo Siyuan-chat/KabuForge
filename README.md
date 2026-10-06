@@ -20,11 +20,7 @@ Current stable package version: **0.1.1**. Published 2026-10-04. Research and lo
 
 </div>
 
-<p align="center">
-  <a href="README.md">English</a> ·
-  <a href="README.zh_CN.md">简体中文</a> ·
-  <a href="README.ja_JP.md">日本語</a>
-</p>
+[English](README.md) · [简体中文](README.zh_CN.md) · [日本語](README.ja_JP.md)
 
 ## Current GUI
 
