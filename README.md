@@ -28,6 +28,8 @@ These screenshots come from the **current GUI research course** captured from th
 
 [Current GUI research course](docs/en_US/GUI_RESEARCH_COURSES.md) · [Current evidence summary](docs/demos/research-20261006/EVIDENCE_SUMMARY.md)
 
+Click any screenshot below to open the original **1440×1080** capture.
+
 ### Research Studio
 
 <a href="docs/demos/research-20261006/en_US/studio-factor-composite-results.png">
