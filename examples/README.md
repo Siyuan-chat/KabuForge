@@ -1,5 +1,20 @@
 # Examples
 
+## Canonical research workflows
+
+Run `python examples/canonical_recipes.py --out output/canonical-new` after
+installing the package. Use a new output directory. This runs four supported
+application workflows: momentum research, factor diagnostics (IC/Rank IC and
+quantiles), feature-only factor scores → portfolio replay, and isolated historical
+paper replay. It creates fictional weekday bars, freezes and hashes the input,
+pins score/report hashes, and retains receipts in `canonical-results.json`.
+The fixture is engineering evidence, not a trading strategy or market result.
+All outputs remain RESEARCH-ONLY with `pit_guarantee=false`.
+
+[MCP client configurations](mcp/README.md) cover Claude Desktop, Claude Code,
+Cursor and generic stdio. [Publishing preparation](../docs/PUBLISHING.md) records
+the remaining PyPI and Official MCP Registry gates.
+
 ## Factor and Strategy extension tutorial
 
 [English guide](../docs/en_US/FACTOR_API.md) · [中文指南](../docs/zh_CN/FACTOR_API.md) · [日本語ガイド](../docs/ja_JP/FACTOR_API.md)

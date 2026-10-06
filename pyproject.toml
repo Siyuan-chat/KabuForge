@@ -11,7 +11,18 @@ license = "AGPL-3.0-only"
 license-files = ["LICENSE", "NOTICE"]
 readme = "README.md"
 dependencies = ["pandas>=2.2", "jsonschema>=4.0", "pyarrow>=19", "requests>=2.32.5", "beautifulsoup4>=4.14.3", "tzdata"]
-classifiers = ["Development Status :: 4 - Beta", "Programming Language :: Python :: 3", "Operating System :: OS Independent"]
+keywords = ["japanese-equities", "jquants", "quant-research", "factor-research", "factor-investing", "backtesting", "portfolio-optimization", "point-in-time-data", "reproducible-research", "mcp", "ai-agents", "paper-trading"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
 
 [project.urls]
 Homepage = "https://kabuforge.com/"

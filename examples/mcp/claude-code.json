@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "kabuforge": {
+      "type": "stdio",
+      "command": "/absolute/path/to/venv/bin/kabuforge",
+      "args": ["--locale", "en_US", "mcp", "--workspace", "/absolute/path/to/agent_workspace"]
+    }
+  }
+}
