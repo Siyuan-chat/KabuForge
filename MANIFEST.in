@@ -12,6 +12,9 @@ recursive-include tools *.py
 recursive-include examples codex_mcp.toml
 include examples/extension_demo.py
 include examples/README.md
+include examples/canonical_recipes.py
+recursive-include examples/mcp *.json *.md
+include server.json docs/PUBLISHING.md docs/ENTRYPOINT_AUDIT.md
 prune output
 prune data_cache
 prune paper_trading_runs

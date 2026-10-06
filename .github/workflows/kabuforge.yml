@@ -27,6 +27,7 @@ jobs:
       - run: python -m unittest discover -s framework_v2/tests -p 'test_*.py' -q
       - run: python tools/check_docs.py
       - run: kabuforge demo --out output/ci_demo
+      - run: python examples/canonical_recipes.py --out output/ci_canonical
       - run: kabuforge strategies
   gui:
     runs-on: windows-latest

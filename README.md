@@ -1,5 +1,7 @@
 <div align="center">
 
+<!-- mcp-name: io.github.Siyuan-chat/kabuforge -->
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="brand/kabuforge/v2/logo-horizontal-dark.svg">
   <img width="460" alt="KabuForge" src="brand/kabuforge/v2/logo-horizontal-light.svg">

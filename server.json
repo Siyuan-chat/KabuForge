@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Siyuan-chat/kabuforge",
+  "title": "KabuForge",
+  "description": "Local Japanese equity research, factor diagnostics, portfolio replay and paper simulation.",
+  "version": "0.2.0rc1",
+  "repository": {"url": "https://github.com/Siyuan-chat/KabuForge", "source": "github"},
+  "packages": [{
+    "registryType": "pypi", "registryBaseUrl": "https://pypi.org",
+    "identifier": "kabuforge", "version": "0.2.0rc1", "runtimeHint": "uvx",
+    "transport": {"type": "stdio"},
+    "packageArguments": [
+      {"type": "positional", "value": "mcp"},
+      {"type": "named", "name": "--workspace", "value": "{workspace}",
+       "variables": {"workspace": {"description": "Absolute path to a dedicated local research workspace", "isRequired": true}}}
+    ]
+  }]
+}
