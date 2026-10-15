@@ -149,13 +149,23 @@ with patch('framework_v2.history.run_history',history):
                                  (job['job_id'], job['run_id']))
 
     def test_research_and_gui_lineage_preserve_original_requests(self):
+        project = Path(__file__).resolve().parents[2]
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(project) + os.pathsep + env.get('PYTHONPATH', '')
+        script = ('from framework_v2.tests.test_agent_lifecycle import AgentLifecycleTests; '
+                  'AgentLifecycleTests("test_research_and_gui_lineage_preserve_original_requests")'
+                  '._assert_research_and_gui_lineage()')
+        result = subprocess.run([sys.executable, '-B', '-c', script], cwd=project,
+                                env=env, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def _assert_research_and_gui_lineage(self):
         from framework_v2.research_application import ResearchApplicationService
         from framework_v2.workbench_jobs import JobController
-        from PySide6.QtWidgets import QApplication
-        # Discovery runs widget tests in this same process after this case.
-        # Keep the GUI-capable application alive for the complete test session.
-        type(self)._qt_app = QApplication.instance() or QApplication([])
-        app = type(self)._qt_app
+        from PySide6.QtCore import QCoreApplication
+        # This task-owned process never runs widget tests; its Qt instance
+        # cannot alter discovery's QApplication or interpreter shutdown order.
+        app = QCoreApplication.instance() or QCoreApplication([])
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             task_id, folder = ResearchApplicationService(root)._new_task('factor_diagnostics', {'fixture': True})

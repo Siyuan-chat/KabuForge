@@ -16,6 +16,40 @@ from framework_v2.request_control import cancellation_scope, check_cancelled, Re
 from framework_v2.stdio_transport import serve
 
 
+def _pid_exists(pid):
+    """Query without signals on Windows; uncertainty must fail the assertion."""
+    if os.name != 'nt':
+        try:
+            os.kill(pid, 0)
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+        return True
+    import ctypes
+    from ctypes import wintypes
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+    kernel.OpenProcess.restype = wintypes.HANDLE
+    kernel.GetExitCodeProcess.argtypes = (wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD))
+    kernel.GetExitCodeProcess.restype = wintypes.BOOL
+    kernel.CloseHandle.argtypes = (wintypes.HANDLE,)
+    kernel.CloseHandle.restype = wintypes.BOOL
+    handle = kernel.OpenProcess(0x1000, False, pid)
+    if not handle:
+        error = ctypes.get_last_error()
+        if error == 87: return False  # Invalid PID, not access denied.
+        raise ctypes.WinError(error)
+    try:
+        code = wintypes.DWORD()
+        if not kernel.GetExitCodeProcess(handle, ctypes.byref(code)):
+            raise ctypes.WinError(ctypes.get_last_error())
+        return code.value == 259  # STILL_ACTIVE
+    finally:
+        if not kernel.CloseHandle(handle):
+            raise ctypes.WinError(ctypes.get_last_error())
+
+
 class SyncResearchControlTests(unittest.TestCase):
     def test_context_is_reset_and_paper_does_not_receive_cancel_token(self):
         class Service:
@@ -75,6 +109,7 @@ class SyncResearchControlTests(unittest.TestCase):
         self.assertEqual([r['id'] for r in results],list(range(1,66)))
 
     def test_real_sync_worker_eof_and_notification(self):
+        self.assertTrue(_pid_exists(os.getpid()))
         for reason in ('eof', 'notification'):
             with self.subTest(reason=reason), tempfile.TemporaryDirectory() as temp:
                 root = Path(temp)
@@ -144,9 +179,7 @@ with patch('framework_v2.research_application.subprocess.Popen',start), patch.ob
                     with closing(sqlite3.connect(root/'agent_audit.sqlite')) as db:
                         link=db.execute('SELECT task_id,job_id FROM call_task_links').fetchone()
                         self.assertEqual(link,(failure['task_id'],failure['task_id']))
-                    # psutil is the existing local harness dependency.
-                    import psutil
-                    self.assertFalse(psutil.pid_exists(int((root/'child.pid').read_text())))
+                    self.assertFalse(_pid_exists(int((root/'child.pid').read_text())))
                 finally:
                     if process.poll() is None: process.kill(); process.wait(timeout=10)
                     for stream in (process.stdin,process.stdout,process.stderr):
