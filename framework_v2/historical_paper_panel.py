@@ -208,6 +208,12 @@ class HistoricalPaperPanel(QGroupBox):
             "expected_cursor":expected_cursor,"readiness":"RESEARCH-ONLY","pit_guarantee":False,
             "recovery":"open the same isolated account to verify/resume; never edit journal directly"}
         self._write_operation("request.json",request)
+        self._write_operation("task_lineage.json", {
+            "schema":"kabuforge.task_lineage.v1","task_id":self._operation_dir.name,
+            "job_id":None,"run_id":None,"operation":action,
+            "input_sha256":self._file_sha(str(self._operation_dir/"request.json")),
+            "input_identity_kind":"request_bytes","request_ref":"request.json",
+            "request_ref_base":"task_directory","execution_host":"HistoricalPaperPanel"})
         self.operation_log.setText(str(self._operation_dir))
         thread=QThread(self); worker=_PaperWorker(action,self.manifest_path,self.report_path,self.report_sha,target,expected_cursor)
         worker.moveToThread(thread); thread.started.connect(worker.run)

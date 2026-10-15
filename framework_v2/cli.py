@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 import json
+import hashlib, uuid
 from pathlib import Path
 from .application import ApplicationService
 from .demo import create_demo
@@ -22,6 +23,18 @@ def plan_file(path, execution, decision_at, now):
     document["evidence"]={"file_hashes":dict(resolved.file_hashes),"execution_snapshot_hash":execution_hash,
         "mode":resolved.run["mode"],"status":"PLANNED_ONLY","submitted":False}
     return document
+
+def _record_file_task(output, operation, args):
+    from .task_lineage import write_lineage
+    inputs = {"operation":operation,"decision_at":args.decision_at,"now":args.now,
+        "file_hash_observation":"after_completion; execution identity remains in report",
+        "files":{name:{"path":str(path.resolve()),"sha256":hashlib.sha256(path.read_bytes()).hexdigest()}
+                 for name,path in (("run",args.run),("execution",args.execution))}}
+    ref=output.name+".lineage_inputs.json"
+    write_new(output.parent/ref,inputs)
+    write_lineage(output.parent,task_id=uuid.uuid4().hex,operation=operation,
+        request_ref=ref,input_sha256=hashlib.sha256((output.parent/ref).read_bytes()).hexdigest(),
+        execution_host="framework_v2.cli",filename=output.name+".task_lineage.json")
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
@@ -57,12 +70,18 @@ def main(argv=None):
             intents.append(document["plan"]["intents"])
         if not intents[0] or not intents[0]==intents[1]==intents[2]:
             raise AssertionError("mode parity failed")
+        from .task_lineage import write_lineage
+        write_new(root/"lineage_inputs.json",{"operation":"demo","fixture":"fictional offline planning"})
+        write_lineage(root,task_id=uuid.uuid4().hex,operation="demo",
+            request_ref="lineage_inputs.json",input_sha256=hashlib.sha256((root/"lineage_inputs.json").read_bytes()).hexdigest(),
+            execution_host="framework_v2.cli")
         print(json.dumps({"output":str(root),"intents":len(intents[0]),"mode_intent_parity":True,"submitted":False}))
     elif args.command=="validate":
         result=ApplicationService().validate(args.run)
         print(json.dumps({"valid":True,"strategy_hash":result.strategy_hash,"files":len(result.file_hashes)}))
     elif args.command=="plan":
         write_new(args.out,plan_file(args.run,args.execution,args.decision_at,args.now))
+        _record_file_task(args.out,"plan",args)
         print(json.dumps({"output":str(args.out.resolve()),"submitted":False}))
     elif args.command=="factors":
         print(json.dumps(ApplicationService().builtins.versions,indent=2))
@@ -72,6 +91,7 @@ def main(argv=None):
         if args.out.exists(): raise FileExistsError(args.out)
         document=simulate_once(args.run,args.execution,decision_at=args.decision_at,now=args.now,store_path=args.journal)
         write_new(args.out,document)
+        _record_file_task(args.out,"simulate",args)
         print(json.dumps({"output":str(args.out.resolve()),"external_submission":False}))
     elif args.command=="doctor":
         print(json.dumps({"configuration":"available","public_factors":"synthetic_PIT_tested",
@@ -83,7 +103,16 @@ def main(argv=None):
         print(json.dumps({"output":str(output.resolve()),"original_preserved":True}))
     elif args.command=="history":
         from .history import run_history
+        entry_refs = {name:{"path":str(path.resolve()),
+            "sha256":hashlib.sha256(path.read_bytes()).hexdigest()}
+            for name,path in (("run",args.run),("timeline",args.timeline))}
         result=run_history(args.run,args.timeline,output_dir=args.out)
+        from .task_lineage import write_lineage
+        write_new(args.out/"lineage_inputs.json",entry_refs)
+        write_lineage(args.out,task_id=uuid.uuid4().hex,operation="history",
+            request_ref="lineage_inputs.json",
+            input_sha256=hashlib.sha256(json.dumps(entry_refs,sort_keys=True,separators=(",",":")).encode()).hexdigest(),
+            input_identity_kind="explicit_entry_files",execution_host="framework_v2.cli")
         print(json.dumps({"output":str(args.out.resolve()),"decisions":len(result["decisions"]),"nav_rows":len(result["nav"]),"external_submission":False}))
 
 if __name__=="__main__": main()

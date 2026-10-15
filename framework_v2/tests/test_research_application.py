@@ -378,6 +378,7 @@ print("RESEARCH_APPLICATION_RESULT=" + json.dumps({
                 def wait(self):
                     (self.job_dir / "result.json").write_text(json.dumps({
                         "schema": "kabuforge.research_studio_result.v1", "status": "COMPLETED",
+                        "job_id": self.request["job_id"], "manifest_sha256": self.request["manifest_sha256"],
                         "operation": self.request["operation"], "readiness": "RESEARCH-ONLY",
                         "pit_guarantee": False}), encoding="utf-8")
                     return 0

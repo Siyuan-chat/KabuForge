@@ -4,6 +4,7 @@ No available_at timestamps are invented. Input bars and recipe are snapshotted.
 Only a complete common calendar with unchanged split factors is accepted.
 """
 from __future__ import annotations
+from .request_control import check_cancelled
 import math, json, hashlib
 from pathlib import Path
 
@@ -62,6 +63,7 @@ def research_bars(rows, recipe):
     positions={code:0.0 for code in by_code}; previous_period=None; nav=[]; trades=[]; peak=initial
     order_schedule=[]; skipped=[]; account_path=[]; daily_turnover=[]; cumulative_fees=0.0
     for i,day in enumerate(dates):
+        check_cancelled()
         from datetime import date
         at=date.fromisoformat(day)
         period=day if frequency=="daily" else at.isocalendar()[:2] if frequency=="weekly" else day[:7]
@@ -179,6 +181,7 @@ def _research_sma_crossover(by_code,dates,recipe,initial,fee,fast,slow,provider)
     cash=initial; positions={code:0.0 for code in by_code}; nav=[]; trades=[]; skipped=[]
     account_path=[]; order_schedule=[]; daily_turnover=[]; peak=initial; cumulative_fees=0.0
     for index,day in enumerate(dates):
+        check_cancelled()
         prior_close_equity=(initial if index==0 else cash+sum(
             positions[code]*float(by_code[code][dates[index-1]]["close"]) for code in positions))
         gross_notional=0.0

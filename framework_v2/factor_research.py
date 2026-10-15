@@ -5,6 +5,7 @@ no network, directory discovery, dynamic imports, factor cache, or strategy
 order side effects. All results remain RESEARCH-ONLY with PIT unverified.
 """
 from __future__ import annotations
+from .request_control import check_cancelled
 
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -189,6 +190,7 @@ def _build_rows(bars: pd.DataFrame, recipe: dict[str, Any]) -> list[dict[str, An
     rows: list[dict[str, Any]] = []
     horizon = recipe["label"]["horizon_sessions"]
     for code, group in frame.groupby("code", sort=True):
+        check_cancelled()
         group = group.sort_values("date", kind="stable").reset_index(drop=True)
         dates = group["date"].astype(str).tolist()
         selected = pd.to_numeric(group["selected_price"], errors="coerce").to_numpy(dtype=float)
@@ -375,9 +377,11 @@ def _analyze(rows: list[dict[str, Any]], feature_names: list[str], recipe: dict[
     by_date = {day: [row for row in rows if row["signal_date"] == day] for day in dates}
     factor_results: dict[str, Any] = {}
     for name in analysis_names:
+        check_cancelled()
         daily = []
         top_by_day: dict[str, set[str] | None] = {}
         for day in dates:
+            check_cancelled()
             day_rows = by_date[day]
             feature_rows = [row for row in day_rows if row.get(name) is not None]
             labeled = [row for row in feature_rows if row.get("forward_return") is not None]

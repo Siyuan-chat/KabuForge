@@ -216,6 +216,10 @@ class PriceSensitivityPanel(QGroupBox):
                 "operation":"price_sensitivity","run_directory":str(self.source_run),"report_sha256":self.source_sha256}
             request_raw=json.dumps(request,ensure_ascii=False,indent=2,allow_nan=False).encode("utf-8")
             (job_dir/"request.json").write_bytes(request_raw)
+            from .task_lineage import write_lineage
+            write_lineage(job_dir,task_id=job_id,job_id=job_id,operation="price_sensitivity",
+                request_ref="request.json",input_sha256=hashlib.sha256(request_raw).hexdigest(),
+                execution_host="PriceSensitivityPanel")
             (job_dir/"stdout.log").touch(); (job_dir/"stderr.log").touch()
             process=QProcess(self); process.setWorkingDirectory(str(Path(__file__).resolve().parents[1]))
             process.setProcessEnvironment(env); process.setProgram(sys.executable)

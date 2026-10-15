@@ -24,7 +24,7 @@
     "runtime/snapshot_cache.py": "859ced269339747a6a077810785164b20cd290ac4e683d517200f8e5cc6486a6",
     "runtime/topix_pool_runtime.py": "ad80b92fde64129a47258c84a33ac62957b47bb3f403d97cb5e0c8e23454c4f0",
     "runtime/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "framework_v2/cli.py": "816debd02fd6e36166e72387dfc036d46685d0b5a3148b11fb8dd02b2603912f",
+    "framework_v2/cli.py": "bd89e27dfa217bf1ddf2b004094e74c058cc649585fadb7112a58000cf93725e",
     "framework_v2/legacy_provider.py": "5f958cedbff7d042c2a86c40568806deb77826b15500c3b698063ba081d0c446",
     "framework_v2/demo.py": "652cdfe3361c99eac836763cb92b86a7c88e80834f02bffd8ab062039dbdee23",
     "framework_v2/conversion.py": "f5bfc3968739b082b9464b60b2eefacb603a501678e1a27e9dd54c0613ec0880",

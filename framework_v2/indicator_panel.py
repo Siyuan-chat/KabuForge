@@ -627,6 +627,10 @@ class IndicatorResearchPanel(QGroupBox):
             "network": "not requested; worker has no transport or credential API call",
             "recovery": "retain this job directory; retry only into a new job ID; never overwrite partial outputs"}
         self._write_json_atomic(self._job_dir / "launch.json", self._launch_receipt, create_only=True)
+        from .task_lineage import write_lineage
+        write_lineage(self._job_dir,task_id=job_id,job_id=job_id,operation="indicator_research",
+            request_ref="launch.json",input_sha256=request_sha,
+            input_identity_kind="canonical_embedded_request",execution_host="IndicatorPanel")
         self._worker_started_monotonic = time.monotonic()
         self._lock_inputs(True); self._status_key = "running"; self._render_status()
         self._timeout_timer.start(300_000)

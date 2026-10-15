@@ -291,6 +291,12 @@ class ResearchStudioPanel(QGroupBox):
             request = {"schema":"kabuforge.research_studio_request.v1", "job_id":job_id, "operation":operation, **body}
             with (job_dir / "request.json").open("x", encoding="utf-8", newline="\n") as stream:
                 json.dump(request, stream, ensure_ascii=False, indent=2, allow_nan=False); stream.write("\n")
+            _write_new_json(job_dir/"task_lineage.json", {
+                "schema":"kabuforge.task_lineage.v1","task_id":job_id,
+                "job_id":job_id,"run_id":None,"operation":operation,
+                "input_sha256":_sha256(job_dir/"request.json"),
+                "input_identity_kind":"request_bytes","request_ref_base":"task_directory",
+                "request_ref":"request.json","execution_host":"ResearchStudioPanel"})
             for filename in ("stdout.log", "stderr.log"):
                 (job_dir / filename).touch(exist_ok=False)
             process = QProcess(self)

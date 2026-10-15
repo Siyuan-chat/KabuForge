@@ -80,6 +80,12 @@ class JobController(QObject):
             "command":[sys.executable,"-B","-m","framework_v2.workbench_worker","--request",str(request_path)],"pid":None,
             "checkpoint":"request.json; partial outputs are retained; do not replay uncertain orders"}
         self.buffer=""; self.decoder=codecs.getincrementaldecoder("utf-8")("replace"); self.cancel_requested=False; self.jobs.append(self.current)
+        with (directory/"task_lineage.json").open("x",encoding="utf-8") as stream:
+            json.dump({"schema":"kabuforge.task_lineage.v1","task_id":job_id,
+                "job_id":job_id,"run_id":None,"operation":request["action"],
+                "input_sha256":self.current["input_hash"],"request_ref":"request.json",
+                "input_identity_kind":"request_bytes","request_ref_base":"task_directory",
+                "execution_host":"JobController"},stream,allow_nan=False)
         process=QProcess(self); self.process=process
         process.setWorkingDirectory(str(Path(__file__).resolve().parents[1]))
         inherited=QProcessEnvironment.systemEnvironment(); env=QProcessEnvironment()

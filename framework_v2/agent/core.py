@@ -152,10 +152,13 @@ class AgentCommandService:
         self.lock = threading.RLock()
         self.jobs = {}
         self.cancellations = {}
+        self._threads = {}
+        self._closing = False
         self.db_path = self.root / "agent_audit.sqlite"
         if self.db_path.is_symlink(): raise AgentError("KF_AGENT_PATH")
         with self._db() as db:
             db.execute("CREATE TABLE IF NOT EXISTS calls (call_id TEXT PRIMARY KEY, idem TEXT UNIQUE, input_hash TEXT, result_hash TEXT, run_id TEXT, timestamp TEXT, tool TEXT, state TEXT, result TEXT)")
+            db.execute("CREATE TABLE IF NOT EXISTS call_task_links (call_id TEXT PRIMARY KEY, task_id TEXT, job_id TEXT, run_id TEXT, task_dir TEXT)")
         self.job_dir = self._path("agent_jobs")
         self.job_dir.mkdir(exist_ok=True)
         for file in self.job_dir.glob('*.json'):
@@ -263,6 +266,12 @@ class AgentCommandService:
                     with self._db() as db:
                         db.execute('UPDATE calls SET state=?,result_hash=?,run_id=?,result=? WHERE call_id=?',
                                    ('SUCCEEDED',digest(result),result.get('run_id'),json.dumps(response,allow_nan=False),call_id))
+                        if any(result.get(key) for key in ('task_id', 'job_id', 'run_id')):
+                            task_dir = result.get('task_dir')
+                            if task_dir is not None:
+                                task_dir = str(Path(task_dir).resolve().relative_to(self.root))
+                            db.execute('INSERT INTO call_task_links VALUES (?,?,?,?,?)',
+                                       (call_id,result.get('task_id'),result.get('job_id'),result.get('run_id'),task_dir))
                     return response
                 except Exception:
                     with self._db() as db: db.execute('UPDATE calls SET state=? WHERE call_id=?',('FAILED',call_id))
@@ -287,6 +296,14 @@ class AgentCommandService:
                 except Exception: rejected_hash = digest({'invalid_input':True})
                 safe_call_id = call_id if isinstance(call_id,str) and 1 <= len(call_id) <= 128 else uuid.uuid4().hex
                 with self.lock, self._db() as db:
+                    from ..research_application import ResearchApplicationError
+                    if isinstance(exc, ResearchApplicationError) and exc.task_dir is not None:
+                        failed_task = Path(exc.task_dir).resolve()
+                        if failed_task.is_relative_to(self.root):
+                            db.execute('INSERT OR IGNORE INTO call_task_links VALUES (?,?,?,?,?)',
+                                (safe_call_id,failed_task.name,
+                                 failed_task.name if failed_task.parent.name == 'jobs' else None,
+                                 None,str(failed_task.relative_to(self.root))))
                     db.execute('INSERT OR IGNORE INTO calls VALUES (?,?,?,?,?,?,?,?,?)',
                                (safe_call_id,None,rejected_hash,digest({'error_code':code}),None,now(),tool if tool in TOOLS else 'UNREGISTERED','REJECTED',json.dumps({'error_code':code})))
             except Exception: pass  # A receipt failure never turns a rejected action into execution.
@@ -547,6 +564,8 @@ class AgentCommandService:
         temp = file.with_suffix('.tmp'); temp.write_text(json.dumps(job),encoding='utf-8'); temp.replace(file)
 
     def _start_job(self, path, timeline, kind):
+        if self._closing:
+            raise AgentError('KF_AGENT_DISABLED')
         run_id,folder = self._new_run(); job_id = uuid.uuid4().hex
         resolved = self.application.validate(path)
         # Capture exact input bytes before queuing; later user edits cannot change a job.
@@ -570,6 +589,12 @@ class AgentCommandService:
                "recovery":"interrupted jobs fail closed; no automatic replay","cancel":"cancel_job"}
         self.jobs[job_id] = job; event = threading.Event(); self.cancellations[job_id] = event
         self._persist_job(job)
+        write_new(folder/'task_lineage.json', {
+            "schema": "kabuforge.task_lineage.v1", "task_id": job_id,
+            "job_id": job_id, "run_id": run_id, "operation": kind,
+            "input_sha256": job['input_hash'],
+            "input_identity_kind": "config_hashes_and_timeline", "request_ref_base": "agent_workspace",
+            "request_ref": 'agent_jobs/'+job_id+'.json', "execution_host": "AgentCommandService"})
         def worker():
             try:
                 from ..history import run_history
@@ -578,8 +603,10 @@ class AgentCommandService:
                 def canceled(): return event.is_set() or self._path('agent_jobs/'+job_id+'.cancel').exists()
                 result = run_history(captured_path,captured_timeline,output_dir=folder/'history',cancel_check=canceled)
                 if canceled(): raise InterruptedError()
-                write_new(folder/'report.json',result)
-                with self.lock: job.update(state='SUCCEEDED',result_ref='kabuforge://runs/'+run_id)
+                with self.lock:
+                    if canceled(): raise InterruptedError()
+                    write_new(folder/'report.json',result)
+                    job.update(state='SUCCEEDED',result_ref='kabuforge://runs/'+run_id)
             except InterruptedError:
                 with self.lock: job.update(state='CANCELED',error_code='KF_JOB_CANCELED')
             except Exception:
@@ -587,8 +614,24 @@ class AgentCommandService:
             finally:
                 with self.lock:
                     job['finished_at'] = now(); self._persist_job(job)
-        threading.Thread(target=worker,name='kabuforge-'+job_id,daemon=True).start()
+                    self.jobs[job_id] = job
+        thread = threading.Thread(target=worker,name='kabuforge-'+job_id,daemon=True)
+        self._threads[job_id] = thread
+        thread.start()
         return {"job_id":job_id,"run_id":run_id,"state":"QUEUED"}
+
+    def shutdown(self):
+        """Cooperatively stop only jobs started by this service, retaining receipts."""
+        with self.lock:
+            self._closing = True
+            threads = list(self._threads.items())
+            for job_id, thread in threads:
+                if thread.is_alive():
+                    self.cancellations[job_id].set()
+        # Workers need the same lock to persist their terminal state.
+        for _, thread in threads:
+            if thread is not threading.current_thread():
+                thread.join()
 
 
 class AgentResourceService:

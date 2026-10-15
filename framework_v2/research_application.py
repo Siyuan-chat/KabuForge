@@ -5,6 +5,7 @@ research cores. Model/engine operations use the static research Studio worker;
 paper writes require explicit opt-in and durable idempotency keys.
 """
 from __future__ import annotations
+from .request_control import check_cancelled, wait_owned, RequestCancelled
 
 from dataclasses import asdict, is_dataclass
 from datetime import datetime, timezone
@@ -198,6 +199,7 @@ class ResearchApplicationService:
             "broker_readonly_check": ("broker_readonly.py", "broker_research.py"),
         }
         source_hashes = {"research_application.py": _sha_file(Path(__file__).resolve())}
+        source_hashes["request_control.py"] = _sha_file(self.project_root/"framework_v2"/"request_control.py")
         for name in operation_sources.get(operation, ()):
             source_hashes[name] = _sha_file(self.project_root / "framework_v2" / name)
         request_doc = {"schema": "kabuforge.research_application_request.v1",
@@ -209,6 +211,13 @@ class ResearchApplicationService:
             "platform": f"{platform.system()}-{platform.machine()}", "request": request,
             "source_sha256": source_hashes}
         _write_new(task_dir / "application_request.json", request_doc)
+        _write_new(task_dir / "task_lineage.json", {
+            "schema": "kabuforge.task_lineage.v1", "task_id": task_id,
+            "job_id": task_id if root_name == "research-studio/jobs" else None,
+            "run_id": None, "operation": operation,
+            "input_sha256": hashlib.sha256(_canonical(request)).hexdigest(),
+            "input_identity_kind": "canonical_request", "request_ref_base": "task_directory",
+            "request_ref": "application_request.json", "execution_host": "ResearchApplicationService"})
         _write_new(task_dir / "launch.json", {"task_id": task_id, "operation": operation,
             "pid": os.getpid(), "started_at_utc": _utc(), "program": "ResearchApplicationService",
             "argv": ["ResearchApplicationService", operation],
@@ -277,7 +286,9 @@ class ResearchApplicationService:
         task_id, task_dir = self._new_task(operation, request, root_name=root_name)
         started = _utc()
         try:
+            check_cancelled()
             value, artifacts = action(task_dir)
+            check_cancelled()
             self._validate_result_artifacts(value)
             response = {"schema": "kabuforge.research_application_result.v1", "task_id": task_id,
                 "operation": operation, "status": "COMPLETED", "readiness": "RESEARCH-ONLY",
@@ -290,7 +301,7 @@ class ResearchApplicationService:
             return response
         except Exception as exc:
             failure = {"schema": "kabuforge.research_application_failure.v1", "task_id": task_id,
-                "operation": operation, "status": "FAILED", "stage": operation,
+                "operation": operation, "status": "CANCELED" if isinstance(exc, RequestCancelled) else "FAILED", "stage": operation,
                 "error_type": type(exc).__name__, "reason": str(exc),
                 "started_at_utc": started, "finished_at_utc": _utc(), "pid": os.getpid(),
                 "readiness": "RESEARCH-ONLY", "pit_guarantee": False}
@@ -449,6 +460,7 @@ class ResearchApplicationService:
         env["PYTHONDONTWRITEBYTECODE"] = "1"
         stdout_path, stderr_path = job_dir / "worker.stdout.log", job_dir / "worker.stderr.log"
         started = _utc()
+        proc = None
         try:
             with stdout_path.open("xb") as stdout, stderr_path.open("xb") as stderr:
                 proc = subprocess.Popen(launch["argv"], cwd=job_dir,
@@ -456,13 +468,23 @@ class ResearchApplicationService:
                 launch["pid"] = proc.pid
                 # Replace only this operation's own pre-start receipt to add
                 # the owned process PID before the worker handles its request.
-                launch_path.unlink()
-                _write_new(launch_path, launch)
-                return_code = proc.wait()
+                pending = launch_path.with_name(launch_path.name + '.pending-' + uuid.uuid4().hex)
+                _write_new(pending, launch)
+                pending.replace(launch_path)
+                return_code = wait_owned(proc)
+            check_cancelled()
             terminal_path = job_dir / ("result.json" if (job_dir / "result.json").is_file() else "failure.json")
             terminal = json.loads(terminal_path.read_text(encoding="utf-8")) if terminal_path.is_file() else None
             if return_code != 0 or not isinstance(terminal, dict) or terminal.get("status") not in {"COMPLETED", "PARTIAL"}:
                 raise RuntimeError(f"static worker exited {return_code}; terminal={terminal.get('status') if isinstance(terminal, dict) else 'missing'}")
+            if (terminal.get('schema') != 'kabuforge.research_studio_result.v1'
+                    or terminal.get('job_id') != job_id
+                    or terminal.get('operation') != operation
+                    or terminal.get('manifest_sha256') != worker_request.get('manifest_sha256')
+                    or ('readiness' in terminal and terminal['readiness'] != 'RESEARCH-ONLY')
+                    or ('pit_guarantee' in terminal and terminal['pit_guarantee'] is not False)):
+                raise ValueError('static worker receipt identity/schema mismatch')
+            self._validate_result_artifacts(terminal)
             response = {"schema": "kabuforge.research_application_result.v1", "task_id": job_id,
                 "operation": operation, "status": terminal["status"], "readiness": "RESEARCH-ONLY",
                 "pit_guarantee": False, "task_dir": str(job_dir), "result": terminal,
@@ -473,10 +495,20 @@ class ResearchApplicationService:
                 "stdout_path": str(stdout_path), "stderr_path": str(stderr_path)})
             return response
         except Exception as exc:
+            if proc is not None and proc.poll() is None:
+                try:
+                    proc.terminate()
+                    try:
+                        proc.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        proc.kill()
+                        proc.wait(timeout=10)
+                except Exception as cleanup_error:
+                    exc.add_note(f'owned worker cleanup failed: {type(cleanup_error).__name__}')
             if not (job_dir / "failure.json").exists():
                 try:
                     _write_new(job_dir / "facade_failure.json", {"task_id": job_id,
-                        "operation": operation, "status": "FAILED", "stage": "static_worker",
+                        "operation": operation, "status": "CANCELED" if isinstance(exc, RequestCancelled) else "FAILED", "stage": "static_worker",
                         "error_type": type(exc).__name__, "reason": str(exc),
                         "started_at_utc": started, "finished_at_utc": _utc(),
                         "stdout_path": str(stdout_path), "stderr_path": str(stderr_path),
@@ -566,7 +598,7 @@ class ResearchApplicationService:
                     _write_new(pending, launch)
                     pending.replace(launch_path)
                     try:
-                        exit_code = process.wait(timeout=300)
+                        exit_code = wait_owned(process, timeout=300)
                     except subprocess.TimeoutExpired:
                         timed_out = True
                         process.terminate()

@@ -1,6 +1,7 @@
 """MCP JSON-RPC stdio adapter. Core services are independent of this transport."""
 from __future__ import annotations
 import argparse
+import atexit
 import json
 import sys
 from .core import AgentCommandService, AgentResourceService, AgentError, schema, STRING
@@ -76,20 +77,10 @@ def main(argv=None):
     parser.add_argument('--locale',choices=['en_US','zh_CN','ja_JP'],default='en_US')
     args = parser.parse_args(argv)
     adapter = MCPAdapter(AgentCommandService(args.workspace,enable_paper=args.enable_paper,locale=args.locale),expose_reserved_external=args.expose_reserved_external)
-    while True:
-        line = sys.stdin.readline(1024*1024+1)
-        if not line: break
-        if len(line) > 1024*1024:
-            while line and not line.endswith('\n'): line = sys.stdin.readline(1024*1024+1)
-            response = {"jsonrpc":"2.0","id":None,"error":{"code":-32600,"message":"Request too large"}}
-        else:
-            try:
-                value = json.loads(line,object_pairs_hook=_unique_pairs,parse_constant=_reject_constant)
-                response = adapter.request(value) if isinstance(value,dict) else {"jsonrpc":"2.0","id":None,"error":{"code":-32600,"message":"Invalid request"}}
-            except (ValueError,TypeError):
-                response = {"jsonrpc":"2.0","id":None,"error":{"code":-32700,"message":"Parse error"}}
-        if response is not None:
-            sys.stdout.write(json.dumps(response,ensure_ascii=False,allow_nan=False)+'\n'); sys.stdout.flush()
+    atexit.register(adapter.service.shutdown)
+    from ..stdio_transport import serve
+    serve(adapter, sys.stdin, sys.stdout)
+    atexit.unregister(adapter.service.shutdown)
 
 
 if __name__ == '__main__': main()
