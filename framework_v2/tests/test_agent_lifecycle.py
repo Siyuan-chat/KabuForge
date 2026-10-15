@@ -151,8 +151,11 @@ with patch('framework_v2.history.run_history',history):
     def test_research_and_gui_lineage_preserve_original_requests(self):
         from framework_v2.research_application import ResearchApplicationService
         from framework_v2.workbench_jobs import JobController
-        from PySide6.QtCore import QCoreApplication
-        app = QCoreApplication.instance() or QCoreApplication([])
+        from PySide6.QtWidgets import QApplication
+        # Discovery runs widget tests in this same process after this case.
+        # Keep the GUI-capable application alive for the complete test session.
+        type(self)._qt_app = QApplication.instance() or QApplication([])
+        app = type(self)._qt_app
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             task_id, folder = ResearchApplicationService(root)._new_task('factor_diagnostics', {'fixture': True})
