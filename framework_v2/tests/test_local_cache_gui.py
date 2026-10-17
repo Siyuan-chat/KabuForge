@@ -14,6 +14,7 @@ import pandas as pd
 from PySide6.QtWidgets import QApplication
 
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 
 
 class LocalCacheGuiTests(unittest.TestCase):
@@ -142,6 +143,7 @@ class LocalCacheGuiTests(unittest.TestCase):
                     self.assertIn("Source SHA-256", cache.details.text())
                 finally:
                     window.close(); self.app.processEvents()
+                    dispose_closed_widget(window)
 
     def test_gui_discloses_adjustment_and_warmup_rejections(self):
         from framework_v2.local_cache_panel import LocalCachePanel
@@ -317,6 +319,7 @@ class LocalCacheGuiTests(unittest.TestCase):
                 self.assertFalse(Path(first_manifest).resolve() == Path(window.market_manifest or "__none__").resolve())
             finally:
                 window.close(); self.app.processEvents()
+                dispose_closed_widget(window)
 
     def test_csv_runs_through_owned_qprocess_with_sanitized_environment(self):
         """Exercise the real QProcess chain on an explicit fictional calendar fixture."""
@@ -443,6 +446,7 @@ class LocalCacheGuiTests(unittest.TestCase):
                 while window.jobs.busy and time.monotonic() < cancel_deadline:
                     self.app.processEvents(); time.sleep(.05)
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
 
 if __name__ == "__main__":

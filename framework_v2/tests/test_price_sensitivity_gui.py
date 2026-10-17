@@ -18,6 +18,7 @@ from unittest.mock import patch
 from framework_v2.price_research import research_bars
 from framework_v2.price_sensitivity_panel import PriceSensitivityPanel, _SCENARIO_IDS, _TEXT
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 
 
 def _source_run(folder: Path):
@@ -82,6 +83,7 @@ class PriceSensitivityGuiTests(unittest.TestCase):
             self.assertEqual(window.price_sensitivity_panel.language,"ja_JP")
             window._confirm_unsaved=lambda:True
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_explicit_source_locale_and_actual_three_case_worker(self):
         with tempfile.TemporaryDirectory() as temporary:

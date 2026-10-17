@@ -21,6 +21,7 @@ from framework_v2.config import ConfigError
 from framework_v2.demo import create_demo
 from framework_v2.factor_cache_panel import FactorCachePanel
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 from framework_v2.workbench_service import WorkbenchService
 from framework_v2.workbench_worker import (_validate_factor_cache_schema,
                                            run_request)
@@ -86,6 +87,7 @@ class FactorCacheGuiTests(unittest.TestCase):
                 panel.set_busy(False)
             finally:
                 window.close(); self.app.processEvents()
+                dispose_closed_widget(window)
 
     def test_preflight_binds_cache_toggle_and_rejects_ineligible_actions(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -403,6 +405,10 @@ class FactorCacheGuiTests(unittest.TestCase):
                     "timeline_sha256":hashlib.sha256((demo/"timeline.json").read_bytes()).hexdigest()},
                 "limitations":["synthetic engineering workflow; no strategy validation or performance inference","child credential variables and hostile PYTHONPATH were shown absent from the actual QProcess environment; no injected sitecustomize or network-deny shim was used"]}
             (evidence/"qprocess-receipt.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2),encoding="utf-8")
+            if window is not None:
+                dispose_closed_widget(window)
+            if off_window is not None:
+                dispose_closed_widget(off_window)
 
 
 if __name__=="__main__":

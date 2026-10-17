@@ -22,6 +22,7 @@ from framework_v2.factor_report_dashboard import build_factor_dashboard
 from framework_v2.factor_research import run_factor_research
 from framework_v2.local_cache import load_research_bars
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 from framework_v2.research_application import ResearchApplicationService
 
 
@@ -134,6 +135,7 @@ class FactorResearchGuiTests(unittest.TestCase):
             window.document._dirty = False
             window.close()
             self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_real_report_renders_three_localized_dashboards_with_actual_manifest_identity(self):
         manifest = self._manifest()
@@ -217,6 +219,7 @@ class FactorResearchGuiTests(unittest.TestCase):
             window.document._dirty = False
             self.assertTrue(window.close())
             self.app.processEvents()
+            dispose_closed_widget(window)
 
     def _wait_for(self, predicate, timeout=10):
         deadline = time.monotonic() + timeout

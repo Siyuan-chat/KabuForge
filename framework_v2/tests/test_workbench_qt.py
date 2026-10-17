@@ -17,6 +17,7 @@ from PySide6.QtWidgets import QApplication
 from framework_v2.demo import create_demo
 from framework_v2.cli import plan_file
 from framework_v2.workbench_qt import WorkbenchWindow
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 
 
 class QtTests(unittest.TestCase):
@@ -47,7 +48,9 @@ class QtTests(unittest.TestCase):
             self.window.jobs.cancel(); self.wait_job()
         self.window.document.load(self.demo/'backtest.json')
         self.window.json_invalid=False; self.window.form_errors={}
-        self.window.close(); self.app.processEvents(); self.temp.cleanup()
+        self.window.close(); self.app.processEvents()
+        dispose_closed_widget(self.window)
+        self.temp.cleanup()
 
     def wait_job(self):
         deadline=time.monotonic()+90

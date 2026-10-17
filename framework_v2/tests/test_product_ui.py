@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 from PySide6.QtWidgets import QApplication
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 from framework_v2.guided_strategy import parse_sentence
 from framework_v2.help_viewer import HelpDialog,manual_html
 from framework_v2.manual_content import CHAPTERS
@@ -22,7 +23,9 @@ class ProductTests(unittest.TestCase):
         self.window.show(); self.app.processEvents()
     def tearDown(self):
         if self.window.jobs.busy: self.window.jobs.cancel(); self.wait_job()
-        self.window.document._dirty=False; self.window.close(); self.app.processEvents(); self.tmp.cleanup()
+        self.window.document._dirty=False; self.window.close(); self.app.processEvents()
+        dispose_closed_widget(self.window)
+        self.tmp.cleanup()
     def wait_job(self):
         deadline=time.monotonic()+100
         while time.monotonic()<deadline:

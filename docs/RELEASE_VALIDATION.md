@@ -1,6 +1,57 @@
 # KabuForge public distribution — validation record
 
-## Current verification — 2026-10-17
+## GUI loading follow-up — 2026-10-17
+
+Validated the local GUI correction against source base `7a985a3eedda4e81cabe2041309bc16e109c2bc8` on Windows,
+stock CPython 3.12.14 / PySide6 6.12.0 / Qt WebEngine 6.140.0. The existing
+task-local dependency environment was reused; this is not fresh dependency
+resolution or acceptance of a newly installed wheel.
+
+Dashboard DOM checks now follow the current loaded document even when its
+`loadFinished` slot is not delivered. Navigation generation, document URL and
+language must match before all six charts are marked ready. Obsolete callbacks
+are invalidated on new input, a new run, navigation and close. Test-owned closed
+windows are explicitly disposed only after existing worker/close checks pass.
+
+| Check | Actual result |
+| --- | --- |
+| Public core discovery including new regressions | 427 executed / 505.980s; 426 passed, one changed-source fingerprint mismatch |
+| Corrected source catalogs and original runtime tests | Both catalog copies updated only for this GUI module; 10 original runtime tests passed / exit 0 |
+| New dashboard regressions plus original factor GUI module | 8 passed / process exit 0 |
+| Original GUI method, three separate serial processes | 10.165s, 8.923s, 8.508s; all passed / exit 0 |
+| Real six-chart workflow with completion slot disconnected | Original 25-second assertion failed before the correction; unchanged workflow passed after it |
+| Original tests and application polling limits | 634 existing assertion calls and original test AST preserved except added cleanup; 250ms interval / 40-attempt threshold unchanged |
+| Research worker, recipe and thread completion | AST unchanged |
+| Promoted public checkout, Qt 6.11.2 | 8 targeted GUI tests passed / exit 0; public distribution boundary and documentation checks passed |
+
+The additional Qt 6.11 environment initially lacked Plotly, causing dashboard
+generation and downstream DOM checks to fail. Installing Plotly 6.9.0 in that
+local verification environment resolved the prerequisite; the same eight tests
+then passed without source, assertion or timeout changes. The failed attempt is
+retained locally. No dependency declaration or CI configuration was changed.
+
+The GUI code bytes are unchanged from the 427-test run. The sole catalog failure
+was corrected and its original runtime module was rerun successfully; the owner
+accepted this targeted follow-up without repeating the full local suite. This
+record does not claim a new all-pass full-suite invocation. Automatic CI remains
+unchanged and evaluates the resulting commit independently.
+
+Failed attempts are retained: an early prototype and a new unit fixture required
+correction. Earlier serial runs also showed slow native Qt
+startup; successive native samples advanced from QApplication to WebEngine
+initialization. They do not establish a persistent deadlock or prove that this
+GUI signal defect was the sole cause of every historical 180-second diagnostic
+termination. Three unchanged serial invocations passed after the final correction.
+
+The historical Windows run that printed all 420 tests OK and then exited 1 still
+has no established native root cause; this correction does not relabel it as fixed.
+No financial/PIT, mutable-isolation, research dynamic-callable or authorization
+contract was changed. No test timeout, CI gate or workflow configuration was
+changed. CI migration remains unapproved
+and unimplemented. No package was published or live broker action enabled.
+Commit-specific GitHub results must be evaluated separately from this local record.
+
+## Earlier module verification — 2026-10-17
 
 Validated on Windows with stock CPython 3.12 against source commit
 `9427b4d4e3d512d9aec7d46f443a704d8ec24e0f`. This is software verification

@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QApplication
 from framework_v2.factor_research import run_factor_research
 from framework_v2.local_cache import load_research_bars
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 from framework_v2.research_studio_panel import ResearchStudioPanel
 from framework_v2.research_studio_worker import run_job
 
@@ -90,6 +91,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
             self.assertFalse(panel.busy)
         finally:
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_ma_crossover_explains_daily_all_symbol_semantics_and_restores_momentum_controls(self):
         window = self._window()
@@ -114,6 +116,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
             self.assertTrue(window.frequency.isEnabled())
         finally:
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_explicit_model_selection_and_engine_gate_bind_fixed_candidates(self):
         manifest=self._frozen_bars(self.root)
@@ -153,6 +156,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
             self.assertFalse(panel.busy)
         finally:
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_studio_qprocess_failure_is_terminal_and_can_restart(self):
         window = self._window()
@@ -181,6 +185,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
             if window.research_studio_panel.busy:
                 self._wait(lambda: not window.research_studio_panel.busy)
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_failed_to_start_writes_terminal_receipts_and_releases_busy_state(self):
         window = self._window()
@@ -202,6 +207,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
         finally:
             if window.research_studio_panel.busy: self._wait(lambda: not window.research_studio_panel.busy)
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_studio_qprocess_completes_real_feature_score_research_and_opens_result(self):
         manifest = self._frozen_bars(self.root)
@@ -232,6 +238,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
         finally:
             if window.research_studio_panel.busy: self._wait(lambda: not window.research_studio_panel.busy, timeout=90)
             window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_manifest_change_invalidates_active_generation_and_parent_close_is_blocked(self):
         window = self._window()
@@ -255,6 +262,7 @@ class ResearchStudioGuiTests(unittest.TestCase):
             if window.isVisible():
                 window.research_studio_panel._busy = False
                 window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
     def test_static_worker_rejects_unknown_operation_and_writes_receipt(self):
         workspace = self.root / "workspace"; job_id = "a" * 32

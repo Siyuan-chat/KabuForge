@@ -19,6 +19,7 @@ from framework_v2.broker_readonly import ALLOWED_GET_PATHS, BrokerReadOnlyError,
 from framework_v2.historical_paper_panel import HistoricalPaperPanel
 from framework_v2.tests.test_historical_paper_research import _workspace_inputs
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 
 
 class PaperBrokerGuiTests(unittest.TestCase):
@@ -356,6 +357,7 @@ class PaperBrokerGuiTests(unittest.TestCase):
         finally:
             if panel.busy: self._wait(lambda:not panel.busy)
             if window.isVisible(): window.close(); self.app.processEvents()
+            dispose_closed_widget(window)
 
 
 if __name__=="__main__": unittest.main()

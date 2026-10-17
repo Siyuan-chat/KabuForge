@@ -15,6 +15,7 @@ from PySide6.QtWidgets import QApplication
 
 from framework_v2.config import ConfigError
 from framework_v2.product_ui import ProductWorkbench
+from framework_v2.tests.qt_widget_cleanup import dispose_closed_widget
 from framework_v2.workbench_worker import _factor_cache_summary, _write_factor_cache_failure
 
 
@@ -34,6 +35,7 @@ class ProductMountingTests(unittest.TestCase):
         self.window.document._dirty = False
         self.window.close()
         self.app.processEvents()
+        dispose_closed_widget(self.window)
         self.temp.cleanup()
 
     def test_public_research_panels_mount_and_market_requires_selected_source(self):

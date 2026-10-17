@@ -9,6 +9,7 @@ from PySide6.QtCore import QObject, QThread, QTimer, QUrl, Signal, Slot
 from PySide6.QtWidgets import (QComboBox, QDoubleSpinBox, QFileDialog, QFormLayout, QGroupBox,
     QHBoxLayout, QLabel, QLineEdit, QPushButton, QSpinBox, QVBoxLayout, QWidget)
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from shiboken6 import isValid
 
 from .factor_research import DEFAULT_RECIPE
 from .workbench_widgets import label
@@ -117,6 +118,10 @@ class FactorResearchPanel(QGroupBox):
         self._worker = None
         self._dom_attempts = 0
         self._last_dom_result = None
+        self._dashboard_generation = 0
+        self._dashboard_url = QUrl()
+        self._dashboard_language = None
+        self._dashboard_ready = False
         self.setProperty("ownTranslation", True)
 
         layout = QVBoxLayout(self)
@@ -202,7 +207,7 @@ class FactorResearchPanel(QGroupBox):
             self.report = None
             self.dashboard_paths = {}
             self._summary_template = ""
-            self._dom_timer.stop()
+            self._reset_dashboard_loading()
             self.view.setHtml("<html><body style='background:#0d1117;color:#e6edf3'></body></html>")
         self.manifest_path = candidate
         self.manifest_edit.setText(str(self.manifest_path) if self.manifest_path else "")
@@ -299,7 +304,7 @@ class FactorResearchPanel(QGroupBox):
         self._active_generation = self._input_generation
         self._active_manifest = self.manifest_path
         self._run_superseded = False
-        self._update_actions(); self._dom_timer.stop()
+        self._update_actions(); self._reset_dashboard_loading()
         self.view.setHtml("<html><body style='background:#0d1117;color:#e6edf3'>RESEARCH-ONLY</body></html>")
         self.status.setText(_LANG[self.language]["running"])
         self._thread = QThread(self)
@@ -341,37 +346,62 @@ class FactorResearchPanel(QGroupBox):
                 and self._active_manifest == self.manifest_path):
             self.status.setText(_LANG[self.language]["failed"] + reason)
 
+    def _reset_dashboard_loading(self):
+        self._dashboard_generation += 1
+        self._dashboard_url = QUrl()
+        self._dashboard_language = None
+        self._dashboard_ready = False
+        self._dom_timer.stop(); self._dom_attempts = 0; self._last_dom_result = None
+
     def _load_dashboard(self, language):
         path = self.dashboard_paths.get(language)
         if not path or self._closed:
             return
-        self._dom_timer.stop(); self._dom_attempts = 0; self._last_dom_result = None
-        self.view.load(QUrl.fromLocalFile(path))
+        self._reset_dashboard_loading()
+        self._dashboard_url = QUrl.fromLocalFile(path)
+        self._dashboard_language = language
+        self.view.load(self._dashboard_url)
         self.status.setText((self._summary_template + "\n") + _LANG[self.language]["loading"])
+        # A hidden WebEngine page can become usable before loadFinished arrives.
+        # Verify the actual document rather than making that signal a prerequisite.
+        self._dom_timer.start()
 
     def _load_finished(self, ok):
-        if self._closed or self._run_superseded:
+        if (self._closed or self._run_superseded or not isValid(self) or not isValid(self.view)
+                or self._dashboard_url.isEmpty()
+                or self.view.url() != self._dashboard_url or self._dashboard_ready):
             return
+        if not ok and self.view.page().isLoading():
+            return  # Cancellation of an older navigation is not this page's failure.
         if not ok:
+            self._dom_timer.stop()
             self.status.setText(_LANG[self.language]["chart_failed"] + _LANG[self.language]["web_error"])
             return
-        self._dom_attempts = 0
         self._dom_timer.start()
 
     def _poll_dom(self):
-        if self._closed or self._run_superseded or not self.view:
+        if (self._closed or self._run_superseded or not self.view
+                or not isValid(self) or not isValid(self.view)
+                or self._dashboard_url.isEmpty()):
             self._dom_timer.stop(); return
+        if self.view.url() != self._dashboard_url or self.view.page().isLoading():
+            return
+        # Keep the existing post-load polling interval and attempt limit.
         self._dom_attempts += 1
+        generation = self._dashboard_generation
         self.view.page().runJavaScript(
-            "JSON.stringify({plots:document.querySelectorAll('.plotly-graph-div').length,ready:typeof Plotly})",
-            self._dom_checked)
+            "JSON.stringify({plots:document.querySelectorAll('.plotly-graph-div').length,"
+            "ready:typeof Plotly,url:location.href,language:document.documentElement.lang})",
+            lambda result, current=generation: self._dom_checked(result, current))
         if self._dom_attempts > 40:
             self._dom_timer.stop()
             detail = f"{_LANG[self.language]['dom_error']} ({self._last_dom_result!r})"
             self.status.setText(_LANG[self.language]["chart_failed"] + detail)
 
-    def _dom_checked(self, result):
-        if self._closed or self._run_superseded:
+    def _dom_checked(self, result, generation=None):
+        if (self._closed or self._run_superseded or not isValid(self) or not isValid(self.view)
+                or (generation is not None and generation != self._dashboard_generation)
+                or self._dashboard_language != self.language or self._dashboard_url.isEmpty()):
             return
         self._last_dom_result = result
         if isinstance(result, str):
@@ -381,8 +411,13 @@ class FactorResearchPanel(QGroupBox):
                 return
         if not isinstance(result, dict):
             return
-        if result.get("ready") == "object" and int(result.get("plots", 0)) == 6:
+        if (QUrl(str(result.get("url", ""))) != self._dashboard_url
+                or self.view.url() != self._dashboard_url
+                or result.get("language") != self._dashboard_language):
+            return
+        if result.get("ready") == "object" and result.get("plots") == 6:
             self._dom_timer.stop()
+            self._dashboard_ready = True
             self.status.setText((self._summary_template + "\n" if self._summary_template else "") + _LANG[self.language]["ready"])
 
     def _thread_finished(self, thread):
@@ -402,7 +437,7 @@ class FactorResearchPanel(QGroupBox):
         thread.deleteLater()
 
     def closeEvent(self, event):
-        self._closed = True; self._dom_timer.stop()
+        self._closed = True; self._reset_dashboard_loading()
         super().closeEvent(event)
 
 
